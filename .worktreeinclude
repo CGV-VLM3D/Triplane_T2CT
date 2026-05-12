@@ -1,0 +1,7 @@
+# Secrets / environment
+.env
+.env.local
+
+# API keys & credentials
+configs/wandb_api_key.txt
+configs/credentials.yaml

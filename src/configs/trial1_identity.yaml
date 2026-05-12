@@ -1,0 +1,35 @@
+exp_name: trial1_identity
+
+model:
+  kind: IdentityAE
+  # Same shape kwargs as trial1.yaml so configs are interchangeable.
+  # IdentityAE ignores these, but keeping them means a real TriplaneAE can
+  # be swapped in by changing only model.kind.
+  encoder:
+    in_channels: 4
+    emb_dim: 512
+    n_layers: 4
+    n_heads: 8
+    out_channels: 8
+    latent_shape: [120, 120, 64]
+  decoder:
+    in_channels: 8
+    hidden: 32
+    out_channels: 4
+    latent_shape: [120, 120, 64]
+
+loss:
+  l1_weight: 1.0
+  lpips_weight: 0.0
+  gan_weight: 0.0
+
+train:
+  epochs: 1
+  n_batches: 100
+  batch_size: 1
+  lr: 1.0e-4
+  dummy_data: true
+
+wandb:
+  project: triplane-ae
+  run_name: trial1_identity

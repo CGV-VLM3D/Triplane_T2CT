@@ -1,0 +1,62 @@
+data:
+  latent_dir: /workspace/dataset/maisi_latents
+  normalize: true
+  out_dir: /workspace/outputs/trivqae_conv
+
+maisi:
+  bundle_dir: /workspace/maisi_bundle
+  network_key: autoencoder_def
+  ae_ckpt: null
+
+training:
+  phase: ae
+  epochs: 10000
+  batch_size: 1
+  num_workers: 2
+  grad_clip: 1.0
+
+  # Full latent grid (D, H, W).
+  spatial_size: [120, 120, 64]
+
+  lr_g: 1.0e-4
+  lr_d: 5.0e-5
+
+  lambda_recon: 1.0
+
+  lambda_image_l1: 0.0
+  lambda_lpips: 0.0
+  lambda_adv: 0.0
+
+  lpips_net: vgg
+  lpips_slice_size: [224, 224]
+
+  save_every: 500
+  mixed_precision: fp16
+
+  resume_ckpt: null
+  resume_mode: generator_only
+
+model:
+  in_channels: 4
+
+  # Each entry = channel width at one Down stage. Number of axis-only
+  # downsample stages is set by the encoder automatically (ceil(log2(agg_size))),
+  # so list any number of channel values; the last is replicated as needed.
+  encoder_channels: [16, 32, 32, 64, 64, 64]
+  blocks_per_stage: 2
+  plane_channels: 16
+  # decoder_channels defaults to reverse(encoder_channels) when null.
+  decoder_channels: null
+
+  final_hidden_channels: 128
+  final_depth: 2
+
+  output_act: null
+  ddp_sync: true
+
+discriminator:
+  spatial_dims: 2
+  slice_size: [256, 256]
+  disc_channels: 32
+  disc_layers: 3
+  sync_batchnorm: true

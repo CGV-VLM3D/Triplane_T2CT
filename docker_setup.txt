@@ -1,0 +1,18 @@
+cd /home/user/woojin/Triplane_T2CT
+docker build -t woojin/triplane-t2ct:latest .
+
+
+
+docker start triplane_t2ct      # 다시 켜기
+docker exec -it triplane_t2ct bash  # 셸로 들어가기
+docker stop triplane_t2ct       # 끄기
+
+
+docker run -dit \
+  --name triplane_t2ct \
+  --gpus all \
+  --shm-size=64g \
+  -v /home/user/woojin/Triplane_T2CT:/workspace \
+  -v /home/user/hyunjun/datasets:/workspace/datasets:ro \
+  -w /workspace \
+  woojin/triplane-t2ct:latest

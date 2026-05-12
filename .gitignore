@@ -1,0 +1,34 @@
+# Secrets (절대 commit 금지)
+.env
+.env.local
+configs/wandb_api_key.txt
+configs/credentials.yaml
+
+# Claude Code worktree 산출물 / 로컬 캐시
+.claude/worktrees/
+.claude/agent-memory-local/
+
+# (참고) .claude/agent-memory/ 는 팀 공유용으로 git에 commit 됨 → ignore 하지 않음
+
+
+# Datasets
+datasets/
+datasets/datasets
+
+# Model checkpoints & weights
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+*.h5
+*.onnx
+*.pkl
+*.npz
+
+# Checkpoint / training output directories
+checkpoints/
+runs/
+wandb/
+logs/
+outputs/

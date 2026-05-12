@@ -1,0 +1,33 @@
+data:
+  latent_dir: /workspace/datasets/datasets/latents
+  out_dir: /workspace/outputs/trivae2
+  sample_z: true             # z = mu + sigma * eps per __getitem__
+  normalize: true            # z-score per channel using stats.json
+
+training:
+  epochs: 100
+  batch_size: 1
+  num_workers: 4
+  grad_clip: 1.0
+  lr: 1.0e-4
+  betas: [0.9, 0.999]
+  mixed_precision: fp16      # fp16 | bf16 | no
+  save_every: 20
+  log_every: 50
+  resume_ckpt: null
+
+  lambda_recon: 1.0
+
+model:
+  in_channels: 4
+  out_channels: null              # null -> in_channels
+  latent_shape: [120, 120, 64]    # (D, H, W) of mu/sigma
+
+  encoder_channels: [16, 32, 32, 64, 64, 64]
+  blocks_per_stage: 2
+  plane_channels: 16
+  decoder_channels: null          
+
+  final_hidden_channels: 128
+  final_depth: 2
+  output_act: null

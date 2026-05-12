@@ -1,0 +1,35 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "/workspace/.claude/hooks/check-remote-updates.sh" }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "/workspace/.claude/hooks/protect-files.sh" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "/workspace/.claude/hooks/ruff-format.sh" }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "experiment-runner",
+        "hooks": [
+          { "type": "command", "command": "/workspace/.claude/hooks/notify-training-done.sh" }
+        ]
+      }
+    ]
+  }
+}
