@@ -29,6 +29,7 @@ train:
 
 eval:
   fast_n_samples: 200
+  image_metric_n_samples: 50
   image_metric_every_n_epochs: 5
   val_split: valid
 

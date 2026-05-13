@@ -13,6 +13,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
+from monai.inferers import SlidingWindowInferer
 from omegaconf import OmegaConf
 from torch.utils.data import DataLoader
 
@@ -84,7 +85,26 @@ def run_full_evaluation(
     # --- Load MAISI decoder ---
     print("Loading MAISI autoencoder...")
     net = _build_maisi_decoder(device)
-    maisi_decoder = net.decode_stage_2_outputs
+    maisi_decoder = torch.compile(net.decode_stage_2_outputs, mode="reduce-overhead")
+
+    # Warm up the compiled decoder so the first sample doesn't pay the cost.
+    print("Warming up torch.compile (3 passes)...")
+    _inferer_warm = SlidingWindowInferer(
+        roi_size=(20, 20, 20),
+        sw_batch_size=16,
+        mode="gaussian",
+        overlap=0.4,
+        device=device,
+        sw_device=device,
+        progress=False,
+    )
+    _dummy = torch.zeros(1, 4, 120, 120, 64, device=device)
+    for _ in range(3):
+        with torch.no_grad(), torch.autocast(device_type="cuda", dtype=torch.float16):
+            _ = _inferer_warm(_dummy, maisi_decoder)
+        torch.cuda.synchronize()
+    del _dummy, _inferer_warm
+    torch.cuda.empty_cache()
 
     # --- Dataset ---
     ds = MAISILatentDataset(split="valid", load_ct_recon=True, load_gt=False)
