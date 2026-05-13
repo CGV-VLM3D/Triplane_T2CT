@@ -28,6 +28,7 @@ train:
   n_batches: 100
   batch_size: 1
   lr: 1.0e-4
+  log_every: 10
   dummy_data: true
 
 eval:

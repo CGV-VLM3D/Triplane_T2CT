@@ -19,9 +19,13 @@ def _get_lpips(device: torch.device):
 def image_psnr_3d(
     pred: torch.Tensor,
     target: torch.Tensor,
-    data_range: float = 2000.0,
+    data_range: float = 1.0,
 ) -> torch.Tensor:
-    """PSNR per sample for 3-D volumes [B,1,H,W,D]. Returns [B]."""
+    """PSNR per sample for 3-D volumes [B,1,H,W,D]. Returns [B].
+
+    Inputs expected in [0, 1] (MAISI decoder output convention).
+    For HU-space inputs, pass data_range=2000.
+    """
     metric = PSNRMetric(max_val=data_range)
     out = metric(pred, target)  # [B, 1]
     return out.squeeze(1)
@@ -30,13 +34,13 @@ def image_psnr_3d(
 def image_ssim_3d(
     pred: torch.Tensor,
     target: torch.Tensor,
-    data_range: float = 2000.0,
-    win_size: int = 7,
+    data_range: float = 1.0,
+    win_size: int = 11,
 ) -> torch.Tensor:
     """SSIM per sample for 3-D volumes [B,1,H,W,D]. Returns [B].
 
-    win_size defaults to 7 (not 11) so callers with spatial dim < 11 don't
-    fail. Pass win_size=11 for full-resolution volumes.
+    Inputs expected in [0, 1] (MAISI decoder output convention).
+    For HU-space inputs, pass data_range=2000.
     """
     metric = SSIMMetric(spatial_dims=3, data_range=data_range, win_size=win_size)
     out = metric(pred, target)  # [B, 1]
@@ -51,12 +55,15 @@ def _random_slice_indices(size: int, n: int, generator: torch.Generator) -> list
 def image_ssim_2d_avg(
     pred: torch.Tensor,
     target: torch.Tensor,
-    data_range: float = 2000.0,
+    data_range: float = 1.0,
     n_slices: int = 10,
     seed: int = 0,
-    win_size: int = 7,
+    win_size: int = 11,
 ) -> torch.Tensor:
     """Average 2-D SSIM over random slices along all 3 axes. Returns [B].
+
+    Inputs expected in [0, 1] (MAISI decoder output convention).
+    For HU-space inputs, pass data_range=2000.
 
     Inputs: [B, 1, H, W, D]. Slices along axial (D), coronal (H), sagittal (W).
     """

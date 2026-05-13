@@ -22,9 +22,11 @@ from src.metrics.latent_metrics import (
 )
 
 # Small tensors so tests run quickly on CPU.
+# Image SSIM defaults to win_size=11 in production (matches MAISI upper bound).
+# Tests pass WIN=7 explicitly so SSIM stays fast on CPU-sized fixtures.
 B = 2
 LATENT = (B, 4, 16, 16, 8)
-IMAGE = (B, 1, 32, 32, 16)  # spatial dims >= win_size=7
+IMAGE = (B, 1, 32, 32, 16)  # spatial dims >= WIN
 WIN = 7
 
 
@@ -194,6 +196,16 @@ def test_image_psnr_3d_batch_consistency(img_rand):
     s0 = image_psnr_3d(a, a + 5.0)
     s1 = image_psnr_3d(b, b + 5.0)
     assert torch.allclose(full[0], s0[0]) and torch.allclose(full[1], s1[0])
+
+
+def test_image_psnr_default_data_range_is_one():
+    """Default call must match an explicit data_range=1.0 call."""
+    torch.manual_seed(0)
+    x = torch.rand(B, 1, 16, 16, 8)  # already in [0, 1]
+    y = (x + 0.05).clamp(0.0, 1.0)
+    out_default = image_psnr_3d(y, x)
+    out_explicit = image_psnr_3d(y, x, data_range=1.0)
+    assert torch.allclose(out_default, out_explicit), (out_default, out_explicit)
 
 
 # ---------------------------------------------------------------------------

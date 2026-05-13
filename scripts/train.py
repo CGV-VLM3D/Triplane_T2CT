@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 import os
 import sys
 from pathlib import Path
@@ -20,6 +19,12 @@ sys.path.insert(0, str(ROOT / "reference" / "scripts"))
 import hydra
 
 from src.losses.recon_loss import ReconLoss
+from src.metrics import (
+    compute_latent_data_range,
+    latent_cosine_similarity,
+    latent_l1,
+    latent_psnr,
+)
 from src.models.identity_ae import IdentityAE
 from src.models.triplane_ae import TriplaneAE
 
@@ -40,55 +45,6 @@ class DummyLatentDataset(Dataset):
 
     def __getitem__(self, idx: int) -> dict:
         return {"mu": torch.randn(4, 120, 120, 64)}
-
-
-# ---------------------------------------------------------------------------
-# Metrics
-# ---------------------------------------------------------------------------
-
-
-def _psnr(pred: torch.Tensor, target: torch.Tensor) -> float:
-    """Peak signal-to-noise ratio in latent space (data_range = max-min of target)."""
-    mse = torch.mean((pred - target) ** 2).item()
-    if mse == 0.0:
-        return float("inf")
-    data_range = (target.max() - target.min()).item()
-    if data_range == 0.0:
-        data_range = 1.0
-    return 20.0 * math.log10(data_range / math.sqrt(mse))
-
-
-def _ssim_3d(pred: torch.Tensor, target: torch.Tensor) -> float:
-    """Simple SSIM estimate over the full batch tensor treated as a 1-D signal."""
-    try:
-        from torchmetrics.functional import (
-            structural_similarity_index_measure as ssim_fn,
-        )
-
-        # torchmetrics expects (B, C, *spatial) but our tensors are [B, 4, 120, 120, 64].
-        # Flatten spatial to 2D: treat Z-slices as "width", H*W as "height".
-        B, C, H, W, D = pred.shape
-        # Reshape to (B, C, H*W, D) — a pseudo-2D image
-        p2 = pred.reshape(B, C, H * W, D)
-        t2 = target.reshape(B, C, H * W, D)
-        data_range = float((target.max() - target.min()).item()) or 1.0
-        val = ssim_fn(p2, t2, data_range=data_range)
-        return float(val)
-    except Exception:
-        # Fallback: closed-form global SSIM approximation.
-        mu1 = pred.mean()
-        mu2 = target.mean()
-        s1 = pred.std()
-        s2 = target.std()
-        cov = ((pred - mu1) * (target - mu2)).mean()
-        c1 = (0.01 * 1.0) ** 2
-        c2 = (0.03 * 1.0) ** 2
-        ssim = (
-            (2 * mu1 * mu2 + c1)
-            * (2 * cov + c2)
-            / ((mu1**2 + mu2**2 + c1) * (s1**2 + s2**2 + c2))
-        )
-        return float(ssim)
 
 
 # ---------------------------------------------------------------------------
@@ -200,10 +156,10 @@ def main(cfg: DictConfig) -> None:
     use_dummy = bool(getattr(cfg.train, "dummy_data", True))
 
     # Dataset / dataloader
-    n_batches = int(cfg.train.n_batches)
     batch_size = int(cfg.train.batch_size)
 
     if use_dummy:
+        n_batches = int(cfg.train.n_batches)
         dataset = DummyLatentDataset(n_samples=n_batches * batch_size)
         loader = DataLoader(
             dataset, batch_size=batch_size, shuffle=False, num_workers=0
@@ -239,6 +195,14 @@ def main(cfg: DictConfig) -> None:
             persistent_workers=True,
         )
 
+    # data_range for latent PSNR — computed once from the first batch.
+    # stats.json is channel-wise, not suitable as a PSNR data_range; the first
+    # batch's global p1-p99 is stable enough.
+    first_batch = next(iter(loader))
+    mu_sample = first_batch["mu"] if isinstance(first_batch, dict) else first_batch
+    data_range = float(compute_latent_data_range(mu_sample).item())
+    print(f"[train] latent data_range (p99-p1) = {data_range:.4f}")
+
     # Model, loss, optimizer
     model = build_model(cfg).to(device)
     loss_fn = ReconLoss(
@@ -250,7 +214,7 @@ def main(cfg: DictConfig) -> None:
 
     print(f"[train] exp={exp_name}  model={cfg.model.kind}  device={device}")
     print(
-        f"[train] batches={n_batches}  batch_size={batch_size}  epochs={cfg.train.epochs}"
+        f"[train] batches={len(loader)}  batch_size={batch_size}  epochs={cfg.train.epochs}"
     )
 
     # Build MAISI decoder once if image-metric validation is enabled.
@@ -273,10 +237,13 @@ def main(cfg: DictConfig) -> None:
 
     fast_n_samples = int(getattr(cfg.eval, "fast_n_samples", 200))
     image_metric_n_samples = int(getattr(cfg.eval, "image_metric_n_samples", 50))
+    log_every = int(getattr(cfg.train, "log_every", 50))
 
     global_step = 0
+    last_metrics: dict = {}
     for epoch in range(1, int(cfg.train.epochs) + 1):
         model.train()
+        last_total = float("nan")
         for step, batch in enumerate(loader):
             # Support both dict-style (real dataset) and tensor-style (legacy dummy).
             if isinstance(batch, dict):
@@ -290,39 +257,43 @@ def main(cfg: DictConfig) -> None:
             losses["total"].backward()
             opt.step()
 
-            # Metrics (detached, no grad)
-            with torch.no_grad():
-                psnr = _psnr(mu_hat, mu)
-                ssim = _ssim_3d(mu_hat, mu)
-
             log = {
                 "loss/total": losses["total"].item(),
                 "loss/l1": losses["l1"].item(),
-                "metrics/psnr": psnr,
-                "metrics/ssim": ssim,
                 "step": global_step,
             }
+            last_total = log["loss/total"]
 
-            if use_wandb:
-                wandb.log(log, step=global_step)
-
-            if step % 10 == 0:
+            if step % log_every == 0:
+                with torch.no_grad():
+                    psnr = float(latent_psnr(mu_hat, mu, data_range=data_range).mean())
+                    l1_metric = float(latent_l1(mu_hat, mu).mean())
+                    cos = float(latent_cosine_similarity(mu_hat, mu).mean())
+                log["metrics/psnr"] = psnr
+                log["metrics/l1"] = l1_metric
+                log["metrics/cosine"] = cos
+                last_metrics = {"psnr": psnr, "l1": l1_metric, "cosine": cos}
                 print(
                     f"[epoch {epoch} step {step:03d}]  "
                     f"loss={log['loss/total']:.2e}  "
                     f"l1={log['loss/l1']:.2e}  "
                     f"psnr={psnr:.1f}  "
-                    f"ssim={ssim:.6f}"
+                    f"cos={cos:.4f}"
                 )
+
+            if use_wandb:
+                wandb.log(log, step=global_step)
 
             global_step += 1
 
-        # End-of-epoch print with last-step values
+        # End-of-epoch print uses the most recent heavy-metric snapshot.
+        psnr_str = f"{last_metrics['psnr']:.2f}" if "psnr" in last_metrics else "n/a"
+        cos_str = f"{last_metrics['cosine']:.4f}" if "cosine" in last_metrics else "n/a"
         print(
             f"[epoch {epoch} DONE]  "
-            f"final_loss={log['loss/total']:.2e}  "
-            f"psnr={log['metrics/psnr']:.2f}  "
-            f"ssim={log['metrics/ssim']:.6f}"
+            f"final_loss={last_total:.2e}  "
+            f"psnr={psnr_str}  "
+            f"cos={cos_str}"
         )
 
         # Save checkpoint

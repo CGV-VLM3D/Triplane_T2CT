@@ -20,6 +20,7 @@
 ## Baselines
 - Upper bound: MAISI VAE 자체 reconstruction PSNR/SSIM (이게 우리가 따라잡을 ceiling)
 - Lower bound: identity (encode=decode=I) — 정상이라면 abysmal
+- Convention: all image metrics on [0, 1] domain, SSIM win_size=11 (matches MAISI upper bound measurement).
 
 ### Measured upper bound (2026-05-12)
 MAISI VAE encode→decode round-trip on all 1000 CT-RATE validation volumes: **PSNR = 30.94 ± 2.97 dB, SSIM = 0.7195 ± 0.1084**. Intensity convention: HU clipped to [-1000, 1000] then scaled to [0, 1]; spatial size 480×480×256; decoder run via SlidingWindowInferer (latent_roi=(20,20,20), overlap=0.4, sw_batch_size=16, GPU stitching, torch.compile reduce-overhead). Full per-sample results and methodology notes in `/workspace/results/upper_bound.json`.

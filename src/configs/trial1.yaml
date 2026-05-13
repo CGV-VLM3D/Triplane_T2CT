@@ -21,10 +21,10 @@ loss:
   gan_weight: 0.0
 
 train:
-  epochs: 10
-  n_batches: 500
+  epochs: 50
   batch_size: 1
   lr: 1.0e-4
+  log_every: 50
   dummy_data: false
 
 eval:
