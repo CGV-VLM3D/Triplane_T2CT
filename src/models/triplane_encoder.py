@@ -11,18 +11,21 @@ class TriplaneEncoder(nn.Module):
     Args:
         in_channels:  4   (MAISI mu channels)
         emb_dim:      512 (transformer token dim)
-        n_layers:     4   (shared-weight self-attention iterations)
+        n_layers:     4   (independent self-attention layers stacked)
         n_heads:      8
         out_channels: 8   (triplane channel width)
         latent_shape: (120, 120, 64)  (H, W, D)
 
     Depth-collapse strategy: D3T F_psi pattern.  For each spatial position
     on the output plane we form a sequence of tokens along the collapsed axis,
-    prepend a learnable z_init query token, run shared self-attention, and
-    read the z_init position (index 0) as the aggregated representation.
-    This is strictly more expressive than mean-pooling (the alternative)
-    because the query can learn content-dependent weighting while adding only
-    one emb_dim-sized parameter per plane.
+    prepend a learnable z_init query token, add a learnable axial positional
+    embedding, run a stack of self-attention layers, and read the z_init
+    position (index 0) as the aggregated representation.
+
+    The positional embedding is plane-specific because the collapsed axis
+    length differs across planes (D=64 for XY, H=120 for YZ, W=120 for XZ).
+    Without it, the transformer would be permutation-equivariant along the
+    collapsed axis -- spatial ordering of CT slices would be lost.
     """
 
     def __init__(
@@ -42,16 +45,16 @@ class TriplaneEncoder(nn.Module):
         H, W, D = latent_shape
         self.H, self.W, self.D = H, W, D
 
-        # One shared self-attention layer called n_layers times (weight sharing
-        # as specified; same module object re-used each forward pass).
-        self.attn = nn.TransformerEncoderLayer(
+        attn_layer = nn.TransformerEncoderLayer(
             d_model=emb_dim,
             nhead=n_heads,
             dim_feedforward=emb_dim * 4,
             dropout=0.0,
             batch_first=True,
-            norm_first=True,  # pre-norm: more stable training
+            norm_first=True,
+            activation="gelu",
         )
+        self.attn = nn.TransformerEncoder(attn_layer, num_layers=n_layers)
 
         # Per-plane input projections: map each position along the collapsed
         # axis from in_channels -> emb_dim before feeding to attention.
@@ -73,25 +76,30 @@ class TriplaneEncoder(nn.Module):
         self.z_init_yz = nn.Parameter(torch.zeros(1, 1, emb_dim))
         self.z_init_xz = nn.Parameter(torch.zeros(1, 1, emb_dim))
 
-    def _run_attn(self, tokens: torch.Tensor) -> torch.Tensor:
-        # tokens: [N_batch, seq_len, emb_dim]
-        # Same layer called n_layers times (shared weights).
-        for _ in range(self.n_layers):
-            tokens = self.attn(tokens)
-        return tokens
+        # Learnable 1D positional embeddings per plane covering z_init (idx 0)
+        # plus the agg_len positions along the collapsed axis. Initialized
+        # with trunc_normal_(std=0.02) per timm ViT convention.
+        self.pos_embed_xy = nn.Parameter(torch.zeros(1, D + 1, emb_dim))
+        self.pos_embed_yz = nn.Parameter(torch.zeros(1, H + 1, emb_dim))
+        self.pos_embed_xz = nn.Parameter(torch.zeros(1, W + 1, emb_dim))
+        nn.init.trunc_normal_(self.pos_embed_xy, std=0.02)
+        nn.init.trunc_normal_(self.pos_embed_yz, std=0.02)
+        nn.init.trunc_normal_(self.pos_embed_xz, std=0.02)
 
     def _f_psi(
         self,
         seq: torch.Tensor,
         z_init: torch.Tensor,
+        pos_embed: torch.Tensor,
         proj_in: nn.Linear,
         proj_out: nn.Linear,
     ) -> torch.Tensor:
-        """D3T F_psi aggregation over one axis.
+        """D3T F_psi aggregation over one axis with learnable positional embedding.
 
         Args:
-            seq:    [N, agg_len, in_channels]  N = batch * spatial positions
-            z_init: [1, 1, emb_dim]            learnable query (broadcast)
+            seq:        [N, agg_len, in_channels]  N = batch * spatial positions
+            z_init:     [1, 1, emb_dim]            learnable query (broadcast)
+            pos_embed:  [1, agg_len+1, emb_dim]    learnable PE (broadcast)
             proj_in, proj_out: per-plane linear projections
 
         Returns:
@@ -101,7 +109,8 @@ class TriplaneEncoder(nn.Module):
         tokens = proj_in(seq)  # [N, agg_len, emb_dim]
         z = z_init.expand(N, -1, -1)  # [N, 1, emb_dim]
         tokens = torch.cat([z, tokens], dim=1)  # [N, agg_len+1, emb_dim]
-        tokens = self._run_attn(tokens)
+        tokens = tokens + pos_embed  # broadcast over N
+        tokens = self.attn(tokens)
         return proj_out(tokens[:, 0])  # [N, out_channels]
 
     def forward(self, mu: torch.Tensor) -> dict[str, torch.Tensor]:
@@ -111,7 +120,9 @@ class TriplaneEncoder(nn.Module):
         # --- XY plane: aggregate over D, output [B, out_c, H, W] ---
         # permute: [B, H, W, D, C], reshape: [B*H*W, D, C]
         xy_seq = mu.permute(0, 2, 3, 4, 1).reshape(B * H * W, D, C)
-        xy = self._f_psi(xy_seq, self.z_init_xy, self.proj_in_xy, self.proj_out_xy)
+        xy = self._f_psi(
+            xy_seq, self.z_init_xy, self.pos_embed_xy, self.proj_in_xy, self.proj_out_xy
+        )
         xy = xy.reshape(B, H, W, self.out_channels).permute(
             0, 3, 1, 2
         )  # [B, out_c, H, W]
@@ -119,7 +130,9 @@ class TriplaneEncoder(nn.Module):
         # --- YZ plane: aggregate over H, output [B, out_c, W, D] ---
         # permute: [B, W, D, H, C], reshape: [B*W*D, H, C]
         yz_seq = mu.permute(0, 3, 4, 2, 1).reshape(B * W * D, H, C)
-        yz = self._f_psi(yz_seq, self.z_init_yz, self.proj_in_yz, self.proj_out_yz)
+        yz = self._f_psi(
+            yz_seq, self.z_init_yz, self.pos_embed_yz, self.proj_in_yz, self.proj_out_yz
+        )
         yz = yz.reshape(B, W, D, self.out_channels).permute(
             0, 3, 1, 2
         )  # [B, out_c, W, D]
@@ -127,7 +140,9 @@ class TriplaneEncoder(nn.Module):
         # --- XZ plane: aggregate over W, output [B, out_c, H, D] ---
         # permute: [B, H, D, W, C], reshape: [B*H*D, W, C]
         xz_seq = mu.permute(0, 2, 4, 3, 1).reshape(B * H * D, W, C)
-        xz = self._f_psi(xz_seq, self.z_init_xz, self.proj_in_xz, self.proj_out_xz)
+        xz = self._f_psi(
+            xz_seq, self.z_init_xz, self.pos_embed_xz, self.proj_in_xz, self.proj_out_xz
+        )
         xz = xz.reshape(B, H, D, self.out_channels).permute(
             0, 3, 1, 2
         )  # [B, out_c, H, D]
