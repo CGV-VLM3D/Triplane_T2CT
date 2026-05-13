@@ -15,10 +15,17 @@ Pipeline per sample:
   5. Compute 3D PSNR and SSIM (data_range=1.0) on the [0,1] domain.
 
 Results saved to /workspace/results/upper_bound.json.
+
+Optional flags:
+  --cache-recon   Save each volume's ct_recon to
+                  /workspace/data/maisi_latent_with_recon/<split>/<sample_id>/ct_recon.pt
+                  as float16 (~58 MB per volume; 1000-sample valid split = ~58 GB total).
+  --split         Which split to process (default: valid).
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -45,8 +52,9 @@ from extract_maisi_latent import (  # noqa: E402
     load_state,
 )
 
-LATENT_VALID_DIR = WORKSPACE / "datasets" / "datasets" / "latents" / "valid"
+LATENTS_ROOT = WORKSPACE / "datasets" / "datasets" / "latents"
 RESULTS_DIR = WORKSPACE / "results"
+RECON_CACHE_ROOT = WORKSPACE / "data" / "maisi_latent_with_recon"
 
 # Decode settings matching reference recon_test.py (image roi 80^3 -> latent roi 20^3)
 LATENT_ROI = (20, 20, 20)
@@ -89,6 +97,29 @@ class LatentGTDataset(Dataset):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Measure MAISI VAE upper bound.")
+    parser.add_argument(
+        "--cache-recon",
+        action="store_true",
+        default=False,
+        help=(
+            "Save each decoded ct_recon to "
+            "RECON_CACHE_ROOT/<split>/<sample_id>/ct_recon.pt (float16). "
+            "WARNING: ~58 MB per volume; full valid split ~58 GB."
+        ),
+    )
+    parser.add_argument(
+        "--split",
+        choices=["valid", "train"],
+        default="valid",
+        help="Which latent split to process (default: valid).",
+    )
+    args = parser.parse_args()
+
+    split = args.split
+    cache_recon = args.cache_recon
+
+    latent_split_dir = LATENTS_ROOT / split
     device = torch.device("cuda:0")
 
     # ---- Build and load frozen autoencoder ----------------------------------
@@ -114,8 +145,8 @@ def main():
     )
 
     # ---- Dataset / DataLoader for parallel GT loading -----------------------
-    latent_dirs = sorted(LATENT_VALID_DIR.iterdir())
-    print(f"Found {len(latent_dirs)} validation latents")
+    latent_dirs = sorted(latent_split_dir.iterdir())
+    print(f"Found {len(latent_dirs)} {split} latents")
 
     ds = LatentGTDataset(latent_dirs)
     loader = DataLoader(
@@ -133,13 +164,16 @@ def main():
 
     per_psnr: list[float] = []
     per_ssim: list[float] = []
+    per_sample_ids: list[str] = []
 
     # Warm up torch.compile with 3 passes so the kernel cache is hot
     # before the timed loop. Uses the first latent (already on CPU cache).
     print("Warming up torch.compile (3 passes)...")
-    _warm_mu = torch.load(
-        str(sorted(LATENT_VALID_DIR.iterdir())[0] / "mu.pt"), weights_only=True
-    ).unsqueeze(0).to(device)
+    _warm_mu = (
+        torch.load(str(latent_dirs[0] / "mu.pt"), weights_only=True)
+        .unsqueeze(0)
+        .to(device)
+    )
     for _ in range(3):
         with torch.no_grad():
             with torch.autocast(device_type="cuda", dtype=torch.float16):
@@ -149,7 +183,8 @@ def main():
     torch.cuda.empty_cache()
     print("Warmup done. Starting measurement loop.")
 
-    for batch in tqdm(loader, desc="Measuring", unit="vol"):
+    for i, batch in enumerate(tqdm(loader, desc="Measuring", unit="vol")):
+        sample_id = latent_dirs[i].name
         mu = batch["mu"].to(device)  # [1, 4, 120, 120, 64]
         gt = batch["gt"].to(device)  # [1, 1, 480, 480, 256]
 
@@ -163,6 +198,13 @@ def main():
 
         per_psnr.append(float(psnr_val.mean().item()))
         per_ssim.append(float(ssim_val.mean().item()))
+        per_sample_ids.append(sample_id)
+
+        if cache_recon:
+            cache_dir = RECON_CACHE_ROOT / split / sample_id
+            cache_dir.mkdir(parents=True, exist_ok=True)
+            # Store as float16 to halve disk usage (~58 MB/vol at float16 vs ~116 MB float32).
+            torch.save(recon_f32.half().cpu(), cache_dir / "ct_recon.pt")
 
         del mu, gt, recon, recon_f32
         torch.cuda.empty_cache()
@@ -176,6 +218,7 @@ def main():
         "psnr": {"mean": float(psnr_arr.mean()), "std": float(psnr_arr.std())},
         "ssim": {"mean": float(ssim_arr.mean()), "std": float(ssim_arr.std())},
         "per_sample": {"psnr": per_psnr, "ssim": per_ssim},
+        "sample_ids": per_sample_ids,
         "notes": (
             "MAISI VAE encode->decode round-trip upper bound on CT-RATE validation set "
             "(1000 volumes). Intensity convention: HU clipped to [-1000, 1000] then "
@@ -189,15 +232,29 @@ def main():
         ),
     }
 
-    out_path = RESULTS_DIR / "upper_bound.json"
-    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    with open(out_path, "w") as f:
-        json.dump(result, f, indent=2)
+    # Only overwrite the canonical upper_bound.json when processing the valid split,
+    # so train-split caching runs don't clobber the benchmark file.
+    if split == "valid":
+        out_path = RESULTS_DIR / "upper_bound.json"
+        RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+        with open(out_path, "w") as f:
+            json.dump(result, f, indent=2)
+        print(f"\n=== Upper bound (n={result['n_samples']}) ===")
+        print(f"PSNR: {result['psnr']['mean']:.3f} +/- {result['psnr']['std']:.3f} dB")
+        print(f"SSIM: {result['ssim']['mean']:.4f} +/- {result['ssim']['std']:.4f}")
+        print(f"Results saved to {out_path}")
+    else:
+        out_path = RESULTS_DIR / f"upper_bound_{split}.json"
+        RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+        with open(out_path, "w") as f:
+            json.dump(result, f, indent=2)
+        print(f"\n=== {split} split (n={result['n_samples']}) ===")
+        print(f"PSNR: {result['psnr']['mean']:.3f} +/- {result['psnr']['std']:.3f} dB")
+        print(f"SSIM: {result['ssim']['mean']:.4f} +/- {result['ssim']['std']:.4f}")
+        print(f"Results saved to {out_path}")
 
-    print(f"\n=== Upper bound (n={result['n_samples']}) ===")
-    print(f"PSNR: {result['psnr']['mean']:.3f} +/- {result['psnr']['std']:.3f} dB")
-    print(f"SSIM: {result['ssim']['mean']:.4f} +/- {result['ssim']['std']:.4f}")
-    print(f"Results saved to {out_path}")
+    if cache_recon:
+        print(f"Recon cache written to {RECON_CACHE_ROOT / split}/")
 
 
 if __name__ == "__main__":

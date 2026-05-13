@@ -30,6 +30,12 @@ train:
   lr: 1.0e-4
   dummy_data: true
 
+eval:
+  fast_n_samples: 200
+  image_metric_n_samples: 50
+  image_metric_every_n_epochs: 5
+  val_split: valid
+
 wandb:
   project: triplane-ae
   run_name: trial1_identity

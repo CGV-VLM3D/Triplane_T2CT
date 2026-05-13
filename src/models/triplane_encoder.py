@@ -16,10 +16,13 @@ class TriplaneEncoder(nn.Module):
         out_channels: 8   (triplane channel width)
         latent_shape: (120, 120, 64)  (H, W, D)
 
-    Depth-collapse strategy: mean-pool over the aggregate axis before the
-    transformer, then project to out_channels.  Alternative (learned linear
-    projection over D) is slightly more expressive but adds parameters
-    proportional to D; mean-pool is parameter-free and worked well in trivae.py.
+    Depth-collapse strategy: D3T F_psi pattern.  For each spatial position
+    on the output plane we form a sequence of tokens along the collapsed axis,
+    prepend a learnable z_init query token, run shared self-attention, and
+    read the z_init position (index 0) as the aggregated representation.
+    This is strictly more expressive than mean-pooling (the alternative)
+    because the query can learn content-dependent weighting while adding only
+    one emb_dim-sized parameter per plane.
     """
 
     def __init__(
@@ -50,62 +53,81 @@ class TriplaneEncoder(nn.Module):
             norm_first=True,  # pre-norm: more stable training
         )
 
-        # Per-plane input projections: collapse depth axis via mean-pool,
-        # then flatten spatial dims and project each position to emb_dim.
-        # XY plane: mean over D -> [B, C, H, W] -> tokens [B, H*W, emb_dim]
+        # Per-plane input projections: map each position along the collapsed
+        # axis from in_channels -> emb_dim before feeding to attention.
+        # XY plane collapses D; tokens are shaped [B*H*W, D, emb_dim].
         self.proj_in_xy = nn.Linear(in_channels, emb_dim)
-        # YZ plane: mean over H -> [B, C, W, D] -> wait, spec says YZ: [B,C,120,64]
-        # Axes: input [B, C, H, W, D]. XY collapses D; YZ collapses H (axis=2 in BCWHY);
-        # XZ collapses W.
-        # YZ plane tokens: [B, W*D, emb_dim] but output is [B, C, W, D]... hmm.
-        # Spec: z_yz [B, 8, 120, 64] => spatial (W=120, D=64), collapsed H.
-        # XZ: z_xz [B, 8, 120, 64] => spatial (H=120, D=64), collapsed W.
-        # XY: z_xy [B, 8, 120, 120] => spatial (H=120, W=120), collapsed D.
+        # YZ plane collapses H; tokens are shaped [B*W*D, H, emb_dim].
         self.proj_in_yz = nn.Linear(in_channels, emb_dim)
+        # XZ plane collapses W; tokens are shaped [B*H*D, W, emb_dim].
         self.proj_in_xz = nn.Linear(in_channels, emb_dim)
 
-        # Output projections: emb_dim -> out_channels per token
+        # Output projections: emb_dim -> out_channels applied to z_init output
         self.proj_out_xy = nn.Linear(emb_dim, out_channels)
         self.proj_out_yz = nn.Linear(emb_dim, out_channels)
         self.proj_out_xz = nn.Linear(emb_dim, out_channels)
 
+        # D3T F_psi: one learnable query token per plane.  Prepended at
+        # position 0; after attention, position 0 carries the aggregate.
+        self.z_init_xy = nn.Parameter(torch.zeros(1, 1, emb_dim))
+        self.z_init_yz = nn.Parameter(torch.zeros(1, 1, emb_dim))
+        self.z_init_xz = nn.Parameter(torch.zeros(1, 1, emb_dim))
+
     def _run_attn(self, tokens: torch.Tensor) -> torch.Tensor:
-        # tokens: [B, N, emb_dim]
+        # tokens: [N_batch, seq_len, emb_dim]
         # Same layer called n_layers times (shared weights).
         for _ in range(self.n_layers):
             tokens = self.attn(tokens)
         return tokens
 
+    def _f_psi(
+        self,
+        seq: torch.Tensor,
+        z_init: torch.Tensor,
+        proj_in: nn.Linear,
+        proj_out: nn.Linear,
+    ) -> torch.Tensor:
+        """D3T F_psi aggregation over one axis.
+
+        Args:
+            seq:    [N, agg_len, in_channels]  N = batch * spatial positions
+            z_init: [1, 1, emb_dim]            learnable query (broadcast)
+            proj_in, proj_out: per-plane linear projections
+
+        Returns:
+            [N, out_channels]
+        """
+        N = seq.shape[0]
+        tokens = proj_in(seq)  # [N, agg_len, emb_dim]
+        z = z_init.expand(N, -1, -1)  # [N, 1, emb_dim]
+        tokens = torch.cat([z, tokens], dim=1)  # [N, agg_len+1, emb_dim]
+        tokens = self._run_attn(tokens)
+        return proj_out(tokens[:, 0])  # [N, out_channels]
+
     def forward(self, mu: torch.Tensor) -> dict[str, torch.Tensor]:
         # mu: [B, C, H, W, D]
         B, C, H, W, D = mu.shape
 
-        # --- XY plane: collapse D (mean over dim=4) -> [B, C, H, W] ---
-        xy = mu.mean(dim=4)  # [B, C, H, W]
-        xy = xy.permute(0, 2, 3, 1).reshape(B, H * W, C)  # [B, H*W, C]
-        xy = self.proj_in_xy(xy)  # [B, H*W, emb_dim]
-        xy = self._run_attn(xy)
-        xy = self.proj_out_xy(xy)  # [B, H*W, out_channels]
+        # --- XY plane: aggregate over D, output [B, out_c, H, W] ---
+        # permute: [B, H, W, D, C], reshape: [B*H*W, D, C]
+        xy_seq = mu.permute(0, 2, 3, 4, 1).reshape(B * H * W, D, C)
+        xy = self._f_psi(xy_seq, self.z_init_xy, self.proj_in_xy, self.proj_out_xy)
         xy = xy.reshape(B, H, W, self.out_channels).permute(
             0, 3, 1, 2
         )  # [B, out_c, H, W]
 
-        # --- YZ plane: collapse H (mean over dim=2) -> [B, C, W, D] ---
-        yz = mu.mean(dim=2)  # [B, C, W, D]
-        yz = yz.permute(0, 2, 3, 1).reshape(B, W * D, C)  # [B, W*D, C]
-        yz = self.proj_in_yz(yz)
-        yz = self._run_attn(yz)
-        yz = self.proj_out_yz(yz)  # [B, W*D, out_channels]
+        # --- YZ plane: aggregate over H, output [B, out_c, W, D] ---
+        # permute: [B, W, D, H, C], reshape: [B*W*D, H, C]
+        yz_seq = mu.permute(0, 3, 4, 2, 1).reshape(B * W * D, H, C)
+        yz = self._f_psi(yz_seq, self.z_init_yz, self.proj_in_yz, self.proj_out_yz)
         yz = yz.reshape(B, W, D, self.out_channels).permute(
             0, 3, 1, 2
         )  # [B, out_c, W, D]
 
-        # --- XZ plane: collapse W (mean over dim=3) -> [B, C, H, D] ---
-        xz = mu.mean(dim=3)  # [B, C, H, D]
-        xz = xz.permute(0, 2, 3, 1).reshape(B, H * D, C)  # [B, H*D, C]
-        xz = self.proj_in_xz(xz)
-        xz = self._run_attn(xz)
-        xz = self.proj_out_xz(xz)  # [B, H*D, out_channels]
+        # --- XZ plane: aggregate over W, output [B, out_c, H, D] ---
+        # permute: [B, H, D, W, C], reshape: [B*H*D, W, C]
+        xz_seq = mu.permute(0, 2, 4, 3, 1).reshape(B * H * D, W, C)
+        xz = self._f_psi(xz_seq, self.z_init_xz, self.proj_in_xz, self.proj_out_xz)
         xz = xz.reshape(B, H, D, self.out_channels).permute(
             0, 3, 1, 2
         )  # [B, out_c, H, D]

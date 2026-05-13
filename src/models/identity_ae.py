@@ -18,18 +18,19 @@ class IdentityAE(nn.Module):
 
     def __init__(self, **kwargs) -> None:  # noqa: ANN003
         super().__init__()
-        # A single dummy parameter so that optimizer construction doesn't
-        # crash when the training loop calls model.parameters().
+        # Zero-valued parameter that keeps model.parameters() non-empty and
+        # anchors forward() into the autograd graph so loss.backward() works
+        # even though the reconstruction is exact.
         self._dummy = nn.Parameter(torch.zeros(1), requires_grad=True)
 
     def encode(self, mu: torch.Tensor) -> torch.Tensor:
         return mu
 
     def decode(self, *args: torch.Tensor, **kwargs: torch.Tensor) -> torch.Tensor:
-        # For identity, the "reconstructed" volume is just the first argument.
         return args[0]
 
     def forward(self, mu: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
-        # triplane_dict is empty: identity has no real plane representations.
-        # The training loop must tolerate an empty dict here.
-        return mu, {}
+        # `+ 0 * _dummy` is a no-op numerically but threads the graph through
+        # the parameter, so a downstream loss always has a grad_fn.
+        mu_hat = mu + 0.0 * self._dummy
+        return mu_hat, {}
