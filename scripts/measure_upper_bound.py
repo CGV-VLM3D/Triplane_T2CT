@@ -59,7 +59,7 @@ RECON_CACHE_ROOT = WORKSPACE / "data" / "maisi_latent_with_recon"
 # Decode settings matching reference recon_test.py (image roi 80^3 -> latent roi 20^3)
 LATENT_ROI = (20, 20, 20)
 SW_OVERLAP = 0.4
-SW_BATCH = 16  # amortise per-window overhead; fits comfortably on A6000
+SW_BATCH = 64  # 96GB Blackwell has plenty of headroom; bigger batch amortises kernel-launch overhead on small 3D conv windows.
 
 # Preprocessing matching the extraction pipeline
 SPATIAL_SIZE = (480, 480, 256)
@@ -114,10 +114,22 @@ def main():
         default="valid",
         help="Which latent split to process (default: valid).",
     )
+    parser.add_argument(
+        "--cache-only",
+        action="store_true",
+        default=False,
+        help=(
+            "Resume/fill cache mode: skip samples whose ct_recon.pt already exists, "
+            "skip PSNR/SSIM computation, and DO NOT overwrite upper_bound.json. "
+            "Useful when the canonical metrics are already on disk and you only "
+            "need to fill in missing recon caches. Implies --cache-recon."
+        ),
+    )
     args = parser.parse_args()
 
     split = args.split
-    cache_recon = args.cache_recon
+    cache_only = args.cache_only
+    cache_recon = args.cache_recon or cache_only
 
     latent_split_dir = LATENTS_ROOT / split
     device = torch.device("cuda:0")
@@ -185,31 +197,41 @@ def main():
 
     for i, batch in enumerate(tqdm(loader, desc="Measuring", unit="vol")):
         sample_id = latent_dirs[i].name
+        cache_path = RECON_CACHE_ROOT / split / sample_id / "ct_recon.pt"
+
+        if cache_only and cache_path.exists():
+            continue
+
         mu = batch["mu"].to(device)  # [1, 4, 120, 120, 64]
-        gt = batch["gt"].to(device)  # [1, 1, 480, 480, 256]
 
         with torch.no_grad():
             with torch.autocast(device_type="cuda", dtype=torch.float16):
                 recon = inferer(mu, compiled_decode).clamp(OUT_MIN, OUT_MAX)
 
         recon_f32 = recon.float()
-        psnr_val = psnr_metric(recon_f32, gt)
-        ssim_val = ssim_metric(recon_f32, gt)
 
-        per_psnr.append(float(psnr_val.mean().item()))
-        per_ssim.append(float(ssim_val.mean().item()))
-        per_sample_ids.append(sample_id)
+        if not cache_only:
+            gt = batch["gt"].to(device)  # [1, 1, 480, 480, 256]
+            psnr_val = psnr_metric(recon_f32, gt)
+            ssim_val = ssim_metric(recon_f32, gt)
+            per_psnr.append(float(psnr_val.mean().item()))
+            per_ssim.append(float(ssim_val.mean().item()))
+            per_sample_ids.append(sample_id)
+            del gt
 
         if cache_recon:
-            cache_dir = RECON_CACHE_ROOT / split / sample_id
-            cache_dir.mkdir(parents=True, exist_ok=True)
+            cache_path.parent.mkdir(parents=True, exist_ok=True)
             # Store as float16 to halve disk usage (~58 MB/vol at float16 vs ~116 MB float32).
-            torch.save(recon_f32.half().cpu(), cache_dir / "ct_recon.pt")
+            torch.save(recon_f32.half().cpu(), cache_path)
 
-        del mu, gt, recon, recon_f32
+        del mu, recon, recon_f32
         torch.cuda.empty_cache()
 
     # ---- Aggregate and save -------------------------------------------------
+    if cache_only:
+        print(f"[cache-only] Done. Recon cache at {RECON_CACHE_ROOT / split}/")
+        return
+
     psnr_arr = np.array(per_psnr)
     ssim_arr = np.array(per_ssim)
 
