@@ -313,6 +313,8 @@ def main(cfg: DictConfig) -> None:
         if val_loader is not None:
             from src.evaluation.validate import run_validation
 
+            sw_batch_size = int(cfg.eval.sw_batch_size)
+
             # Cheap latent-only validation every epoch.
             with torch.no_grad():
                 val_metrics = run_validation(
@@ -322,6 +324,7 @@ def main(cfg: DictConfig) -> None:
                     n_samples=fast_n_samples,
                     device=str(device),
                     compute_image_metrics=False,
+                    sw_batch_size=sw_batch_size,
                 )
 
             # Full image-domain validation every N epochs.
@@ -334,6 +337,7 @@ def main(cfg: DictConfig) -> None:
                         n_samples=image_metric_n_samples,
                         device=str(device),
                         compute_image_metrics=True,
+                        sw_batch_size=sw_batch_size,
                     )
                 val_metrics.update(img_metrics)
 

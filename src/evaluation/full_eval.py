@@ -26,7 +26,6 @@ BUNDLE_DIR = ROOT / "maisi_bundle"
 UPPER_BOUND_JSON = ROOT / "results" / "upper_bound.json"
 
 LATENT_ROI = (20, 20, 20)
-SW_BATCH = 16
 SW_OVERLAP = 0.4
 
 
@@ -53,6 +52,7 @@ def run_full_evaluation(
     model_ckpt_path: str,
     config_path: str,
     output_dir: str,
+    sw_batch_size: int = 16,
 ) -> None:
     """Run full validation and write results to output_dir.
 
@@ -107,7 +107,7 @@ def run_full_evaluation(
     torch.cuda.empty_cache()
 
     # --- Dataset ---
-    ds = MAISILatentDataset(split="valid", load_ct_recon=True, load_gt=False)
+    ds = MAISILatentDataset(split="valid", load_ct_recon=True)
     val_loader = DataLoader(
         ds,
         batch_size=1,
@@ -128,11 +128,14 @@ def run_full_evaluation(
             n_samples=None,
             device=str(device),
             compute_image_metrics=True,
+            sw_batch_size=sw_batch_size,
         )
 
     # --- Per-sample pass (collect per-sample rows) ---
     print("Collecting per-sample metrics...")
-    per_sample_rows = _collect_per_sample(model, maisi_decoder, val_loader, device)
+    per_sample_rows = _collect_per_sample(
+        model, maisi_decoder, val_loader, device, sw_batch_size
+    )
 
     # --- Load upper bound ---
     with open(UPPER_BOUND_JSON) as f:
@@ -246,7 +249,7 @@ def run_full_evaluation(
 
 
 def _collect_per_sample(
-    model, maisi_decoder, val_loader, device: torch.device
+    model, maisi_decoder, val_loader, device: torch.device, sw_batch_size: int
 ) -> list[dict]:
     """Second pass over val_loader to collect per-sample metric rows."""
     from monai.inferers import SlidingWindowInferer
@@ -254,7 +257,7 @@ def _collect_per_sample(
 
     inferer = SlidingWindowInferer(
         roi_size=LATENT_ROI,
-        sw_batch_size=SW_BATCH,
+        sw_batch_size=sw_batch_size,
         mode="gaussian",
         overlap=SW_OVERLAP,
         device=device,

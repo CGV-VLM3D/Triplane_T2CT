@@ -21,7 +21,6 @@ UPPER_BOUND_JSON = Path("/workspace/results/upper_bound.json")
 
 LATENT_ROI = (20, 20, 20)
 SW_OVERLAP = 0.4
-SW_BATCH = 16
 
 
 def _latent_metrics(mu_hat: torch.Tensor, mu: torch.Tensor) -> dict[str, float]:
@@ -37,10 +36,10 @@ def _latent_metrics(mu_hat: torch.Tensor, mu: torch.Tensor) -> dict[str, float]:
     }
 
 
-def _build_inferer(device: torch.device) -> SlidingWindowInferer:
+def _build_inferer(device: torch.device, sw_batch_size: int) -> SlidingWindowInferer:
     return SlidingWindowInferer(
         roi_size=LATENT_ROI,
-        sw_batch_size=SW_BATCH,
+        sw_batch_size=sw_batch_size,
         mode="gaussian",
         overlap=SW_OVERLAP,
         device=device,
@@ -56,6 +55,7 @@ def run_validation(
     n_samples: int | None = 200,
     device: str = "cuda",
     compute_image_metrics: bool = True,
+    sw_batch_size: int = 16,
 ) -> dict[str, Any]:
     """Run validation and return aggregate metric dict.
 
@@ -90,7 +90,7 @@ def run_validation(
     ssim_metric_img = SSIMMetric(
         spatial_dims=3, data_range=1.0, win_size=11, reduction="none"
     )
-    inferer = _build_inferer(dev) if compute_image_metrics else None
+    inferer = _build_inferer(dev, sw_batch_size) if compute_image_metrics else None
 
     accum: dict[str, list[float]] = {
         "latent_l1": [],
