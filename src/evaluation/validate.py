@@ -15,6 +15,8 @@ import torch
 from monai.inferers import SlidingWindowInferer
 from monai.metrics import PSNRMetric, SSIMMetric
 
+from src.metrics import latent_cosine_similarity, latent_l1, latent_mse, latent_psnr
+
 UPPER_BOUND_JSON = Path("/workspace/results/upper_bound.json")
 
 LATENT_ROI = (20, 20, 20)
@@ -24,38 +26,14 @@ SW_BATCH = 16
 
 def _latent_metrics(mu_hat: torch.Tensor, mu: torch.Tensor) -> dict[str, float]:
     """Per-batch latent-space metrics; returns scalars."""
-    diff = mu_hat - mu
-    l1 = diff.abs().mean().item()
-    l2 = diff.pow(2).mean().sqrt().item()
-
-    mse = diff.pow(2).mean().item()
-    if mse == 0.0:
-        psnr = float("inf")
-    else:
-        data_range = (mu.max() - mu.min()).item()
-        if data_range == 0.0:
-            data_range = 1.0
-        import math
-
-        psnr = 20.0 * math.log10(data_range / math.sqrt(mse))
-
-    # Plane-wise SSIM: treat each axis-aligned projection as an independent 3-D volume.
-    # mu shape: [B, 4, X, Y, Z]. We compute SSIM over all three axis orientations
-    # and average — this is a cheaper proxy than full-volume SSIM.
-    ssim_metric = SSIMMetric(spatial_dims=3, data_range=1.0, reduction="mean")
-    # normalise to [0,1] for SSIM (data_range=1.0 contract)
-    d_range = (mu.max() - mu.min()).clamp(min=1e-6)
-    mu_n = (mu - mu.min()) / d_range
-    mu_hat_n = (mu_hat - mu.min()) / d_range
-    with torch.no_grad():
-        # SSIMMetric expects [B, C, *spatial] — our tensors are already [B, 4, X, Y, Z]
-        ssim_val = float(ssim_metric(mu_hat_n.cpu(), mu_n.cpu()).mean().item())
-
+    l1 = float(latent_l1(mu_hat, mu).mean())
+    l2 = float(latent_mse(mu_hat, mu).mean().sqrt())
+    data_range = float(mu.max() - mu.min()) or 1.0
+    psnr = float(latent_psnr(mu_hat, mu, data_range=data_range).mean())
     return {
         "latent_l1": l1,
         "latent_l2": l2,
         "latent_psnr": psnr,
-        "latent_ssim_planewise": ssim_val,
     }
 
 
@@ -109,14 +87,15 @@ def run_validation(
     model.eval()
 
     psnr_metric_img = PSNRMetric(max_val=1.0, reduction="none")
-    ssim_metric_img = SSIMMetric(spatial_dims=3, data_range=1.0, reduction="none")
+    ssim_metric_img = SSIMMetric(
+        spatial_dims=3, data_range=1.0, win_size=11, reduction="none"
+    )
     inferer = _build_inferer(dev) if compute_image_metrics else None
 
     accum: dict[str, list[float]] = {
         "latent_l1": [],
         "latent_l2": [],
         "latent_psnr": [],
-        "latent_ssim_planewise": [],
     }
     if compute_image_metrics:
         accum["image_psnr_3d"] = []

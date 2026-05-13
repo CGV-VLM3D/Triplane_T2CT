@@ -152,10 +152,6 @@ def run_full_evaluation(
         "latent_l1": {"mean": agg.get("latent_l1"), "std": None},
         "latent_l2": {"mean": agg.get("latent_l2"), "std": None},
         "latent_psnr": {"mean": agg.get("latent_psnr"), "std": None},
-        "latent_ssim_planewise": {
-            "mean": agg.get("latent_ssim_planewise"),
-            "std": None,
-        },
         "image_psnr_3d": {
             "mean": float(our_psnr_per.mean()),
             "std": float(our_psnr_per.std()),
@@ -180,7 +176,6 @@ def run_full_evaluation(
         "latent_l1",
         "latent_l2",
         "latent_psnr",
-        "latent_ssim_planewise",
         "image_psnr_3d",
         "image_ssim_3d",
     ]
@@ -267,7 +262,9 @@ def _collect_per_sample(
         progress=False,
     )
     psnr_metric = PSNRMetric(max_val=1.0, reduction="none")
-    ssim_metric = SSIMMetric(spatial_dims=3, data_range=1.0, reduction="none")
+    ssim_metric = SSIMMetric(
+        spatial_dims=3, data_range=1.0, win_size=11, reduction="none"
+    )
 
     rows = []
     model.eval()
@@ -294,16 +291,6 @@ def _collect_per_sample(
                 20.0 * math.log10(drange / math.sqrt(mse)) if mse > 0 else float("inf")
             )
 
-            from monai.metrics import SSIMMetric as _SSIM
-
-            _ssim = _SSIM(spatial_dims=3, data_range=1.0, reduction="mean")
-            d = (mu.max() - mu.min()).clamp(min=1e-6)
-            lat_ssim = float(
-                _ssim(
-                    ((mu_hat - mu.min()) / d).cpu(), ((mu - mu.min()) / d).cpu()
-                ).item()
-            )
-
             with torch.autocast(device_type="cuda", dtype=torch.float16):
                 our_recon = inferer(mu_hat.float(), maisi_decoder).clamp(0.0, 1.0)
             our_recon_f32 = our_recon.float()
@@ -317,7 +304,6 @@ def _collect_per_sample(
                     "latent_l1": lat_l1,
                     "latent_l2": lat_l2,
                     "latent_psnr": lat_psnr,
-                    "latent_ssim_planewise": lat_ssim,
                     "image_psnr_3d": img_psnr,
                     "image_ssim_3d": img_ssim,
                     # Keep the decoded recon tensor path-accessible for worst-case viz
