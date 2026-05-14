@@ -1,0 +1,147 @@
+# =============================================================================
+# Example config for the triplane autoencoder.
+#
+# Copy this file to `src/configs/<your_exp>.yaml`, change `exp_name`, and tweak
+# the fields you care about. Anything left unset falls back to the defaults
+# documented in `src/models/triplane_encoder.py`, `triplane_decoder.py`, and
+# `scripts/train.py`.
+#
+# Launch:
+#   torchrun --nproc_per_node=N scripts/train.py --config-name=<your_exp>
+# =============================================================================
+
+# Experiment name. Used as the run directory (`runs/${exp_name}/...`) and as
+# the default wandb run name. Keep it short and filesystem-safe.
+exp_name: example
+
+# -----------------------------------------------------------------------------
+# Model — see src/models/triplane_ae.py for how `kind` is dispatched.
+# -----------------------------------------------------------------------------
+model:
+  # "TriplaneAE" — real model (encoder + decoder defined below)
+  # "IdentityAE" — passthrough debug model that returns the input as-is.
+  #                Useful for verifying the data + eval pipeline end-to-end
+  #                without paying for a real forward pass.
+  kind: TriplaneAE
+
+  encoder:
+    # MAISI VAE latent has 4 channels. Don't change unless you swap the VAE.
+    in_channels: 4
+    # Transformer width inside F_psi (and the patch embedding channel count).
+    # Typical: 256 (cheap) / 512 (trial1 default) / 768 (heavy).
+    emb_dim: 256
+    # TransformerEncoder depth. 4 is a reasonable default; 6–8 for capacity.
+    n_layers: 4
+    # Multi-head attention heads. Must divide emb_dim. 8 is standard.
+    n_heads: 8
+    # Triplane channel width (what the decoder consumes). 8 is the trial1
+    # baseline; 16/32 give the decoder more to work with at higher VRAM cost.
+    out_channels: 8
+    # Non-overlapping 3D patch size. Must divide every dim of latent_shape.
+    # latent_shape=[120,120,64]: legal values are 1, 2, 4, 8.
+    # Larger patch = shorter attention sequences = faster, less spatial detail.
+    patch_size: 4
+    # Shape of the MAISI latent grid (H, W, D). 120x120x64 is fixed by the
+    # MAISI VAE for the CT volume size we use. Each dim must be divisible by
+    # patch_size.
+    latent_shape: [120, 120, 64]
+    # Optional ResBlock3D stack applied to the patch grid before F_psi.
+    # 0 = skip entirely (default, matches trial1–5).
+    n_res_blocks: 0
+
+  decoder:
+    # Must equal encoder.out_channels.
+    in_channels: 8
+    # ResBlock3D channel width inside the decoder. Can be larger than
+    # in_channels — 32 is the default; bump to 64/128 for more capacity.
+    hidden: 32
+    # MAISI latent channel count — must stay 4 to match the frozen VAE decoder.
+    out_channels: 4
+    # Must equal encoder.patch_size (the decoder uses ConvTranspose3d to
+    # exactly invert the encoder's patchify Conv3d).
+    patch_size: 4
+    # Must equal encoder.latent_shape.
+    latent_shape: [120, 120, 64]
+    # ResBlock3D count before the final unpatchify. 2 is the default.
+    n_res_blocks: 2
+
+# -----------------------------------------------------------------------------
+# Loss — weighted sum. Set a weight to 0.0 to skip that term entirely (no
+# forward pass through e.g. the LPIPS network). See src/losses/recon_loss.py.
+# -----------------------------------------------------------------------------
+loss:
+  l1_weight: 1.0       # L1 between reconstructed and target MAISI latent.
+  l2_weight: 0.0       # MSE term; set >0 to add (or replace L1) — see trial4.
+  lpips_weight: 0.0    # Placeholder — wired in but currently a no-op.
+  gan_weight: 0.0      # Placeholder — wired in but currently a no-op.
+
+# -----------------------------------------------------------------------------
+# Training — see scripts/train.py.
+# -----------------------------------------------------------------------------
+train:
+  epochs: 50
+  # Per-GPU batch size. One MAISI latent ~= 1 sample, so 1 is the norm.
+  # Effective batch = batch_size * world_size.
+  batch_size: 1
+  lr: 1.0e-4
+  # Print/log a train-loss line every N global steps.
+  log_every: 50
+  # true  -> synthetic in-memory tensors (fast smoke tests, no I/O).
+  # false -> real MAISI latents from disk (production training).
+  dummy_data: false
+  # Only honored when dummy_data=true; caps batches per epoch.
+  # n_batches: 100
+  # Mixed precision: "bf16" (recommended on A6000/A100/H100), "fp16", "none".
+  amp: bf16
+  # Checkpoint resume policy:
+  #   "auto" -> resume from runs/${exp_name}/checkpoints/latest.pt if present
+  #   "off"  -> always start from scratch (will overwrite latest.pt)
+  #   "/abs/path/to/file.pt" -> resume from that exact checkpoint
+  resume: auto
+  # Overwrite latest.pt every N global steps so a crash loses < N steps.
+  # Lower = safer but more disk churn; 500 is a good balance at batch_size=1.
+  save_every_n_steps: 500
+  # Optional. Which metric decides best.pt. Default "latent_psnr" (cheap,
+  # logged every epoch). Other options: "image_psnr" / "image_ssim" — but
+  # those are only computed every `eval.image_metric_every_n_epochs`.
+  # best_metric: latent_psnr
+
+# -----------------------------------------------------------------------------
+# Evaluation — runs at end of each epoch. See scripts/train.py validation block.
+# -----------------------------------------------------------------------------
+eval:
+  # "Fast" latent-space metrics (PSNR on the 4-channel MAISI latent).
+  # Cheap — no MAISI decoder involvement. Run on `fast_n_samples` val items.
+  fast_n_samples: 200
+  # "Image" metrics: decode reconstructed latent through frozen MAISI VAE
+  # to CT space and compute PSNR/SSIM against ground-truth CT. Expensive
+  # because of the MAISI VAE sliding-window decode.
+  image_metric_n_samples: 50
+  image_metric_every_n_epochs: 5
+  # Which split to validate on. Usually "valid"; "train" for sanity checks.
+  val_split: valid
+  # MAISI VAE sliding-window batch size. **Tune for your GPU**:
+  #   A6000 Pro / A100 / H100: 64 (default)
+  #   RTX 4090 (24 GB):         8–16
+  # Override at the CLI: `eval.sw_batch_size=8`.
+  sw_batch_size: 64
+  # Run torch.compile on the MAISI VAE decoder. First epoch pays a compile
+  # cost; subsequent epochs are faster. Set false for short runs / debugging.
+  compile_maisi: false
+
+# -----------------------------------------------------------------------------
+# Weights & Biases logging.
+# -----------------------------------------------------------------------------
+wandb:
+  project: triplane-ae
+  # Defaults to exp_name if you leave it identical, but you can decouple them
+  # (e.g. to share a project across many runs with descriptive names).
+  run_name: example
+
+# -----------------------------------------------------------------------------
+# Hydra — controls where Hydra dumps its own working dir & resolved config.
+# You almost never need to change this.
+# -----------------------------------------------------------------------------
+hydra:
+  run:
+    dir: runs/${exp_name}/hydra/${now:%Y-%m-%d_%H-%M-%S}
