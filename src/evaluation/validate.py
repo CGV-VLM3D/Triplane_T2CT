@@ -62,7 +62,7 @@ def run_validation(
     Parameters
     ----------
     model:
-        TriplaneAE or IdentityAE.  Must implement forward(mu) -> (mu_hat, ...).
+        TriplaneAE.  Must implement forward(mu) -> (mu_hat, ...).
     maisi_decoder:
         Frozen callable net.decode_stage_2_outputs, or None.
         Required when compute_image_metrics=True.
@@ -100,8 +100,6 @@ def run_validation(
     if compute_image_metrics:
         accum["image_psnr_3d"] = []
         accum["image_ssim_3d"] = []
-        accum["image_psnr_3d_vs_gt"] = []
-        accum["image_ssim_3d_vs_gt"] = []
 
     n_seen = 0
 
@@ -131,16 +129,6 @@ def run_validation(
                 ssim_vals = ssim_metric_img(our_recon_f32, ct_recon)
                 accum["image_psnr_3d"].append(float(psnr_vals.mean().item()))
                 accum["image_ssim_3d"].append(float(ssim_vals.mean().item()))
-
-                gt = batch.get("gt")
-                if gt is not None and not (
-                    isinstance(gt, torch.Tensor) and gt.numel() == 0
-                ):
-                    gt = gt.to(dev)
-                    psnr_gt = psnr_metric_img(our_recon_f32, gt.float())
-                    ssim_gt = ssim_metric_img(our_recon_f32, gt.float())
-                    accum["image_psnr_3d_vs_gt"].append(float(psnr_gt.mean().item()))
-                    accum["image_ssim_3d_vs_gt"].append(float(ssim_gt.mean().item()))
 
                 del ct_recon, our_recon, our_recon_f32
 

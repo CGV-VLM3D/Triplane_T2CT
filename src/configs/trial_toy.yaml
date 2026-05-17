@@ -1,0 +1,61 @@
+# Tier-1 toy config: Path B (2mm latent) + Path A (width 1/2 of standard ours).
+#
+# Standard ours v1.0 (Tier 2/3 full): emb_dim=512, n_layers=6, out_channels=24,
+# decoder_hidden=96, decoder_n_res_blocks=4, patch_size=4. Designed so 1mm
+# full-resolution inference fits under 24 GB VRAM (a publication constraint).
+#
+# Tier 1 here halves emb_dim and decoder_hidden (Path A "width 1/2") but keeps
+# depth and out_channels constant — μP says depth transfer is fragile, and
+# out_channels is the task-defining bottleneck not a "width" knob.
+
+exp_name: trial_toy
+
+data:
+  root: /workspace/data/latents_2mm   # Path B: 2mm latents
+
+model:
+  kind: TriplaneAE
+  encoder:
+    in_channels: 4
+    emb_dim: 256              # half of standard ours (512)
+    n_layers: 6               # same as standard ours (depth μP-fragile)
+    n_heads: 8                # same
+    out_channels: 24          # same as standard ours (task bottleneck)
+    patch_size: 4             # LOCKED: 1mm inference VRAM budget
+    latent_shape: [60, 60, 32]
+  decoder:
+    in_channels: 24           # matches encoder.out_channels
+    hidden: 48                # half of standard ours (96)
+    out_channels: 4
+    n_res_blocks: 4           # same as standard ours
+    patch_size: 4
+    latent_shape: [60, 60, 32]
+
+loss:
+  l1_weight: 1.0
+
+train:
+  epochs: 50
+  batch_size: 8               # sweet spot for this arch: ~5.3 GB peak, ~73 epochs in 60-min cap,
+                              # cleaner gradients than B=4 while keeping plenty of Adam updates.
+  lr: 1.0e-4
+  log_every: 25
+  resume: auto
+  save_every_n_steps: 500
+  max_wall_minutes: 60
+
+eval:
+  fast_n_samples: 100
+  image_metric_n_samples: 0   # no ct_recon cache for 2mm toy latents
+  image_metric_every_n_epochs: 0
+  val_split: valid
+  sw_batch_size: 64
+  compile_maisi: false
+
+wandb:
+  project: triplane-ae
+  run_name: trial_toy
+
+hydra:
+  run:
+    dir: runs/${exp_name}/hydra/${now:%Y-%m-%d_%H-%M-%S}

@@ -1,0 +1,50 @@
+# Tier-2 config (collaborator baseline): 1mm latents, TriVQAEConv at its
+# full reference channel schedule. Mirror of trial_mid.yaml's data/eval, with
+# only the model section swapped.
+
+exp_name: trial_mid_baseline
+
+data:
+  root: /workspace/datasets/datasets/latents   # 1mm pool
+
+model:
+  kind: TriVQAEConv
+  encoder:
+    in_channels: 4
+    latent_shape: [120, 120, 64]
+    encoder_channels: [16, 32, 64, 64, 64, 64]
+    blocks_per_stage: 2
+    plane_channels: 64
+  decoder:
+    out_channels: 4
+    decoder_channels: null   # mirror of encoder_channels
+    final_hidden_channels: 64
+    final_depth: 2
+
+loss:
+  l1_weight: 1.0
+
+train:
+  epochs: 100
+  batch_size: 1
+  lr: 1.0e-4
+  log_every: 50
+  resume: auto
+  save_every_n_steps: 500
+  max_wall_minutes: 360
+
+eval:
+  fast_n_samples: 200
+  image_metric_n_samples: 50
+  image_metric_every_n_epochs: 5
+  val_split: valid
+  sw_batch_size: 64
+  compile_maisi: false
+
+wandb:
+  project: triplane-ae
+  run_name: trial_mid_baseline
+
+hydra:
+  run:
+    dir: runs/${exp_name}/hydra/${now:%Y-%m-%d_%H-%M-%S}

@@ -1,0 +1,58 @@
+# Tier-2 config: standard ours v1.0 at 1mm full resolution.
+#
+# Standard ours v1.0:
+#   patch_size=4, emb_dim=512, n_layers=6, n_heads=8, out_channels=24,
+#   decoder_hidden=96, decoder_n_res_blocks=4.
+# Designed so 1mm full-resolution inference fits under 24 GB VRAM
+# (the paper-relevant constraint per user 2026-05-17).
+
+exp_name: trial_mid
+
+data:
+  root: /workspace/datasets/datasets/latents   # 1mm pool (collaborator precompute)
+
+model:
+  kind: TriplaneAE
+  encoder:
+    in_channels: 4
+    emb_dim: 512              # full width
+    n_layers: 6
+    n_heads: 8
+    out_channels: 24          # task bottleneck (3x trial2's 8)
+    patch_size: 4             # LOCKED for 24 GB inference budget
+    latent_shape: [120, 120, 64]
+  decoder:
+    in_channels: 24
+    hidden: 96                # full width (3x trial2's 32)
+    out_channels: 4
+    n_res_blocks: 4
+    patch_size: 4
+    latent_shape: [120, 120, 64]
+
+loss:
+  l1_weight: 1.0
+
+train:
+  epochs: 100
+  batch_size: 1               # 1mm latent is 8x larger than 2mm
+  lr: 1.0e-4
+  log_every: 50
+  resume: auto
+  save_every_n_steps: 500
+  max_wall_minutes: 360       # 6h Tier-2 budget
+
+eval:
+  fast_n_samples: 200
+  image_metric_n_samples: 50
+  image_metric_every_n_epochs: 5
+  val_split: valid
+  sw_batch_size: 64
+  compile_maisi: false
+
+wandb:
+  project: triplane-ae
+  run_name: trial_mid
+
+hydra:
+  run:
+    dir: runs/${exp_name}/hydra/${now:%Y-%m-%d_%H-%M-%S}

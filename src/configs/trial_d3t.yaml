@@ -1,0 +1,43 @@
+exp_name: trial_d3t
+
+model:
+  kind: TriVAE_D3T
+  in_channels: 4
+  emb_dim: 256
+  patch_size: 4
+  n_swin_enc_layers: 4
+  swin_window_size: [5, 5, 4]
+  swin_num_heads: 8
+  n_fpsi_layers: 2
+  fpsi_num_heads: 8
+  out_channels: 8
+  n_swin_dec_layers: 4
+  latent_shape: [120, 120, 64]
+
+loss:
+  l1_weight: 1.0
+
+train:
+  epochs: 50
+  batch_size: 1
+  lr: 1.0e-4
+  log_every: 50
+  amp: bf16
+  resume: auto
+  save_every_n_steps: 500
+
+eval:
+  fast_n_samples: 200
+  image_metric_n_samples: 50
+  image_metric_every_n_epochs: 5
+  val_split: valid
+  sw_batch_size: 16
+  compile_maisi: false
+
+wandb:
+  project: triplane-ae
+  run_name: trial_d3t
+
+hydra:
+  run:
+    dir: runs/${exp_name}/hydra/${now:%Y-%m-%d_%H-%M-%S}

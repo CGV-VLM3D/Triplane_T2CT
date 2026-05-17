@@ -11,7 +11,7 @@ You are the final gate that answers a single question: **is the triplane AE clos
 
 # Inputs (ask only if missing)
 
-- Checkpoint path (typically under `checkpoints/<exp_name>/`).
+- Checkpoint path (typically under `runs/<exp_name>/checkpoints/`).
 - MAISI-only upper-bound PSNR and SSIM (the ceiling).
 - Sample count (default **100**, drawn from the validation split in [/workspace/datasets/split.json](/workspace/datasets/split.json)).
 

@@ -1,0 +1,1807 @@
+{
+  "root": "/",
+  "train": [
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10000/train_10000_a/train_10000_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10002/train_10002_a/train_10002_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10003/train_10003_a/train_10003_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10005/train_10005_a/train_10005_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10008/train_10008_a/train_10008_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10009/train_10009_a/train_10009_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1000/train_1000_a/train_1000_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10010/train_10010_a/train_10010_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10011/train_10011_a/train_10011_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10012/train_10012_a/train_10012_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10013/train_10013_a/train_10013_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10014/train_10014_a/train_10014_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10015/train_10015_a/train_10015_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10016/train_10016_a/train_10016_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10017/train_10017_a/train_10017_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10018/train_10018_a/train_10018_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10019/train_10019_a/train_10019_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1001/train_1001_a/train_1001_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10020/train_10020_a/train_10020_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10021/train_10021_a/train_10021_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10022/train_10022_a/train_10022_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10024/train_10024_a/train_10024_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10025/train_10025_a/train_10025_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10026/train_10026_a/train_10026_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10027/train_10027_a/train_10027_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10028/train_10028_a/train_10028_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10029/train_10029_a/train_10029_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1002/train_1002_a/train_1002_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10032/train_10032_a/train_10032_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10034/train_10034_a/train_10034_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10036/train_10036_a/train_10036_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10038/train_10038_a/train_10038_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10039/train_10039_a/train_10039_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1003/train_1003_a/train_1003_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10040/train_10040_a/train_10040_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10041/train_10041_a/train_10041_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10042/train_10042_a/train_10042_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10043/train_10043_a/train_10043_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10044/train_10044_a/train_10044_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10046/train_10046_a/train_10046_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10047/train_10047_a/train_10047_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10049/train_10049_a/train_10049_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1004/train_1004_a/train_1004_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10050/train_10050_a/train_10050_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10051/train_10051_a/train_10051_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10052/train_10052_a/train_10052_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10053/train_10053_a/train_10053_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10054/train_10054_a/train_10054_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10055/train_10055_a/train_10055_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10056/train_10056_a/train_10056_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10058/train_10058_a/train_10058_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10059/train_10059_a/train_10059_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1005/train_1005_a/train_1005_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10060/train_10060_a/train_10060_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10061/train_10061_a/train_10061_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10062/train_10062_a/train_10062_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10063/train_10063_a/train_10063_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10064/train_10064_a/train_10064_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10065/train_10065_a/train_10065_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10066/train_10066_a/train_10066_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10067/train_10067_a/train_10067_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10068/train_10068_a/train_10068_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10069/train_10069_a/train_10069_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1006/train_1006_a/train_1006_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10070/train_10070_a/train_10070_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10071/train_10071_a/train_10071_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10072/train_10072_a/train_10072_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10073/train_10073_a/train_10073_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10077/train_10077_a/train_10077_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10078/train_10078_a/train_10078_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10079/train_10079_a/train_10079_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1007/train_1007_a/train_1007_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10081/train_10081_a/train_10081_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10082/train_10082_a/train_10082_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10085/train_10085_a/train_10085_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10088/train_10088_a/train_10088_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10089/train_10089_a/train_10089_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1008/train_1008_a/train_1008_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10090/train_10090_a/train_10090_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10091/train_10091_a/train_10091_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10093/train_10093_a/train_10093_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10094/train_10094_a/train_10094_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10096/train_10096_a/train_10096_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10097/train_10097_a/train_10097_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_100/train_100_a/train_100_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10102/train_10102_a/train_10102_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10104/train_10104_a/train_10104_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10105/train_10105_a/train_10105_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10106/train_10106_a/train_10106_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10107/train_10107_a/train_10107_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10109/train_10109_a/train_10109_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1010/train_1010_a/train_1010_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10110/train_10110_a/train_10110_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10111/train_10111_a/train_10111_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10112/train_10112_a/train_10112_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10113/train_10113_a/train_10113_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10115/train_10115_a/train_10115_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10116/train_10116_a/train_10116_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10117/train_10117_a/train_10117_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10118/train_10118_a/train_10118_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10119/train_10119_a/train_10119_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1011/train_1011_a/train_1011_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10120/train_10120_a/train_10120_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10121/train_10121_a/train_10121_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10122/train_10122_a/train_10122_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10123/train_10123_a/train_10123_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10124/train_10124_a/train_10124_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10125/train_10125_a/train_10125_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10126/train_10126_a/train_10126_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10129/train_10129_a/train_10129_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10133/train_10133_a/train_10133_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10134/train_10134_a/train_10134_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10135/train_10135_a/train_10135_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10136/train_10136_a/train_10136_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10137/train_10137_a/train_10137_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10139/train_10139_a/train_10139_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1013/train_1013_a/train_1013_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10140/train_10140_a/train_10140_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10141/train_10141_a/train_10141_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10143/train_10143_a/train_10143_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10144/train_10144_a/train_10144_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10145/train_10145_a/train_10145_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10146/train_10146_a/train_10146_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1014/train_1014_a/train_1014_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10150/train_10150_a/train_10150_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10151/train_10151_a/train_10151_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10153/train_10153_a/train_10153_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10154/train_10154_a/train_10154_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10156/train_10156_a/train_10156_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10157/train_10157_a/train_10157_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1015/train_1015_a/train_1015_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10160/train_10160_a/train_10160_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10161/train_10161_a/train_10161_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10162/train_10162_a/train_10162_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10164/train_10164_a/train_10164_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10165/train_10165_a/train_10165_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10166/train_10166_a/train_10166_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10167/train_10167_a/train_10167_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10168/train_10168_a/train_10168_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10169/train_10169_a/train_10169_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10171/train_10171_a/train_10171_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10172/train_10172_a/train_10172_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10174/train_10174_a/train_10174_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10177/train_10177_a/train_10177_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10179/train_10179_a/train_10179_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1017/train_1017_a/train_1017_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10180/train_10180_a/train_10180_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10181/train_10181_a/train_10181_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10182/train_10182_a/train_10182_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10183/train_10183_a/train_10183_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10185/train_10185_a/train_10185_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10186/train_10186_a/train_10186_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10187/train_10187_a/train_10187_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10188/train_10188_a/train_10188_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10189/train_10189_a/train_10189_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1018/train_1018_a/train_1018_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10190/train_10190_a/train_10190_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10191/train_10191_a/train_10191_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10193/train_10193_a/train_10193_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10194/train_10194_a/train_10194_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10195/train_10195_a/train_10195_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10196/train_10196_a/train_10196_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10197/train_10197_a/train_10197_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10198/train_10198_a/train_10198_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10199/train_10199_a/train_10199_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1019/train_1019_a/train_1019_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_101/train_101_a/train_101_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10201/train_10201_a/train_10201_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10202/train_10202_a/train_10202_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10203/train_10203_a/train_10203_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10204/train_10204_a/train_10204_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10205/train_10205_a/train_10205_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10206/train_10206_a/train_10206_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10208/train_10208_a/train_10208_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1020/train_1020_a/train_1020_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10210/train_10210_a/train_10210_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10211/train_10211_a/train_10211_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10213/train_10213_a/train_10213_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10214/train_10214_a/train_10214_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10215/train_10215_a/train_10215_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10216/train_10216_a/train_10216_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10217/train_10217_a/train_10217_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10218/train_10218_a/train_10218_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10219/train_10219_a/train_10219_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1021/train_1021_a/train_1021_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10225/train_10225_a/train_10225_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10226/train_10226_a/train_10226_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10227/train_10227_a/train_10227_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10228/train_10228_a/train_10228_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1022/train_1022_a/train_1022_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10230/train_10230_a/train_10230_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10232/train_10232_a/train_10232_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10233/train_10233_a/train_10233_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10235/train_10235_a/train_10235_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10237/train_10237_a/train_10237_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10238/train_10238_a/train_10238_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10239/train_10239_a/train_10239_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1023/train_1023_a/train_1023_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10240/train_10240_a/train_10240_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10241/train_10241_a/train_10241_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10242/train_10242_a/train_10242_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10243/train_10243_a/train_10243_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10244/train_10244_a/train_10244_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10245/train_10245_a/train_10245_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10246/train_10246_a/train_10246_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10247/train_10247_a/train_10247_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1024/train_1024_a/train_1024_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10250/train_10250_a/train_10250_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10251/train_10251_a/train_10251_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10253/train_10253_a/train_10253_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10254/train_10254_a/train_10254_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10255/train_10255_a/train_10255_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10256/train_10256_a/train_10256_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10257/train_10257_a/train_10257_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10258/train_10258_a/train_10258_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10259/train_10259_a/train_10259_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1025/train_1025_a/train_1025_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10260/train_10260_a/train_10260_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10261/train_10261_a/train_10261_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10262/train_10262_a/train_10262_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10263/train_10263_a/train_10263_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10264/train_10264_a/train_10264_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10266/train_10266_a/train_10266_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10268/train_10268_a/train_10268_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10269/train_10269_a/train_10269_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1026/train_1026_a/train_1026_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10271/train_10271_a/train_10271_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10272/train_10272_a/train_10272_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10275/train_10275_a/train_10275_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10278/train_10278_a/train_10278_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10282/train_10282_a/train_10282_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10284/train_10284_a/train_10284_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10286/train_10286_a/train_10286_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10288/train_10288_a/train_10288_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10289/train_10289_a/train_10289_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1028/train_1028_a/train_1028_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10290/train_10290_a/train_10290_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10292/train_10292_a/train_10292_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10293/train_10293_a/train_10293_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10294/train_10294_a/train_10294_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10295/train_10295_a/train_10295_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10296/train_10296_a/train_10296_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10297/train_10297_a/train_10297_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10299/train_10299_a/train_10299_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1029/train_1029_a/train_1029_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10300/train_10300_a/train_10300_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10301/train_10301_a/train_10301_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10302/train_10302_a/train_10302_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10303/train_10303_a/train_10303_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10304/train_10304_a/train_10304_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10305/train_10305_a/train_10305_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10307/train_10307_a/train_10307_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10308/train_10308_a/train_10308_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10309/train_10309_a/train_10309_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1030/train_1030_a/train_1030_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10310/train_10310_a/train_10310_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10311/train_10311_a/train_10311_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10312/train_10312_a/train_10312_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10313/train_10313_a/train_10313_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10314/train_10314_a/train_10314_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10316/train_10316_a/train_10316_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10317/train_10317_a/train_10317_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10319/train_10319_a/train_10319_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1031/train_1031_a/train_1031_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10320/train_10320_a/train_10320_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10321/train_10321_a/train_10321_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10322/train_10322_a/train_10322_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10323/train_10323_a/train_10323_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10325/train_10325_a/train_10325_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10326/train_10326_a/train_10326_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10328/train_10328_a/train_10328_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10329/train_10329_a/train_10329_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1032/train_1032_a/train_1032_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10331/train_10331_a/train_10331_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10332/train_10332_a/train_10332_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10333/train_10333_a/train_10333_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10334/train_10334_a/train_10334_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10335/train_10335_a/train_10335_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10338/train_10338_a/train_10338_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10339/train_10339_a/train_10339_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10340/train_10340_a/train_10340_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10341/train_10341_a/train_10341_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10342/train_10342_a/train_10342_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10343/train_10343_a/train_10343_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10344/train_10344_a/train_10344_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10345/train_10345_a/train_10345_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10346/train_10346_a/train_10346_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10347/train_10347_a/train_10347_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10349/train_10349_a/train_10349_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1034/train_1034_a/train_1034_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10350/train_10350_a/train_10350_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10351/train_10351_a/train_10351_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10352/train_10352_a/train_10352_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10353/train_10353_a/train_10353_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10355/train_10355_a/train_10355_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10357/train_10357_a/train_10357_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10359/train_10359_a/train_10359_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1035/train_1035_a/train_1035_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10360/train_10360_a/train_10360_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10361/train_10361_a/train_10361_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10362/train_10362_a/train_10362_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10363/train_10363_a/train_10363_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10364/train_10364_a/train_10364_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10365/train_10365_a/train_10365_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10368/train_10368_a/train_10368_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10371/train_10371_a/train_10371_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10373/train_10373_a/train_10373_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10375/train_10375_a/train_10375_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10376/train_10376_a/train_10376_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10377/train_10377_a/train_10377_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10379/train_10379_a/train_10379_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1037/train_1037_a/train_1037_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10382/train_10382_a/train_10382_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10383/train_10383_a/train_10383_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10384/train_10384_a/train_10384_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10385/train_10385_a/train_10385_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10386/train_10386_a/train_10386_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10388/train_10388_a/train_10388_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10389/train_10389_a/train_10389_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1038/train_1038_a/train_1038_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10390/train_10390_a/train_10390_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10391/train_10391_a/train_10391_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10392/train_10392_a/train_10392_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10393/train_10393_a/train_10393_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10394/train_10394_a/train_10394_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10395/train_10395_a/train_10395_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10396/train_10396_a/train_10396_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10397/train_10397_a/train_10397_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10398/train_10398_a/train_10398_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10399/train_10399_a/train_10399_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1039/train_1039_a/train_1039_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_103/train_103_a/train_103_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10402/train_10402_a/train_10402_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10403/train_10403_a/train_10403_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10404/train_10404_a/train_10404_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10405/train_10405_a/train_10405_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10406/train_10406_a/train_10406_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1040/train_1040_a/train_1040_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10410/train_10410_a/train_10410_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10411/train_10411_a/train_10411_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10413/train_10413_a/train_10413_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10414/train_10414_a/train_10414_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10416/train_10416_a/train_10416_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10417/train_10417_a/train_10417_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1041/train_1041_a/train_1041_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10420/train_10420_a/train_10420_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10422/train_10422_a/train_10422_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10423/train_10423_a/train_10423_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10424/train_10424_a/train_10424_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10425/train_10425_a/train_10425_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10426/train_10426_a/train_10426_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10427/train_10427_a/train_10427_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10429/train_10429_a/train_10429_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1042/train_1042_a/train_1042_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10430/train_10430_a/train_10430_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10431/train_10431_a/train_10431_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10432/train_10432_a/train_10432_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10433/train_10433_a/train_10433_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10434/train_10434_a/train_10434_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10435/train_10435_a/train_10435_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10437/train_10437_a/train_10437_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10438/train_10438_a/train_10438_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10439/train_10439_a/train_10439_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1043/train_1043_a/train_1043_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10440/train_10440_a/train_10440_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10441/train_10441_a/train_10441_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10442/train_10442_a/train_10442_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10443/train_10443_a/train_10443_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10444/train_10444_a/train_10444_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10445/train_10445_a/train_10445_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10446/train_10446_a/train_10446_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10448/train_10448_a/train_10448_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10449/train_10449_a/train_10449_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1044/train_1044_a/train_1044_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10450/train_10450_a/train_10450_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10451/train_10451_a/train_10451_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10452/train_10452_a/train_10452_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10453/train_10453_a/train_10453_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10455/train_10455_a/train_10455_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10457/train_10457_a/train_10457_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10458/train_10458_a/train_10458_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10459/train_10459_a/train_10459_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10460/train_10460_a/train_10460_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10461/train_10461_a/train_10461_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10462/train_10462_a/train_10462_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10463/train_10463_a/train_10463_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10464/train_10464_a/train_10464_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10465/train_10465_a/train_10465_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10466/train_10466_a/train_10466_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10467/train_10467_a/train_10467_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10468/train_10468_a/train_10468_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1046/train_1046_a/train_1046_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10470/train_10470_a/train_10470_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10471/train_10471_a/train_10471_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10472/train_10472_a/train_10472_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10473/train_10473_a/train_10473_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10474/train_10474_a/train_10474_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10475/train_10475_a/train_10475_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10476/train_10476_a/train_10476_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10477/train_10477_a/train_10477_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10478/train_10478_a/train_10478_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10480/train_10480_a/train_10480_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10482/train_10482_a/train_10482_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10483/train_10483_a/train_10483_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10485/train_10485_a/train_10485_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10486/train_10486_a/train_10486_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10487/train_10487_a/train_10487_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10488/train_10488_a/train_10488_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10490/train_10490_a/train_10490_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10491/train_10491_a/train_10491_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10492/train_10492_a/train_10492_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10493/train_10493_a/train_10493_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10494/train_10494_a/train_10494_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10495/train_10495_a/train_10495_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10496/train_10496_a/train_10496_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10497/train_10497_a/train_10497_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10499/train_10499_a/train_10499_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1049/train_1049_a/train_1049_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_104/train_104_a/train_104_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10500/train_10500_a/train_10500_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10502/train_10502_a/train_10502_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10503/train_10503_a/train_10503_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10504/train_10504_a/train_10504_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10505/train_10505_a/train_10505_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10507/train_10507_a/train_10507_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1050/train_1050_a/train_1050_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10510/train_10510_a/train_10510_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10511/train_10511_a/train_10511_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10512/train_10512_a/train_10512_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10513/train_10513_a/train_10513_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10514/train_10514_a/train_10514_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10515/train_10515_a/train_10515_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10517/train_10517_a/train_10517_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10518/train_10518_a/train_10518_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10519/train_10519_a/train_10519_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1051/train_1051_a/train_1051_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10522/train_10522_a/train_10522_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10523/train_10523_a/train_10523_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10524/train_10524_a/train_10524_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10525/train_10525_a/train_10525_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10526/train_10526_a/train_10526_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10527/train_10527_a/train_10527_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10529/train_10529_a/train_10529_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1052/train_1052_a/train_1052_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10530/train_10530_a/train_10530_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10531/train_10531_a/train_10531_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10532/train_10532_a/train_10532_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10533/train_10533_a/train_10533_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10534/train_10534_a/train_10534_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10535/train_10535_a/train_10535_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10536/train_10536_a/train_10536_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10537/train_10537_a/train_10537_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10538/train_10538_a/train_10538_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10539/train_10539_a/train_10539_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10540/train_10540_a/train_10540_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10541/train_10541_a/train_10541_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10542/train_10542_a/train_10542_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10545/train_10545_a/train_10545_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10546/train_10546_a/train_10546_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10547/train_10547_a/train_10547_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10548/train_10548_a/train_10548_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10550/train_10550_a/train_10550_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10552/train_10552_a/train_10552_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10554/train_10554_a/train_10554_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10555/train_10555_a/train_10555_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10559/train_10559_a/train_10559_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1055/train_1055_a/train_1055_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10560/train_10560_a/train_10560_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10561/train_10561_a/train_10561_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10562/train_10562_a/train_10562_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10563/train_10563_a/train_10563_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10564/train_10564_a/train_10564_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10565/train_10565_a/train_10565_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10566/train_10566_a/train_10566_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10567/train_10567_a/train_10567_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10568/train_10568_a/train_10568_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10569/train_10569_a/train_10569_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1056/train_1056_a/train_1056_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10570/train_10570_a/train_10570_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10572/train_10572_a/train_10572_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10573/train_10573_a/train_10573_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10574/train_10574_a/train_10574_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10575/train_10575_a/train_10575_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10576/train_10576_a/train_10576_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10577/train_10577_a/train_10577_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10579/train_10579_a/train_10579_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1057/train_1057_a/train_1057_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10580/train_10580_a/train_10580_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10581/train_10581_a/train_10581_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10583/train_10583_a/train_10583_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10585/train_10585_a/train_10585_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10590/train_10590_a/train_10590_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10591/train_10591_a/train_10591_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10592/train_10592_a/train_10592_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10593/train_10593_a/train_10593_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10594/train_10594_a/train_10594_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10595/train_10595_a/train_10595_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10596/train_10596_a/train_10596_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10598/train_10598_a/train_10598_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10599/train_10599_a/train_10599_a_1.nii.gz"
+    }
+  ],
+  "valid": [
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10001/train_10001_a/train_10001_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10004/train_10004_a/train_10004_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10006/train_10006_a/train_10006_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10023/train_10023_a/train_10023_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10031/train_10031_a/train_10031_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10033/train_10033_a/train_10033_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10035/train_10035_a/train_10035_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10045/train_10045_a/train_10045_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10057/train_10057_a/train_10057_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10074/train_10074_a/train_10074_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10075/train_10075_a/train_10075_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10076/train_10076_a/train_10076_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10083/train_10083_a/train_10083_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10084/train_10084_a/train_10084_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10086/train_10086_a/train_10086_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10087/train_10087_a/train_10087_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10098/train_10098_a/train_10098_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10099/train_10099_a/train_10099_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10101/train_10101_a/train_10101_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10114/train_10114_a/train_10114_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10127/train_10127_a/train_10127_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10131/train_10131_a/train_10131_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10132/train_10132_a/train_10132_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10147/train_10147_a/train_10147_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10148/train_10148_a/train_10148_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10149/train_10149_a/train_10149_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10152/train_10152_a/train_10152_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10158/train_10158_a/train_10158_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10159/train_10159_a/train_10159_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1016/train_1016_a/train_1016_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10170/train_10170_a/train_10170_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10176/train_10176_a/train_10176_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10192/train_10192_a/train_10192_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10200/train_10200_a/train_10200_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10209/train_10209_a/train_10209_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10220/train_10220_a/train_10220_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10222/train_10222_a/train_10222_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10223/train_10223_a/train_10223_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10229/train_10229_a/train_10229_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10236/train_10236_a/train_10236_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10265/train_10265_a/train_10265_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10267/train_10267_a/train_10267_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10270/train_10270_a/train_10270_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10273/train_10273_a/train_10273_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10276/train_10276_a/train_10276_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10277/train_10277_a/train_10277_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10279/train_10279_a/train_10279_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10285/train_10285_a/train_10285_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10287/train_10287_a/train_10287_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10291/train_10291_a/train_10291_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10298/train_10298_a/train_10298_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_102/train_102_a/train_102_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10306/train_10306_a/train_10306_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10315/train_10315_a/train_10315_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10324/train_10324_a/train_10324_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10330/train_10330_a/train_10330_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10336/train_10336_a/train_10336_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10337/train_10337_a/train_10337_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1033/train_1033_a/train_1033_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10348/train_10348_a/train_10348_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10354/train_10354_a/train_10354_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10367/train_10367_a/train_10367_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10369/train_10369_a/train_10369_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1036/train_1036_a/train_1036_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10370/train_10370_a/train_10370_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10372/train_10372_a/train_10372_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10374/train_10374_a/train_10374_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10381/train_10381_a/train_10381_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10400/train_10400_a/train_10400_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10401/train_10401_a/train_10401_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10409/train_10409_a/train_10409_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10412/train_10412_a/train_10412_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10415/train_10415_a/train_10415_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10418/train_10418_a/train_10418_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10428/train_10428_a/train_10428_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10447/train_10447_a/train_10447_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10454/train_10454_a/train_10454_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10456/train_10456_a/train_10456_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1045/train_1045_a/train_1045_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1047/train_1047_a/train_1047_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10481/train_10481_a/train_10481_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10489/train_10489_a/train_10489_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1048/train_1048_a/train_1048_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10498/train_10498_a/train_10498_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10501/train_10501_a/train_10501_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10508/train_10508_a/train_10508_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10509/train_10509_a/train_10509_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10516/train_10516_a/train_10516_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10520/train_10520_a/train_10520_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10521/train_10521_a/train_10521_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10528/train_10528_a/train_10528_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10543/train_10543_a/train_10543_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10544/train_10544_a/train_10544_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_1054/train_1054_a/train_1054_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10551/train_10551_a/train_10551_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10553/train_10553_a/train_10553_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10556/train_10556_a/train_10556_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10558/train_10558_a/train_10558_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10571/train_10571_a/train_10571_a_1.nii.gz"
+    },
+    {
+      "path": "/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_10578/train_10578_a/train_10578_a_1.nii.gz"
+    }
+  ]
+}
