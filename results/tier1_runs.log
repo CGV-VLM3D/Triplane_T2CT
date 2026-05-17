@@ -1,0 +1,53 @@
+[run_tier] 2 job(s) planned:
+  [1] tier1/ours                CUDA_VISIBLE_DEVICES=0 python scripts/train.py --config-name=trial_toy
+  [2] tier1/baseline            CUDA_VISIBLE_DEVICES=0 python scripts/train.py --config-name=trial_toy_baseline
+
+[run_tier] -> START  tier1/ours: CUDA_VISIBLE_DEVICES=0 python scripts/train.py --config-name=trial_toy
+[resume] starting fresh (no snapshot to resume from)
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /root/.netrc.
+wandb: Currently logged in as: jasonna24 (jasonna24-) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run shucjhx5
+wandb: Tracking run with wandb version 0.26.1
+wandb: Run data is saved locally in /workspace/wandb/run-20260517_164908-shucjhx5
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run trial_toy
+wandb: ⭐️ View project at https://wandb.ai/jasonna24-/triplane-ae
+wandb: 🚀 View run at https://wandb.ai/jasonna24-/triplane-ae/runs/shucjhx5
+[train] latent data_range (p99-p1) = 4.7764
+/opt/conda/lib/python3.11/site-packages/torch/nn/modules/transformer.py:382: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+[train] exp=trial_toy  model=TriplaneAE  device=cuda
+[train] batches=625  batch_size=8  epochs=50
+[train] wall-clock cap: 60.0 min
+[epoch 1 step 000]  loss=8.45e-01  l1=8.45e-01  l2=0.00e+00  psnr=12.9  cos=-0.0227
+[epoch 1 step 025]  loss=7.35e-01  l1=7.35e-01  l2=0.00e+00  psnr=13.9  cos=0.2138
+[epoch 1 step 050]  loss=7.11e-01  l1=7.11e-01  l2=0.00e+00  psnr=13.9  cos=0.3501
+[epoch 1 step 075]  loss=6.72e-01  l1=6.72e-01  l2=0.00e+00  psnr=14.4  cos=0.3676
+[epoch 1 step 100]  loss=6.89e-01  l1=6.89e-01  l2=0.00e+00  psnr=14.1  cos=0.4025
+[epoch 1 step 125]  loss=6.81e-01  l1=6.81e-01  l2=0.00e+00  psnr=14.2  cos=0.4002
+[epoch 1 step 150]  loss=6.65e-01  l1=6.65e-01  l2=0.00e+00  psnr=14.2  cos=0.4474
+[epoch 1 step 175]  loss=6.38e-01  l1=6.38e-01  l2=0.00e+00  psnr=14.7  cos=0.4378
+[epoch 1 step 200]  loss=6.17e-01  l1=6.17e-01  l2=0.00e+00  psnr=14.9  cos=0.4627
+[epoch 1 step 225]  loss=6.41e-01  l1=6.41e-01  l2=0.00e+00  psnr=14.5  cos=0.4585
+[epoch 1 step 250]  loss=6.36e-01  l1=6.36e-01  l2=0.00e+00  psnr=14.6  cos=0.4655
+[epoch 1 step 275]  loss=6.10e-01  l1=6.10e-01  l2=0.00e+00  psnr=14.9  cos=0.4867
+[epoch 1 step 300]  loss=6.05e-01  l1=6.05e-01  l2=0.00e+00  psnr=14.9  cos=0.4929
+[epoch 1 step 325]  loss=5.72e-01  l1=5.72e-01  l2=0.00e+00  psnr=15.3  cos=0.5192
+[epoch 1 step 350]  loss=6.19e-01  l1=6.19e-01  l2=0.00e+00  psnr=14.8  cos=0.4893
+[epoch 1 step 375]  loss=6.20e-01  l1=6.20e-01  l2=0.00e+00  psnr=14.9  cos=0.4655
+[epoch 1 step 400]  loss=6.08e-01  l1=6.08e-01  l2=0.00e+00  psnr=14.8  cos=0.5225
+[epoch 1 step 425]  loss=6.21e-01  l1=6.21e-01  l2=0.00e+00  psnr=14.6  cos=0.4989
+[epoch 1 step 450]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=15.2  cos=0.5267
+[epoch 1 step 475]  loss=6.06e-01  l1=6.06e-01  l2=0.00e+00  psnr=14.9  cos=0.5079
+[epoch 1 step 500]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=15.1  cos=0.5072
+[epoch 1 step 525]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=15.1  cos=0.5035
+[epoch 1 step 550]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=15.2  cos=0.5199
+[epoch 1 step 575]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=15.0  cos=0.5244
+[epoch 1 step 600]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=15.0  cos=0.5299
+[epoch 1 DONE]  final_loss=5.91e-01  psnr=14.97  cos=0.5299
+[checkpoint] /workspace/runs/trial_toy/checkpoints/epoch_0001.pt
+[val epoch 1]  latent_l1=0.5926  latent_l2=0.8485  latent_psnr=24.8768
+[best] new best latent_psnr=24.8768 (prev=n/a) -> /workspace/runs/trial_toy/checkpoints/best.pt
+[epoch 2 step 000]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=15.1  cos=0.5248
+[epoch 2 step 025]  loss=6.12e-01  l1=6.12e-01  l2=0.00e+00  psnr=14.8  cos=0.5237
+[epoch 2 step 050]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=15.2  cos=0.5282

@@ -1,0 +1,1 @@
+/workspace/datasets/datasets/CT-RATE/dataset/train_fixed/train_11236/train_11236_a/train_11236_a_1.nii.gz

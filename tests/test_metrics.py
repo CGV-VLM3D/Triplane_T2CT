@@ -7,12 +7,7 @@ import math
 import pytest
 import torch
 
-from src.metrics.image_metrics import (
-    image_lpips_2d_avg,
-    image_psnr_3d,
-    image_ssim_2d_avg,
-    image_ssim_3d,
-)
+from src.metrics.image_metrics import image_psnr_3d, image_ssim_3d
 from src.metrics.latent_metrics import (
     compute_latent_data_range,
     latent_cosine_similarity,
@@ -230,69 +225,5 @@ def test_image_ssim_3d_batch_consistency(img_rand):
     full = image_ssim_3d(img_rand, img_rand + noise, win_size=WIN)
     s0 = image_ssim_3d(a, a + noise[:1], win_size=WIN)
     s1 = image_ssim_3d(b, b + noise[1:], win_size=WIN)
-    assert torch.allclose(full[0], s0[0], atol=1e-5)
-    assert torch.allclose(full[1], s1[0], atol=1e-5)
-
-
-# ---------------------------------------------------------------------------
-# image_ssim_2d_avg
-# ---------------------------------------------------------------------------
-
-
-def test_image_ssim_2d_avg_shape(img_rand):
-    out = image_ssim_2d_avg(img_rand, img_rand + 1.0, win_size=WIN)
-    assert out.shape == (B,), out.shape
-
-
-def test_image_ssim_2d_avg_identity(img_rand):
-    out = image_ssim_2d_avg(img_rand, img_rand, win_size=WIN)
-    assert torch.allclose(out, torch.ones(B), atol=1e-4), out
-
-
-def test_image_ssim_2d_avg_deterministic(img_rand):
-    out1 = image_ssim_2d_avg(img_rand, img_rand + 5.0, seed=42, win_size=WIN)
-    out2 = image_ssim_2d_avg(img_rand, img_rand + 5.0, seed=42, win_size=WIN)
-    assert torch.allclose(out1, out2), (out1, out2)
-
-
-def test_image_ssim_2d_avg_batch_consistency(img_rand):
-    a, b = img_rand[:1], img_rand[1:]
-    torch.manual_seed(7)
-    noise = torch.randn_like(img_rand) * 10.0
-    full = image_ssim_2d_avg(img_rand, img_rand + noise, seed=7, win_size=WIN)
-    s0 = image_ssim_2d_avg(a, a + noise[:1], seed=7, win_size=WIN)
-    s1 = image_ssim_2d_avg(b, b + noise[1:], seed=7, win_size=WIN)
-    assert torch.allclose(full[0], s0[0], atol=1e-5)
-    assert torch.allclose(full[1], s1[0], atol=1e-5)
-
-
-# ---------------------------------------------------------------------------
-# image_lpips_2d_avg
-# ---------------------------------------------------------------------------
-
-
-def test_image_lpips_2d_avg_shape(img_rand):
-    out = image_lpips_2d_avg(img_rand, img_rand + 10.0)
-    assert out.shape == (B,), out.shape
-
-
-def test_image_lpips_2d_avg_identity(img_rand):
-    out = image_lpips_2d_avg(img_rand, img_rand)
-    assert (out < 0.05).all(), f"LPIPS identity not near 0: {out}"
-
-
-def test_image_lpips_2d_avg_deterministic(img_rand):
-    out1 = image_lpips_2d_avg(img_rand, img_rand + 50.0, seed=0)
-    out2 = image_lpips_2d_avg(img_rand, img_rand + 50.0, seed=0)
-    assert torch.allclose(out1, out2), (out1, out2)
-
-
-def test_image_lpips_2d_avg_batch_consistency(img_rand):
-    a, b = img_rand[:1], img_rand[1:]
-    torch.manual_seed(5)
-    noise = torch.randn_like(img_rand) * 50.0
-    full = image_lpips_2d_avg(img_rand, img_rand + noise, seed=3)
-    s0 = image_lpips_2d_avg(a, a + noise[:1], seed=3)
-    s1 = image_lpips_2d_avg(b, b + noise[1:], seed=3)
     assert torch.allclose(full[0], s0[0], atol=1e-5)
     assert torch.allclose(full[1], s1[0], atol=1e-5)

@@ -1,0 +1,60 @@
+# Tier-1 reference baseline: collaborator's TriVQAEConv on the same 2mm toy latents.
+#
+# Purpose: give us a concrete reference number at the Tier-1 budget so our own
+# arch sweep candidates can be positioned absolutely, not just compared to each
+# other. Combined with the 2mm upper bound (MAISI round-trip ceiling), each
+# trial_toy variant is read as:
+#   our_candidate_psnr  vs  baseline_psnr  vs  upper_bound_psnr.
+#
+# Notes:
+#   - Same data, same wall-clock cap, same eval as trial_toy.
+#   - Model uses the collaborator's full default channels (16,32,64,64,64,64).
+#     Not width-halved — we want the *reference* baseline at its real setting.
+#   - decoder.out_channels = 4 (matches MAISI latent channel count).
+
+exp_name: trial_toy_baseline
+
+data:
+  root: /workspace/data/latents_2mm
+
+model:
+  kind: TriVQAEConv
+  encoder:
+    in_channels: 4
+    latent_shape: [60, 60, 32]
+    encoder_channels: [16, 32, 64, 64, 64, 64]
+    blocks_per_stage: 2
+    plane_channels: 64
+  decoder:
+    out_channels: 4
+    decoder_channels: null   # null => mirror of encoder_channels
+    final_hidden_channels: 64
+    final_depth: 2
+
+loss:
+  l1_weight: 1.0
+
+train:
+  epochs: 50
+  batch_size: 4               # peak ~15.6 GB at B=4 with this conv-heavy arch
+  lr: 1.0e-4
+  log_every: 25
+  resume: auto
+  save_every_n_steps: 500
+  max_wall_minutes: 60
+
+eval:
+  fast_n_samples: 100
+  image_metric_n_samples: 0
+  image_metric_every_n_epochs: 0
+  val_split: valid
+  sw_batch_size: 64
+  compile_maisi: false
+
+wandb:
+  project: triplane-ae
+  run_name: trial_toy_baseline
+
+hydra:
+  run:
+    dir: runs/${exp_name}/hydra/${now:%Y-%m-%d_%H-%M-%S}

@@ -1,0 +1,46 @@
+exp_name: trial3
+
+model:
+  kind: TriplaneAE
+  encoder:
+    in_channels: 4
+    emb_dim: 256
+    n_layers: 4
+    n_heads: 8
+    out_channels: 32
+    patch_size: 4
+    latent_shape: [120, 120, 64]
+  decoder:
+    in_channels: 32
+    hidden: 32
+    out_channels: 4
+    patch_size: 4
+    latent_shape: [120, 120, 64]
+
+loss:
+  l1_weight: 1.0
+
+train:
+  epochs: 50
+  batch_size: 1
+  lr: 1.0e-4
+  log_every: 50
+  amp: bf16
+  resume: auto
+  save_every_n_steps: 500
+
+eval:
+  fast_n_samples: 200
+  image_metric_n_samples: 50
+  image_metric_every_n_epochs: 5
+  val_split: valid
+  sw_batch_size: 16
+  compile_maisi: false
+
+wandb:
+  project: triplane-ae
+  run_name: trial3
+
+hydra:
+  run:
+    dir: runs/${exp_name}/hydra/${now:%Y-%m-%d_%H-%M-%S}

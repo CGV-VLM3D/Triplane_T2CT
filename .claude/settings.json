@@ -29,6 +29,12 @@
         "hooks": [
           { "type": "command", "command": "/workspace/.claude/hooks/notify-training-done.sh" }
         ]
+      },
+      {
+        "matcher": "result-analyzer",
+        "hooks": [
+          { "type": "command", "command": "/workspace/.claude/hooks/trigger-summarizer.sh" }
+        ]
       }
     ]
   }

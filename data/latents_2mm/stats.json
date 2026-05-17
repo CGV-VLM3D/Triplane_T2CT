@@ -1,0 +1,24 @@
+{
+  "num_volumes": 5000,
+  "num_voxels_per_channel": 576000000,
+  "channel_mean": [
+    -0.15546536360300367,
+    -0.05920529045881994,
+    -0.03135784213452074,
+    -0.04777296407842935
+  ],
+  "channel_std": [
+    0.916959037164537,
+    0.18473161305851088,
+    0.7881804320858462,
+    0.7422678371792363
+  ],
+  "latent_channels": 4,
+  "split": "train",
+  "spatial_size": [
+    240,
+    240,
+    128
+  ],
+  "notes": "Computed over the full 2mm train pool by extend_2mm_precompute.py --merge-stats."
+}

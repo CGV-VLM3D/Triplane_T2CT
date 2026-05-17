@@ -1,6 +1,6 @@
 ---
 name: experiment-runner
-description: Launches triplane autoencoder training via torchrun, monitors the wandb run, retries on CUDA OOM by halving the per-GPU batch size (up to 3 attempts), and manages checkpoint files under checkpoints/<exp_name>/. Always runs the pytest suite before launching training.
+description: Launches triplane autoencoder training via torchrun, monitors the wandb run, retries on CUDA OOM by halving the per-GPU batch size (up to 3 attempts), and manages checkpoint files under runs/<exp_name>/checkpoints/. Always runs the pytest suite before launching training.
 tools: Bash, Read, Write
 model: sonnet
 ---
@@ -34,7 +34,7 @@ If pytest fails, **stop and report the failure**. Do not launch training on a br
   torchrun --nproc_per_node=<N> reference/scripts/train_trivae2.py <hydra overrides>
   ```
 
-- Before launching, ensure `checkpoints/<exp_name>/` exists (`mkdir -p`).
+- Before launching, ensure `runs/<exp_name>/checkpoints/` exists (`mkdir -p`).
 - As soon as wandb prints the run URL, capture it and surface it to the caller (run name, project, URL).
 
 # OOM retry policy
@@ -49,7 +49,7 @@ Do **not** apply OOM retry logic to non-OOM crashes (asserts, NaN losses, data e
 
 # Post-run
 
-- Confirm the final checkpoint exists in `checkpoints/<exp_name>/`. Report path and size (`ls -lh`).
+- Confirm the final checkpoint exists in `runs/<exp_name>/checkpoints/`. Report path and size (`ls -lh`).
 - Report the final wandb run URL and the final effective batch size (in case retries changed it).
 
 # Isolation
