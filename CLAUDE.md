@@ -33,6 +33,13 @@ Pipeline: raw CT NIfTI → resample to target spacing (default 1mm³) → MAISI 
 - Image metrics on `[0, 1]` domain; SSIM `win_size=11` (matches the upper-bound measurement).
 - `sw_batch_size`: 64 on A6000 Pro (default), 8–16 on RTX 4090 — override with `eval.sw_batch_size=8`.
 
+## Compute / I/O notes
+3D MAISI latent (`mu.pt`, `[4,120,120,64]` fp16, ~7.2 MB/sample × 6,000 ≈ 43 GB) **streaming reads dominate runtime** for any per-sample sweep (distribution analysis, eval, recon caching). Before picking GPU, check if the inner math justifies it:
+- **GPU helps** when per-sample compute is heavy: 3D FFT, per-voxel covariance/outer-products, decoder passthrough, dense attention. Otherwise GPU sits idle and you pay disk-load latency at CPU speed.
+- **CPU + many workers helps** when the workload is moments/histograms/projections (cheap arithmetic). Defaults: `--device cpu --num-workers 16 --batch-size 4` is often faster end-to-end than naive `--device cuda:0` because it actually feeds the pipeline.
+- If using GPU, raise `num_workers` (≥8), `prefetch_factor` (≥4), `pin_memory=True`, and move tensors with `non_blocking=True`. A 0% GPU util + small VRAM means the loader is the bottleneck.
+- Cache per-sample summary stats (parquet/CSV) on first pass so re-runs (e.g., re-ranking thresholds, plot tweaks) skip the I/O entirely.
+
 ## Upper bound (measured 2026-05-12)
 MAISI VAE encode→decode round-trip on the 1000 CT-RATE valid volumes: **PSNR 30.94 ± 2.97 dB, SSIM 0.7195 ± 0.1084**. Intensity: HU clipped to `[-1000, 1000]`, scaled to `[0, 1]`; spatial 480×480×256. Full details in `results/upper_bound.json`.
 

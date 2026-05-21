@@ -43,12 +43,14 @@ DISPATCH: dict[tuple[int, str | None], list[str]] = {
     (0, None): ["pytest", "-m", "tier0", "-v"],
     (1, "ours"): ["python", "scripts/train.py", "--config-name=trial_toy"],
     (1, "baseline"): ["python", "scripts/train.py", "--config-name=trial_toy_baseline"],
+    (1, "d3t"): ["python", "scripts/train.py", "--config-name=trial_toy_d3t"],
     (2, "ours"): ["python", "scripts/train.py", "--config-name=trial_mid"],
     (2, "baseline"): ["python", "scripts/train.py", "--config-name=trial_mid_baseline"],
+    (2, "d3t"): ["python", "scripts/train.py", "--config-name=trial_mid_d3t"],
 }
 
 VALID_TIERS = {0, 1, 2}
-VALID_ARCHS = {"ours", "baseline"}
+VALID_ARCHS = {"ours", "baseline", "d3t"}
 
 
 def _parse_tiers(spec: str) -> list[int]:

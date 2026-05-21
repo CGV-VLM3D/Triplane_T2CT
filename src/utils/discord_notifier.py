@@ -193,6 +193,47 @@ def notify_new_best(
     )
 
 
+def notify_milestone(
+    *,
+    exp_name: str,
+    epoch: int,
+    total_epochs: int,
+    fraction_label: str,
+    best_metric_name: Optional[str],
+    best_metric_value: Optional[float],
+    val_metrics: Optional[dict] = None,
+    wandb_url: Optional[str] = None,
+) -> None:
+    """Milestone progress ping (e.g. 1/3, 2/3 through training).
+
+    Reports the best metric seen so far plus the latest validation snapshot.
+    """
+    fields: list[dict] = []
+    if best_metric_name is not None and best_metric_value is not None:
+        best_str = (
+            f"{best_metric_value:.4f}" if best_metric_value != float("-inf") else "n/a"
+        )
+        fields.append(
+            {"name": f"best {best_metric_name}", "value": best_str, "inline": True}
+        )
+    if val_metrics:
+        for k, v in val_metrics.items():
+            fields.append(
+                {
+                    "name": k,
+                    "value": f"{v:.4f}" if isinstance(v, float) else str(v),
+                    "inline": True,
+                }
+            )
+    notify(
+        title=f"📈 Milestone {fraction_label} — {exp_name}",
+        description=f"epoch {epoch}/{total_epochs}",
+        color=COLOR_BLUE,
+        fields=fields,
+        url=wandb_url,
+    )
+
+
 def notify_epoch_summary(
     *,
     exp_name: str,

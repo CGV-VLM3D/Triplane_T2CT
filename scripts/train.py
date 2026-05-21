@@ -340,6 +340,20 @@ def _run_training(cfg: DictConfig, state: dict) -> None:
         },
     )
 
+    # Milestone Discord pings at 1/3 and 2/3 of training; 3/3 is covered by
+    # notify_training_done at the end. Keeps the channel quiet vs. notifying on
+    # every new-best epoch.
+    total_epochs = int(cfg.train.epochs)
+    milestone_epochs = {
+        ep
+        for ep in (total_epochs // 3, (2 * total_epochs) // 3)
+        if 0 < ep < total_epochs
+    }
+    milestone_labels = {
+        total_epochs // 3: "1/3",
+        (2 * total_epochs) // 3: "2/3",
+    }
+
     # ---- Restore model / optimizer / RNG / counters from snapshot.
     start_epoch = 1
     start_completed_in_epoch = 0
@@ -681,12 +695,18 @@ def _run_training(cfg: DictConfig, state: dict) -> None:
                 f"[best] new best {best_metric_name}={best_metric_value:.4f} "
                 f"(prev={prev_str}) -> {best_path}"
             )
-            notifier.notify_new_best(
+
+        if epoch in milestone_epochs:
+            notifier.notify_milestone(
                 exp_name=exp_name,
-                metric_name=best_metric_name,
-                metric_value=best_metric_value,
-                prev_value=prev_value,
                 epoch=epoch,
+                total_epochs=total_epochs,
+                fraction_label=milestone_labels[epoch],
+                best_metric_name=best_metric_name,
+                best_metric_value=best_metric_value
+                if best_metric_value != float("-inf")
+                else None,
+                val_metrics=val_metrics,
                 wandb_url=wandb_url,
             )
 
