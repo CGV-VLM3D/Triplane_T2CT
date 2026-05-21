@@ -1,0 +1,9 @@
+# Full validation: latent metrics every epoch + image-domain (MAISI decode)
+# every 5 epochs. Requires a ct_recon cache (scripts/measure_upper_bound.py
+# --cache-recon).
+fast_n_samples: 200
+image_metric_n_samples: 50
+image_metric_every_n_epochs: 5
+val_split: valid
+sw_batch_size: 64
+compile_maisi: false

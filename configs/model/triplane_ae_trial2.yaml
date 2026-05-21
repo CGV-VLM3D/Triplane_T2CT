@@ -1,0 +1,17 @@
+# Earlier trial2 width — kept as a separate model file because emb_dim,
+# n_layers, and out_channels all differ from standard ours v1.0.
+kind: TriplaneAE
+encoder:
+  in_channels: 4
+  emb_dim: 256
+  n_layers: 4
+  n_heads: 8
+  out_channels: 8
+  patch_size: 4
+  latent_shape: [120, 120, 64]
+decoder:
+  in_channels: 8
+  hidden: 32
+  out_channels: 4
+  patch_size: 4
+  latent_shape: [120, 120, 64]

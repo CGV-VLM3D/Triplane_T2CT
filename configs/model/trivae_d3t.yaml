@@ -1,0 +1,14 @@
+# Swin-based D3T standard. patch_size=4 is locked for the 24 GB inference
+# budget. For Tier-1 toy width, override emb_dim (e.g. 128 = half of 256).
+kind: TriVAE_D3T
+in_channels: 4
+emb_dim: 256
+patch_size: 4
+n_swin_enc_layers: 4
+swin_window_size: [5, 5, 4]
+swin_num_heads: 8
+n_fpsi_layers: 2
+fpsi_num_heads: 8
+out_channels: 8
+n_swin_dec_layers: 4
+latent_shape: [120, 120, 64]

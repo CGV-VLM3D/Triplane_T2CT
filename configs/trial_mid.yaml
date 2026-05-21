@@ -1,0 +1,16 @@
+# Tier-2: standard ours v1.0 at the full 1mm latent, 6h wall-clock cap.
+
+defaults:
+  - data: latents_1mm
+  - model: triplane_ae
+  - train: tier2
+  - eval: full
+  - loss: l1
+  - wb: default
+  - _self_
+
+exp_name: trial_mid
+
+hydra:
+  run:
+    dir: runs/${exp_name}/hydra/${now:%Y-%m-%d_%H-%M-%S}

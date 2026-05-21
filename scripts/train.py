@@ -159,6 +159,25 @@ def _save_snapshot(
     os.replace(tmp, path)
 
 
+def _prune_epoch_checkpoints(ckpt_dir: Path, keep_last_n: int) -> None:
+    """Delete old ``epoch_*.pt`` files, keeping the ``keep_last_n`` newest.
+
+    ``latest.pt`` and ``best.pt`` are never touched. ``keep_last_n <= 0`` is a
+    no-op (keep everything — useful for debugging).
+    """
+    if keep_last_n <= 0:
+        return
+    epoch_ckpts = sorted(
+        ckpt_dir.glob("epoch_*.pt"),
+        key=lambda p: int(p.stem.split("_")[1]),
+    )
+    for old in epoch_ckpts[:-keep_last_n]:
+        try:
+            old.unlink()
+        except OSError as e:
+            print(f"[checkpoint] WARN could not delete {old}: {e}")
+
+
 def _resolve_resume_path(ckpt_dir: Path, resume_cfg) -> Optional[Path]:
     """Return path to checkpoint to resume from, or None for a fresh run.
 
@@ -190,7 +209,7 @@ def _resolve_resume_path(ckpt_dir: Path, resume_cfg) -> Optional[Path]:
 
 
 @hydra.main(
-    config_path=str(ROOT / "src" / "configs"),
+    config_path=str(ROOT / "configs"),
     config_name="trial2",
     version_base=None,
 )
@@ -626,6 +645,11 @@ def _run_training(cfg: DictConfig, state: dict) -> None:
                 wandb_run_id=wandb_run_id,
             )
         print(f"[checkpoint] {epoch_ckpt_path}")
+
+        # Prune old per-epoch checkpoints so the run dir stays bounded.
+        # best.pt and latest.pt are never touched.
+        keep_last_n = int(getattr(cfg.train, "keep_last_n", 3))
+        _prune_epoch_checkpoints(ckpt_dir, keep_last_n)
 
         # --- Validation ---
         from src.evaluation.validate import run_validation
