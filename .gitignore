@@ -32,3 +32,5 @@ runs/
 wandb/
 logs/
 outputs/
+
+paper_pdf/
