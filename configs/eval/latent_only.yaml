@@ -1,0 +1,8 @@
+# Cheap latent-domain validation only. Use for 2mm toy data (no ct_recon cache)
+# and any sweep where image-domain PSNR/SSIM is not needed.
+fast_n_samples: 100
+image_metric_n_samples: 0
+image_metric_every_n_epochs: 0
+val_split: valid
+sw_batch_size: 64
+compile_maisi: false

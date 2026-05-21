@@ -219,6 +219,41 @@ def test_resume_planner_mid_epoch(tmp_path: Path):
     assert (start_epoch, skip) == (4, 200)
 
 
+def test_prune_epoch_checkpoints_keeps_last_n(tmp_path: Path):
+    """keep_last_n=3 → only the 3 highest-numbered epoch_*.pt survive; best/latest spared."""
+    (tmp_path / "best.pt").write_bytes(b"b")
+    (tmp_path / "latest.pt").write_bytes(b"l")
+    for ep in (1, 2, 3, 4, 5):
+        (tmp_path / f"epoch_{ep:04d}.pt").write_bytes(b"x")
+
+    train_mod._prune_epoch_checkpoints(tmp_path, keep_last_n=3)
+
+    surviving = sorted(p.name for p in tmp_path.iterdir())
+    assert surviving == [
+        "best.pt",
+        "epoch_0003.pt",
+        "epoch_0004.pt",
+        "epoch_0005.pt",
+        "latest.pt",
+    ]
+
+
+def test_prune_epoch_checkpoints_zero_keeps_all(tmp_path: Path):
+    """keep_last_n=0 disables pruning."""
+    for ep in (1, 2, 3):
+        (tmp_path / f"epoch_{ep:04d}.pt").write_bytes(b"x")
+    train_mod._prune_epoch_checkpoints(tmp_path, keep_last_n=0)
+    assert len(list(tmp_path.glob("epoch_*.pt"))) == 3
+
+
+def test_prune_epoch_checkpoints_fewer_than_n(tmp_path: Path):
+    """keep_last_n larger than what's present is a no-op."""
+    for ep in (1, 2):
+        (tmp_path / f"epoch_{ep:04d}.pt").write_bytes(b"x")
+    train_mod._prune_epoch_checkpoints(tmp_path, keep_last_n=10)
+    assert len(list(tmp_path.glob("epoch_*.pt"))) == 2
+
+
 def test_resume_planner_after_epoch_done(tmp_path: Path):
     """Snapshot taken at epoch end → start at next epoch, no skip."""
     ckpt = tmp_path / "latest.pt"

@@ -8,8 +8,8 @@ Tiers
 
 Tier 3 (full run) is intentionally not implemented.
 
-The orchestrator is config-driven: pass any yaml name under `src/configs/`
-via `--configs`. To add a new model variant, drop a yaml in `src/configs/`
+The orchestrator is config-driven: pass any yaml name under `configs/`
+via `--configs`. To add a new model variant, drop a yaml in `configs/`
 and reference it by name — no code change here.
 
 The orchestrator does NOT enforce tier↔config matching (e.g. it won't stop
@@ -22,7 +22,7 @@ Usage
     # tier 0 needs no config (runs the sanity pytest)
     python scripts/run_tier.py --tier 0
 
-    # tier 1 / 2: pass any config name(s) under src/configs/
+    # tier 1 / 2: pass any config name(s) under configs/
     python scripts/run_tier.py --tier 1 --configs trial_toy
     python scripts/run_tier.py --tier 1 --configs trial_toy,trial_toy_baseline,trial_toy_d3t
     python scripts/run_tier.py --tier 2 --configs trial_mid
@@ -40,7 +40,7 @@ Convention
 ----------
 - All non-tier-0 commands are prefixed with CUDA_VISIBLE_DEVICES=0
   (single-GPU project convention).
-- Configs are validated against `src/configs/<name>.yaml` existence before
+- Configs are validated against `configs/<name>.yaml` existence before
   any subprocess is launched, so typos fail fast at planning time.
 """
 
@@ -54,7 +54,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIGS_DIR = ROOT / "src" / "configs"
+CONFIGS_DIR = ROOT / "configs"
 
 VALID_TIERS = {0, 1, 2}
 
@@ -144,7 +144,7 @@ def main() -> int:
         type=str,
         default="",
         help=(
-            "comma-separated config names under src/configs/ "
+            "comma-separated config names under configs/ "
             "(e.g. trial_toy,trial_toy_baseline). Ignored when tier=0."
         ),
     )

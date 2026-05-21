@@ -1,0 +1,11 @@
+# Tier-1 arch sweep: 60-min wall-clock cap, toy scale.
+# batch_size differs per arch (TriplaneAE 8, TriVQAEConv/D3T 4) — override
+# in the launch yaml.
+epochs: 50
+batch_size: 4
+lr: 1.0e-4
+log_every: 25
+resume: auto
+save_every_n_steps: 500
+keep_last_n: 3
+max_wall_minutes: 60

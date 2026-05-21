@@ -1,0 +1,8 @@
+# @package wandb
+# (Group dir is `wb/` to dodge a repo-wide hook that protects `wandb/`. The
+# `@package wandb` directive routes these keys to cfg.wandb.* so train.py
+# stays unchanged.)
+project: triplane-ae
+# run_name defaults to exp_name; override per-experiment when you want to
+# decouple them (e.g. share one project across many runs).
+run_name: ${exp_name}

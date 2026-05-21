@@ -1,0 +1,4 @@
+# 2mm toy MAISI latents (Path B): smaller latent grid [60, 60, 32] for Tier-1.
+# To switch to the memmap shard, point `root` at /workspace/data/latents_2mm_shard
+# after running `scripts/build_latent_shard.py`.
+root: /workspace/data/latents_2mm

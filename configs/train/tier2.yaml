@@ -1,0 +1,9 @@
+# Tier-2 mid validation: 6h wall-clock cap, full data + full model width.
+epochs: 100
+batch_size: 1
+lr: 1.0e-4
+log_every: 50
+resume: auto
+save_every_n_steps: 500
+keep_last_n: 3
+max_wall_minutes: 360

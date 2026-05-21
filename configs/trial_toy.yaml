@@ -1,0 +1,29 @@
+# Tier-1 toy: Path-B 2mm latents + Path-A width-1/2 of standard ours v1.0.
+# Standard ours full width: emb_dim=512, decoder.hidden=96. Tier-1 halves both
+# (μP: depth and out_channels held constant).
+
+defaults:
+  - data: latents_2mm
+  - model: triplane_ae
+  - train: tier1
+  - eval: latent_only
+  - loss: l1
+  - wb: default
+  - _self_
+
+exp_name: trial_toy
+
+model:
+  encoder:
+    emb_dim: 256
+    latent_shape: [60, 60, 32]
+  decoder:
+    hidden: 48
+    latent_shape: [60, 60, 32]
+
+train:
+  batch_size: 8   # ~5.3 GB peak; ~73 epochs in the 60-min cap
+
+hydra:
+  run:
+    dir: runs/${exp_name}/hydra/${now:%Y-%m-%d_%H-%M-%S}

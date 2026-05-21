@@ -1,0 +1,15 @@
+# Collaborator's TriVQAEConv reference baseline at its full default channel
+# schedule. For 2mm toy data override encoder.latent_shape to [60, 60, 32]
+# in the launch yaml.
+kind: TriVQAEConv
+encoder:
+  in_channels: 4
+  latent_shape: [120, 120, 64]
+  encoder_channels: [16, 32, 64, 64, 64, 64]
+  blocks_per_stage: 2
+  plane_channels: 64
+decoder:
+  out_channels: 4
+  decoder_channels: null   # null => mirror of encoder_channels
+  final_hidden_channels: 64
+  final_depth: 2

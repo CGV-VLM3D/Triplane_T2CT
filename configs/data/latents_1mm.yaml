@@ -1,0 +1,5 @@
+# 1mm MAISI latents — collaborator precompute, read-only.
+# Pre-shard layout: per-patient directories at <root>/<split>/<patient_id>/mu.pt.
+# Post-shard layout (after `scripts/build_latent_shard.py`): <root>/<split>.npy
+# + <root>/<split>.index.json. The dataset auto-detects whichever is present.
+root: /workspace/datasets/datasets/latents
