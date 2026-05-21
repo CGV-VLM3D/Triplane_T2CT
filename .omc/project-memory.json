@@ -1,0 +1,433 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1779364140014,
+  "projectRoot": "C:\\Users\\jason\\000_CGV_PC\\002_Research\\003_Triplane_T2CT\\Triplane_T2CT",
+  "techStack": {
+    "languages": [
+      {
+        "name": "Python",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "requirements.txt"
+        ]
+      }
+    ],
+    "frameworks": [],
+    "packageManager": "pip",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": "/c/Users/jason/anaconda3/envs/py311/python.exe -m pytest tests/test_tier0_overfit.py -m tier0 -k compress3d -x -v 2>&1 | tail -25",
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "scripts",
+      "src",
+      "tests"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "data": {
+      "path": "data",
+      "purpose": "Data files",
+      "fileCount": 0,
+      "lastAccessed": 1779364139983,
+      "keyFiles": []
+    },
+    "datasets": {
+      "path": "datasets",
+      "purpose": null,
+      "fileCount": 6,
+      "lastAccessed": 1779364139984,
+      "keyFiles": [
+        "conc_info.json",
+        "desc_info.json",
+        "Dockerfile",
+        "download_ct_rate.py",
+        "make_split.py"
+      ]
+    },
+    "maisi_bundle": {
+      "path": "maisi_bundle",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1779364139984,
+      "keyFiles": []
+    },
+    "reference": {
+      "path": "reference",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1779364139985,
+      "keyFiles": []
+    },
+    "research_summary": {
+      "path": "research_summary",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1779364139985,
+      "keyFiles": [
+        "summary.md"
+      ]
+    },
+    "results": {
+      "path": "results",
+      "purpose": null,
+      "fileCount": 7,
+      "lastAccessed": 1779364139986,
+      "keyFiles": [
+        "cache_recon.log",
+        "measure_upper_bound_2mm.log",
+        "tier1_runs.log",
+        "upper_bound.json",
+        "upper_bound_2mm.json"
+      ]
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 7,
+      "lastAccessed": 1779364139986,
+      "keyFiles": [
+        "check_sdpa.py",
+        "extend_2mm_precompute.py",
+        "measure_upper_bound.py",
+        "measure_upper_bound_2mm.py",
+        "run_tier.py"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 1,
+      "lastAccessed": 1779364139986,
+      "keyFiles": [
+        "__init__.py"
+      ]
+    },
+    "tests": {
+      "path": "tests",
+      "purpose": "Test files",
+      "fileCount": 11,
+      "lastAccessed": 1779364139986,
+      "keyFiles": [
+        "conftest.py",
+        "test_d3t.py",
+        "test_dataset.py",
+        "test_forward_backward.py",
+        "test_metrics.py"
+      ]
+    },
+    "maisi_bundle\\docs": {
+      "path": "maisi_bundle\\docs",
+      "purpose": "Documentation",
+      "fileCount": 2,
+      "lastAccessed": 1779364139987,
+      "keyFiles": [
+        "data_license.txt",
+        "README.md"
+      ]
+    },
+    "maisi_bundle\\scripts": {
+      "path": "maisi_bundle\\scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 8,
+      "lastAccessed": 1779364139987,
+      "keyFiles": [
+        "augmentation.py",
+        "find_masks.py",
+        "quality_check.py"
+      ]
+    },
+    "reference\\models": {
+      "path": "reference\\models",
+      "purpose": "Data models",
+      "fileCount": 5,
+      "lastAccessed": 1779364139988,
+      "keyFiles": [
+        "dataloader.py",
+        "latent_dataset.py",
+        "trivae.py"
+      ]
+    },
+    "reference\\scripts": {
+      "path": "reference\\scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 6,
+      "lastAccessed": 1779364139988,
+      "keyFiles": [
+        "compute_latent_stats.py",
+        "extract_maisi_latent.py",
+        "recon_test.py"
+      ]
+    },
+    "src\\data": {
+      "path": "src\\data",
+      "purpose": "Data files",
+      "fileCount": 2,
+      "lastAccessed": 1779364139989,
+      "keyFiles": [
+        "maisi_latent_dataset.py",
+        "__init__.py"
+      ]
+    },
+    "src\\models": {
+      "path": "src\\models",
+      "purpose": "Data models",
+      "fileCount": 6,
+      "lastAccessed": 1779364139989,
+      "keyFiles": [
+        "triplane_ae.py",
+        "triplane_decoder.py",
+        "triplane_encoder.py"
+      ]
+    },
+    "src\\utils": {
+      "path": "src\\utils",
+      "purpose": "Utility functions",
+      "fileCount": 2,
+      "lastAccessed": 1779364139990,
+      "keyFiles": [
+        "discord_notifier.py",
+        "__init__.py"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "tests\\test_tier0_overfit.py",
+      "accessCount": 9,
+      "lastAccessed": 1779373820531,
+      "type": "file"
+    },
+    {
+      "path": "src\\models\\triplane_ae.py",
+      "accessCount": 7,
+      "lastAccessed": 1779374076718,
+      "type": "file"
+    },
+    {
+      "path": "scripts\\train.py",
+      "accessCount": 6,
+      "lastAccessed": 1779373280062,
+      "type": "file"
+    },
+    {
+      "path": "src\\models\\triplane_encoder.py",
+      "accessCount": 6,
+      "lastAccessed": 1779374075862,
+      "type": "file"
+    },
+    {
+      "path": "reference\\models\\trivae2.py",
+      "accessCount": 4,
+      "lastAccessed": 1779373089473,
+      "type": "file"
+    },
+    {
+      "path": "src\\models\\triplane_decoder.py",
+      "accessCount": 4,
+      "lastAccessed": 1779373100175,
+      "type": "file"
+    },
+    {
+      "path": "src\\models\\__init__.py",
+      "accessCount": 4,
+      "lastAccessed": 1779373260228,
+      "type": "file"
+    },
+    {
+      "path": "src\\models\\tri_conv.py",
+      "accessCount": 3,
+      "lastAccessed": 1779373082062,
+      "type": "file"
+    },
+    {
+      "path": "reference\\models\\trivae.py",
+      "accessCount": 3,
+      "lastAccessed": 1779373088486,
+      "type": "file"
+    },
+    {
+      "path": "src\\losses\\recon_loss.py",
+      "accessCount": 3,
+      "lastAccessed": 1779373253693,
+      "type": "file"
+    },
+    {
+      "path": "src\\data\\maisi_latent_dataset.py",
+      "accessCount": 2,
+      "lastAccessed": 1779370757455,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 2,
+      "lastAccessed": 1779370761952,
+      "type": "directory"
+    },
+    {
+      "path": "scripts\\extend_analysis_c6_c7.py",
+      "accessCount": 2,
+      "lastAccessed": 1779370782562,
+      "type": "file"
+    },
+    {
+      "path": "reference\\models\\trivae4.py",
+      "accessCount": 2,
+      "lastAccessed": 1779372691105,
+      "type": "directory"
+    },
+    {
+      "path": "src\\configs\\trial2.yaml",
+      "accessCount": 2,
+      "lastAccessed": 1779372711521,
+      "type": "file"
+    },
+    {
+      "path": "src\\configs\\example.yaml",
+      "accessCount": 2,
+      "lastAccessed": 1779372711867,
+      "type": "file"
+    },
+    {
+      "path": "tests\\test_tri_conv.py",
+      "accessCount": 2,
+      "lastAccessed": 1779372800868,
+      "type": "file"
+    },
+    {
+      "path": "research_summary\\summary.md",
+      "accessCount": 1,
+      "lastAccessed": 1779364837239,
+      "type": "file"
+    },
+    {
+      "path": "reference\\models",
+      "accessCount": 1,
+      "lastAccessed": 1779367602019,
+      "type": "directory"
+    },
+    {
+      "path": "reference\\models\\trivae3.py",
+      "accessCount": 1,
+      "lastAccessed": 1779367603074,
+      "type": "directory"
+    },
+    {
+      "path": "CLAUDE.md",
+      "accessCount": 1,
+      "lastAccessed": 1779370727222,
+      "type": "file"
+    },
+    {
+      "path": "reference\\configs\\trivae.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1779370765671,
+      "type": "file"
+    },
+    {
+      "path": "reference\\configs\\trivae2.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1779370766063,
+      "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 1,
+      "lastAccessed": 1779370766786,
+      "type": "directory"
+    },
+    {
+      "path": "./datasets/desc_info.json",
+      "accessCount": 1,
+      "lastAccessed": 1779370789618,
+      "type": "directory"
+    },
+    {
+      "path": "datasets\\datasets\\latents\\stats.json",
+      "accessCount": 1,
+      "lastAccessed": 1779370789954,
+      "type": "file"
+    },
+    {
+      "path": "datasets\\datasets\\latents\\train\\train_10000_a_1\\src.txt",
+      "accessCount": 1,
+      "lastAccessed": 1779370919474,
+      "type": "file"
+    },
+    {
+      "path": "src\\models\\trivae_d3t.py",
+      "accessCount": 1,
+      "lastAccessed": 1779370935641,
+      "type": "file"
+    },
+    {
+      "path": "tests\\test_shapes.py",
+      "accessCount": 1,
+      "lastAccessed": 1779372707046,
+      "type": "file"
+    },
+    {
+      "path": "src\\configs\\trial_toy_baseline.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1779373089827,
+      "type": "file"
+    },
+    {
+      "path": "src\\evaluation\\validate.py",
+      "accessCount": 1,
+      "lastAccessed": 1779373105341,
+      "type": "file"
+    },
+    {
+      "path": "src\\models\\cross_attention_3d.py",
+      "accessCount": 1,
+      "lastAccessed": 1779373153992,
+      "type": "file"
+    },
+    {
+      "path": "src\\models\\triplane_decoder_d.py",
+      "accessCount": 1,
+      "lastAccessed": 1779373211968,
+      "type": "file"
+    },
+    {
+      "path": "tests\\test_cross_attn_3d.py",
+      "accessCount": 1,
+      "lastAccessed": 1779373315843,
+      "type": "file"
+    },
+    {
+      "path": "src\\configs\\trial_toy_compress3d_no_attn.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1779373876968,
+      "type": "file"
+    },
+    {
+      "path": "src\\configs\\trial_toy_compress3d_attn.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1779373877309,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

@@ -317,6 +317,7 @@ def _run_training(cfg: DictConfig, state: dict) -> None:
     loss_fn = ReconLoss(
         l1_weight=float(cfg.loss.l1_weight),
         l2_weight=float(getattr(cfg.loss, "l2_weight", 0.0)),
+        kl_weight=float(getattr(cfg.loss, "kl_weight", 0.0)),
     )
     opt = torch.optim.Adam(model.parameters(), lr=float(cfg.train.lr))
 
@@ -486,11 +487,15 @@ def _run_training(cfg: DictConfig, state: dict) -> None:
             opt.zero_grad(set_to_none=True)
             if use_bf16:
                 with torch.autocast(device_type=device.type, dtype=torch.bfloat16):
-                    mu_hat, _triplane = model(mu)
-                    losses = loss_fn(mu_hat, mu)
+                    out = model(mu)
+                    mu_hat, _aux = out
+                    kl_loss = _aux.get("kl_loss") if isinstance(_aux, dict) else None
+                    losses = loss_fn(mu_hat, mu, kl_loss=kl_loss)
             else:
-                mu_hat, _triplane = model(mu)
-                losses = loss_fn(mu_hat, mu)
+                out = model(mu)
+                mu_hat, _aux = out
+                kl_loss = _aux.get("kl_loss") if isinstance(_aux, dict) else None
+                losses = loss_fn(mu_hat, mu, kl_loss=kl_loss)
             losses["total"].backward()
             opt.step()
 
@@ -498,6 +503,7 @@ def _run_training(cfg: DictConfig, state: dict) -> None:
                 "loss/total": losses["total"].item(),
                 "loss/l1": losses["l1"].item(),
                 "loss/l2": losses["l2"].item(),
+                "loss/kl": losses["kl"].item(),
                 "step": global_step,
             }
             last_total = log["loss/total"]
