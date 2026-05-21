@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"/c/Users/jason/anaconda3/envs/py311/python.exe -m pytest tests/test_cross_attn_3d.py tests/test_tier0_overfit.py tests/test_tri_conv.py -v 2>&1\",\"description\":\"Run all relevant tests\"}",
+  "error": "Exit code 1\n============================= test session starts =============================\r\nplatform win32 -- Python 3.11.14, pytest-9.0.3, pluggy-1.6.0 -- C:\\Users\\jason\\anaconda3\\envs\\py311\\python.exe\r\ncachedir: .pytest_cache\r\nrootdir: C:\\Users\\jason\\000_CGV_PC\\002_Research\\003_Triplane_T2CT\\Triplane_T2CT\r\nplugins: anyio-4.12.1, hydra-core-1.3.2\r\ncollecting ... collected 20 items\r\n\r\ntests/test_cross_attn_3d.py::test_output_shapes PASSED                   [  5%]\r\ntests/test_cross_attn_3d.py::t...",
+  "timestamp": "2026-05-21T14:30:08.635Z",
+  "retry_count": 1
+}

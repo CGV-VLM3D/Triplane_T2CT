@@ -1,0 +1,3 @@
+{"t":0,"agent":"ae29856","agent_type":"triplane-architect","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"ae29856","agent_type":"triplane-architect","event":"agent_stop","success":true,"duration_ms":847519}
+{"t":0,"agent":"a77876f","agent_type":"unknown","event":"agent_stop","success":true}
