@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "locked_at": "2026-05-30",
+  "anchor_configuration": "report2ct_3_text_encoders_cfg_mid",
+  "anchor_configuration_note": "3-TE + classifier-free guidance (mid scale, likely cfg=5). Picked as the paper's headline best per Section 'Discussion' (cfg further enhanced alignment with minor FID trade-off).",
+  "priority_order_for_headline": ["FID_2p5D_Avg", "CLIPScore", "FVD_CTNet"],
+  "metrics": {
+    "FID_2p5D_Avg": {
+      "anchor": 4.04,
+      "anchor_source": "paper_fig_6_3te_cfg_mid",
+      "envelope_pct": 15,
+      "bounds": [3.434, 4.646],
+      "informational": false
+    },
+    "CLIPScore": {
+      "anchor": 59.93,
+      "anchor_source": "paper_fig_5_3te_cfg_mid",
+      "envelope_pct": 10,
+      "bounds": [53.937, 65.923],
+      "informational": false,
+      "_note": "This is CLIPScore-T2I per paper convention; matches VLM3D-Dockers 'CLIPScore' key (I2T)."
+    },
+    "CLIPScore_I2I": {
+      "anchor": 53.06,
+      "anchor_source": "paper_fig_5_3te_cfg_mid",
+      "envelope_pct": null,
+      "bounds": null,
+      "informational": true
+    },
+    "FVD_CTNet": {
+      "anchor": null,
+      "anchor_source": "self_measured_6_1_paper_spec_skeleton",
+      "envelope_pct": 25,
+      "bounds": null,
+      "informational": false,
+      "_note": "FVD is NOT reported in the Report2CT paper. Anchor will be set at Phase B kickoff from a 1-epoch wall-clock run on the paper-spec skeleton. Envelope widened to ±25% to absorb the unanchored baseline."
+    },
+    "FID_2p5D_XY": {"anchor": 2.92, "envelope_pct": null, "bounds": null, "informational": true},
+    "FID_2p5D_XZ": {"anchor": 5.48, "envelope_pct": null, "bounds": null, "informational": true},
+    "FID_2p5D_YZ": {"anchor": 3.72, "envelope_pct": null, "bounds": null, "informational": true}
+  },
+  "win_condition": {
+    "rule": "ours_final beats report2ct_our_repro in >=2 of {FID_2p5D_Avg, CLIPScore, FVD_CTNet} measured by VLM3D-Dockers on the CT-RATE valid 1000-split.",
+    "headline_metric_priority_note": "A 2/3 win that excludes FID_2p5D_Avg must be flagged in the writeup as weaker than a 2/3 win including FID_2p5D_Avg, since FID has the strongest paper anchor.",
+    "envelope_miss_branch": "If report2ct_our_repro is OUTSIDE the envelope on FID_2p5D_Avg or CLIPScore, the publishable claim downgrades to 'competitive with our reimplementation of Report2CT' (NOT 'beats Report2CT'). FVD-only envelope miss is acceptable due to the self-anchor."
+  },
+  "metric_key_mapping": {
+    "_description": "Map paper metric names to VLM3D-Dockers ctgen evaluation JSON keys.",
+    "paper_2p5D_FID_Average -> ctgen": "FID_2p5D_Avg",
+    "paper_CLIPScore_T2I -> ctgen": "CLIPScore",
+    "paper_CLIPScore_I2I -> ctgen": "CLIPScore_I2I",
+    "paper_FVD (not reported) -> ctgen": "FVD_CTNet"
+  }
+}

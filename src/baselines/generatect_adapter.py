@@ -48,7 +48,11 @@ TRANSFORMER_CKPT: Final[Path] = CKPT_DIR / "transformer_pretrained.pt"
 SUPERRES_CKPT: Final[Path] = CKPT_DIR / "superres_pretrained.pt"
 
 
-# CTViT init kwargs from GenerateCT/inference_ctvit.py + inference_transformer.py.
+# DUPLICATION INTENTIONAL — GenerateCT submodule encodes its model spec as Python literals
+# inside `inference_ctvit.py` / `inference_transformer.py` (no YAML/JSON config file). We copy
+# the literals here verbatim. If the submodule ever ships a config file, switch to ConfigParser
+# like src/baselines/maisi.py and src/baselines/report2ct_adapter.py.
+# Source: third_party/generatect/inference_ctvit.py:5-15, inference_transformer.py:44-54
 _CTVIT_KWARGS: Final[dict] = {
     "dim": 512,
     "codebook_size": 8192,
@@ -61,7 +65,8 @@ _CTVIT_KWARGS: Final[dict] = {
     "heads": 8,
 }
 
-# MaskGit init kwargs from GenerateCT/inference_transformer.py.
+# DUPLICATION INTENTIONAL — see _CTVIT_KWARGS note above.
+# Source: third_party/generatect/inference_transformer.py:56-62
 _MASKGIT_KWARGS: Final[dict] = {
     "num_tokens": 8192,
     "max_seq_len": 10000,
