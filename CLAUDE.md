@@ -29,18 +29,18 @@ src/                      # lightning-hydra-template base + our additions
 
 configs/                  # Hydra hierarchy (data/model/trainer/logger/callbacks/experiment/...)
 
-third_party/              # READ-ONLY submodules (P2)
-  report2ct/              # SHA 7b483a8 — paper code + train.sh + JSON configs (weights NOT released)
-  generatect/             # SHA 2a81135 — has 3 pretrained .pt ckpts on HF
-  vlm3d_dockers/          # SHA c73fe07 — official VLM3D-Dockers eval containers (Task 4 = FVD + CLIPScore + 2.5-D FID)
+third_party/              # READ-ONLY external code (P2)
+  report2ct/              # submodule SHA 7b483a8 — paper code + train.sh + JSON configs (weights NOT released)
+  generatect/             # submodule SHA 2a81135 — 3 pretrained .pt ckpts on HF
+  vlm3d_dockers/          # submodule SHA c73fe07 — official VLM3D-Dockers eval containers (Task 4 = FVD + CLIPScore + 2.5-D FID)
+  maisi_bundle/           # vendored MONAI MAISI bundle (FROZEN VAE: autoencoder.pt + configs/inference.json)
 
-tests/                    # pytest scaffold (test_hydra_compose, test_maisi_frozen_load, +placeholders)
+tests/                    # pytest scaffold (test_hydra_compose, test_maisi_frozen_load, test_data_module, +placeholders)
 notebooks/                # eda.ipynb (lands Day 4-5)
-docs/                     # submodule_pins.md, ct_clip_check.md, report2ct_training_handoff.md (Day 2+)
+docs/                     # submodule_pins.md, ct_clip_check.md, report2ct_external_components.md, report2ct_training_handoff.md (Day 2+)
 submission/               # Phase A Day 5 stub submission docker → Phase D production
 results/                  # results/upper_bound.json (1mm MAISI VAE PSNR 30.94 baseline)
 data/                     # new artifacts only (data/checkpoints/...)
-maisi_bundle/             # FROZEN MAISI VAE (autoencoder.pt) — R6 mitigation: test_maisi_frozen_load.py
 paper_pdf/                # Report2CT.pdf + others (reference)
 deprecated/               # all triplane-era work (do not import from here)
 ```

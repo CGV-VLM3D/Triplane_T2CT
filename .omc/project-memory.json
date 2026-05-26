@@ -19,7 +19,7 @@
   },
   "build": {
     "buildCommand": null,
-    "testCommand": "pytest tests/test_hydra_compose.py tests/test_maisi_frozen_load.py tests/test_generatect_adapter.py tests/test_report2ct_module.py tests/test_lightning_fit_smoke.py tests/test_diagnostic_cross_attn_generatect_smoke.py 2>&1 | tail -10",
+    "testCommand": "pytest tests/ -v --ignore=tests/test_configs.py --ignore=tests/test_datamodules.py --ignore=tests/test_eval.py --ignore=tests/test_sweeps.py --ignore=tests/test_train.py --ignore=tests/helpers 2>&1 | tail -30",
     "lintCommand": null,
     "devCommand": null,
     "scripts": {}
@@ -296,6 +296,12 @@
       "type": "file"
     },
     {
+      "path": "CLAUDE.md",
+      "accessCount": 7,
+      "lastAccessed": 1779781136246,
+      "type": "file"
+    },
+    {
       "path": "scripts\\train.py",
       "accessCount": 6,
       "lastAccessed": 1779373280062,
@@ -305,12 +311,6 @@
       "path": "src\\models\\triplane_encoder.py",
       "accessCount": 6,
       "lastAccessed": 1779374075862,
-      "type": "file"
-    },
-    {
-      "path": "CLAUDE.md",
-      "accessCount": 6,
-      "lastAccessed": 1779779313677,
       "type": "file"
     },
     {
