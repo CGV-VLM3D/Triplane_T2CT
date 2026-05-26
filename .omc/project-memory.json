@@ -19,7 +19,7 @@
   },
   "build": {
     "buildCommand": null,
-    "testCommand": "pytest tests/ -v --ignore=tests/test_configs.py --ignore=tests/test_datamodules.py --ignore=tests/test_eval.py --ignore=tests/test_sweeps.py --ignore=tests/test_train.py --ignore=tests/helpers 2>&1 | tail -25",
+    "testCommand": "pytest tests/ --ignore=tests/test_configs.py --ignore=tests/test_datamodules.py --ignore=tests/test_eval.py --ignore=tests/test_sweeps.py --ignore=tests/test_train.py --ignore=tests/helpers 2>&1 | tail -5",
     "lintCommand": null,
     "devCommand": null,
     "scripts": {}
