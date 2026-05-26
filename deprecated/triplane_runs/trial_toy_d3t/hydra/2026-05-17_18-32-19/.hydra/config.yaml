@@ -1,0 +1,43 @@
+exp_name: trial_toy_d3t
+data:
+  root: /workspace/data/latents_2mm
+model:
+  kind: TriVAE_D3T
+  in_channels: 4
+  emb_dim: 128
+  patch_size: 4
+  n_swin_enc_layers: 4
+  swin_window_size:
+  - 5
+  - 5
+  - 4
+  swin_num_heads: 8
+  n_fpsi_layers: 2
+  fpsi_num_heads: 8
+  out_channels: 8
+  n_swin_dec_layers: 4
+  latent_shape:
+  - 60
+  - 60
+  - 32
+loss:
+  l1_weight: 1.0
+train:
+  epochs: 100
+  batch_size: 4
+  lr: 0.0001
+  log_every: 25
+  amp: bf16
+  resume: auto
+  save_every_n_steps: 500
+  max_wall_minutes: 60
+eval:
+  fast_n_samples: 100
+  image_metric_n_samples: 0
+  image_metric_every_n_epochs: 0
+  val_split: valid
+  sw_batch_size: 64
+  compile_maisi: false
+wandb:
+  project: triplane-ae
+  run_name: trial_toy_d3t

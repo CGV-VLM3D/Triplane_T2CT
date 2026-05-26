@@ -1,62 +1,75 @@
-# Triplane Autoencoder for MAISI Latents
+# VLM3D 2026 Task 4 — Report2CT-Beating Text→3D CT Generation
 
 ## Project goal
-Encode MAISI VAE latent `[B, 4, 120, 120, 64]` → 3 axis-aligned 2D triplanes (XY, YZ, XZ) → decode back to 3D latent → pass through the frozen MAISI decoder to recover the CT volume. Evaluate PSNR/SSIM against MAISI's own round-trip reconstruction (upper bound); minimize the gap.
+Submit to **MICCAI VLM3D 2026 Task 4 (Text-Conditional CT Generation)** by **2026-08-20** and beat the published winner **Report2CT** on FVD / 2.5D-FID / CLIPScore as measured by VLM3D-Dockers.
+
+Pipeline (target): radiology report (findings + impression) + voxel spacing →
+multi-encoder text + spacing conditioning → latent diffusion in MAISI VAE latent space
+(`[B, 4, 120, 120, 64]`) → MAISI decoder → CT volume (`[B, 1, 480, 480, 256]`).
+
+Plan: `/workspace/.omc/plans/vlm3d-pivot-plan.md` (Critic APPROVED, iter 3 consensus).
+
+## Phase plan
+- **Phase A (5/26 → 5/31, 5d)**: repo restructure on lightning-hydra-template + EDA + GenerateCT pretrained inference + Report2CT paper read + stub submission docker.
+- **Phase B (6/1 → 6/30, 4w)**: Report2CT training-ready code via submodule adapter + 4 diagnostic modules + VLM3D-Dockers eval. **User runs the multi-day Report2CT training** ([[report2ct-training-is-user-owned]]).
+- **Phase C (7/1 → 7/31, 4w)**: our v1 model + ablations.
+- **Phase D (8/1 → 8/20, 3w)**: final + submission docker.
 
 ## Environment
-DeepCGV-Mk7, up to 3× A6000 Blackwell. Docker dev container. Python 3.11, PyTorch 2.x, MONAI, wandb. Hydra configs.
+DeepCGV-Mk7, up to **3× A6000 Blackwell (96 GB each)**. Docker dev container. Python 3.11, PyTorch 2.x, MONAI 1.4, lightning 2.4, Hydra 1.3, transformers 4.46, diffusers 0.31, wandb.
+
+## Repo layout (post Phase A restructure)
+```
+src/                      # lightning-hydra-template base + our additions
+  data/                   # LightningDataModule (CT-RATE, MAISI latents)
+  models/                 # ours_v1+ LightningModule
+  baselines/              # adapter LightningModules for Report2CT, GenerateCT
+  diagnostics/            # cross_attn, retrieval, counterfactual, token_region
+  train.py, eval.py       # Hydra entrypoints
+
+configs/                  # Hydra hierarchy (data/model/trainer/logger/callbacks/experiment/...)
+
+third_party/              # READ-ONLY submodules (P2)
+  report2ct/              # SHA 7b483a8 — paper code + train.sh + JSON configs (weights NOT released)
+  generatect/             # SHA 2a81135 — has 3 pretrained .pt ckpts on HF
+  vlm3d_dockers/          # SHA c73fe07 — official VLM3D-Dockers eval containers (Task 4 = FVD + CLIPScore + 2.5-D FID)
+
+tests/                    # pytest scaffold (test_hydra_compose, test_maisi_frozen_load, +placeholders)
+notebooks/                # eda.ipynb (lands Day 4-5)
+docs/                     # submodule_pins.md, ct_clip_check.md, report2ct_training_handoff.md (Day 2+)
+submission/               # Phase A Day 5 stub submission docker → Phase D production
+results/                  # results/upper_bound.json (1mm MAISI VAE PSNR 30.94 baseline)
+data/                     # new artifacts only (data/checkpoints/...)
+maisi_bundle/             # FROZEN MAISI VAE (autoencoder.pt) — R6 mitigation: test_maisi_frozen_load.py
+paper_pdf/                # Report2CT.pdf + others (reference)
+deprecated/               # all triplane-era work (do not import from here)
+```
 
 ## Dataset reference
-Pipeline: raw CT NIfTI → resample to target spacing (default 1mm³) → MAISI preproc `[1, 480, 480, 256]` → MAISI VAE encode `[4, 120, 120, 64]` (fp16) → **our triplane AE** encodes/decodes this latent. MAISI VAE compression ratio is 4× per spatial axis. MAISI VAE is fully convolutional and used with sliding-window inference (default ROI 80³, see `maisi_bundle/configs/inference.json`), so input spatial dimensions are flexible — any size that is a multiple of 4 works. The VAE itself was trained on 64³/128³ random patches across diverse CT spacings (~0.5–2mm), so changing FOV or spacing at encode time is supported in principle; it has only mild robustness limits, not a hard fixed input size.
-
-- **Raw CT (CT-RATE)** at [/workspace/datasets/datasets/CT-RATE/dataset/](datasets/datasets/CT-RATE/dataset/)
-  - `train_fixed/`: 20,000 patient dirs, 47,148 scans (NIfTI, 512×512×~300, XYSpacing ~0.82mm, ZSpacing 1.0mm)
+- **Raw CT (CT-RATE)** at `/workspace/datasets/datasets/CT-RATE/dataset/`
+  - `train_fixed/`: 20,000 patient dirs, 47,148 scans (NIfTI)
   - `valid_fixed/`: 1,304 patient dirs, 3,038 scans
-  - `metadata/{train,validation}_metadata.csv`: 44 cols (manufacturer, age, spacing, kernel, ...)
-  - `multi_abnormality_labels/`: 18 binary abnormality labels per scan
-  - `radiology_text_reports/`: free-text radiology reports
-  - `ts_seg/`, `anatomy_segmentation_labels/`: segmentation maps
+  - `metadata/{train,validation}_metadata.csv`: spacing, kernel, manufacturer, etc.
+  - `multi_abnormality_labels/`: 18 binary labels per scan
+  - `radiology_text_reports/`: free-text reports (findings + impression)
+- **Storage convention**: `/workspace/datasets/` is collaborator's read-only area. New artifacts → `/workspace/data/`.
+- **GPU convention**: prefix scripts with `CUDA_VISIBLE_DEVICES=0` for single-GPU; explicit `CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node=2 ...` for multi-GPU.
 
-- **Precomputed MAISI latents** at [/workspace/datasets/datasets/latents/](datasets/datasets/latents/)
-  - 5,000 train / 1,000 valid (toy subset prepared by a collaborator)
-  - Per sample: `mu.pt` `[4, 120, 120, 64]` fp16, `sigma.pt` (same shape), `src.txt` (pointer to source NIfTI)
-  - `stats.json`: channel-wise mean/std for normalization. Loader: [src/data/maisi_latent_dataset.py](src/data/maisi_latent_dataset.py)
-  - This is our main training source. **Read-only — do not write new artifacts here.**
+## Win condition (frozen)
+On CT-RATE valid 1000-split, via VLM3D-Dockers: `ours_final` beats `report2ct_our_repro` in ≥2 of {2.5D-FID, CLIPScore-T2I, FVD}. Metric priority for headline: **2.5D-FID > CLIPScore-T2I > FVD**.
 
-- **Storage convention**: `/workspace/datasets/` is the collaborator's read-only data area. All new artifacts (toy-spacing latents, recon caches, intermediate tensors) go under [/workspace/data/](data/). Example: Path-B toy latents at `/workspace/data/latents_2mm/{train,valid}/<sample>/{mu.pt, sigma.pt, src.txt}` + `stats.json`.
+## Envelope (Report2CT 3-TE-cfg5 anchor)
+- 2.5D-FID anchor = 4.04 (Fig 6 FID Avg) ⇒ ±15%
+- CLIPScore-T2I anchor = 59.93 (Fig 5) ⇒ ±10%
+- FVD anchor = self-measured on 6/1 (paper does NOT report FVD) ⇒ ±25%
 
-- **GPU convention**: prefix every script and training command with `CUDA_VISIBLE_DEVICES=0` so only GPU 0 is used. Scripts pin `device = "cuda:0"` for the same reason.
-
-## Conventions
-- All experiment artifacts under `runs/<exp_name>/{checkpoints,figs,logs,hydra}/`.
-- Project-wide baseline (`results/upper_bound.json`) stays at the top-level `results/`.
-- Image metrics on `[0, 1]` domain; SSIM `win_size=11` (matches the upper-bound measurement).
-- `sw_batch_size`: 64 on A6000 Pro (default), 8–16 on RTX 4090 — override with `eval.sw_batch_size=8`.
+## Upper bound (preserved from earlier work)
+MAISI VAE encode→decode round-trip on 1000 CT-RATE valid: **PSNR 30.94 ± 2.97 dB, SSIM 0.7195 ± 0.1084**. Intensity: HU clipped to `[-1000, 1000]`, scaled to `[0, 1]`; spatial 480×480×256. Full: `results/upper_bound.json`.
 
 ## Compute / I/O notes
-3D MAISI latent (`mu.pt`, `[4,120,120,64]` fp16, ~7.2 MB/sample × 6,000 ≈ 43 GB) **streaming reads dominate runtime** for any per-sample sweep (distribution analysis, eval, recon caching). Before picking GPU, check if the inner math justifies it:
-- **GPU helps** when per-sample compute is heavy: 3D FFT, per-voxel covariance/outer-products, decoder passthrough, dense attention. Otherwise GPU sits idle and you pay disk-load latency at CPU speed.
-- **CPU + many workers helps** when the workload is moments/histograms/projections (cheap arithmetic). Defaults: `--device cpu --num-workers 16 --batch-size 4` is often faster end-to-end than naive `--device cuda:0` because it actually feeds the pipeline.
-- If using GPU, raise `num_workers` (≥8), `prefetch_factor` (≥4), `pin_memory=True`, and move tensors with `non_blocking=True`. A 0% GPU util + small VRAM means the loader is the bottleneck.
-- Cache per-sample summary stats (parquet/CSV) on first pass so re-runs (e.g., re-ranking thresholds, plot tweaks) skip the I/O entirely.
-
-## Upper bound (measured 2026-05-12)
-MAISI VAE encode→decode round-trip on the 1000 CT-RATE valid volumes: **PSNR 30.94 ± 2.97 dB, SSIM 0.7195 ± 0.1084**. Intensity: HU clipped to `[-1000, 1000]`, scaled to `[0, 1]`; spatial 480×480×256. Full details in `results/upper_bound.json`.
-
-## Experiment iteration tiers
-Goal: shorten the feedback loop from ~1 day to ~30–60 min per Tier-1 experiment. **Latent crop is the worst option** — it breaks triplane's global axis-aligned structure. Two viable paths:
-
-- **Path A (safe, no precompute)**: keep `[4, 120, 120, 64]` latent. Reduce model width, data count, and wall-clock budget (μP / Chinchilla / Karpathy autoresearch convention). Keep model **depth unchanged** (depth-transfer is the most fragile under μP).
-- **Path B (faster per step, needs MAISI re-encode)**: resample raw CT to coarser spacing (e.g. 2mm³) → MAISI encode → `[4, 60, 60, 32]` toy latent. Per-step compute drops ~8×. Validate first by measuring MAISI round-trip PSNR vs 1mm baseline (29 dB) on ~50 volumes; if drop is ≤1–2 dB the toy latent is usable.
-
-Tier plan (using Path A by default; substitute Path B latents if validated):
-- **Tier 0 sanity (<5 min)**: 8–16 samples, overfit single batch to ~0 loss. Wired into pytest.
-- **Tier 1 architecture sweep (30–60 min, wall-clock capped)**: 500 latents (~10% of 5k), model width ½ (encoder `emb_dim` 512→256, decoder `hidden` 32→16), depth unchanged. Compare 5–10 candidates by **latent-domain reconstruction loss**.
-- **Tier 2 mid validation (4–6 h)**: all 5,000 latents, full model width, ~15 epochs. Promote 2–3 candidates.
-- **Tier 3 full run (1 day+)**: full data, full model, full epochs. 1–2 finalists only.
+3D MAISI latent streaming (`mu.pt`, 7.2 MB/sample × 6,000 ≈ 43 GB) **dominates runtime** for any per-sample sweep. Defaults: `--device cpu --num-workers 16` for cheap arithmetic; GPU only when inner ops justify it. See [[3d-latent-i-o-bottleneck]] memory.
 
 ## Non-goals
-Text conditioning, diffusion training, new dataset preprocessing.
-
-## Post-eval workflow
-After the `result-analyzer` subagent finishes for an experiment, invoke `research-summarizer` with the same `exp_name` to refresh `research_summary/summary.md`. A `SubagentStop` hook also surfaces this reminder.
+- Triplane autoencoder research ([[triplane-deprecated-2026-05]]).
+- Report2CT full training (user runs it directly — [[report2ct-training-is-user-owned]]).
+- New dataset preprocessing beyond what VLM3D-Dockers expects.

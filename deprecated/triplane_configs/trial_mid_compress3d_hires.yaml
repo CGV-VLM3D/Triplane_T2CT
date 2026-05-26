@@ -1,0 +1,37 @@
+# Tier-2: hires Compress3D (deep K/V, no triplane compression) on 1mm latents.
+# Goal: validate the hires architecture (winning tier1) at full 1mm scale.
+#
+# Memory note: 1mm full latent + n_triplane_downsamples=0 + full-res volume K/V
+# is ~8× heavier per-sample than the 2mm tier1 hires run (which used 35 GB at
+# batch_size=32). Default to batch_size=2 here for headroom on a single A6000
+# Pro; bump back up if VRAM allows.
+
+defaults:
+  - data: latents_1mm
+  - model: triplane_ae_compress3d
+  - train: tier2
+  - eval: full
+  - loss: l1
+  - wb: default
+  - _self_
+
+exp_name: trial_mid_compress3d_hires
+
+model:
+  encoder:
+    latent_shape: [120, 120, 64]
+    n_triplane_downsamples: 0   # no triplane compression
+    volume_downsample: 1        # no volume compression — deep K/V at full res
+
+train:
+  batch_size: 2
+
+eval:
+  image_metric_every_n_epochs: 10
+
+loss:
+  kl_weight: 1.0e-6
+
+hydra:
+  run:
+    dir: runs/${exp_name}/hydra/${now:%Y-%m-%d_%H-%M-%S}

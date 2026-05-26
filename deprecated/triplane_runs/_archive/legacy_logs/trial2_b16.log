@@ -1,0 +1,1444 @@
+[resume] loading snapshot: /workspace/runs/trial2/checkpoints/latest.pt
+[resume]   epoch=50  global_step=250000  completed_in_epoch=5000  epoch_done=True
+[wandb] resuming run id=wfn1avvj
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /root/.netrc.
+wandb: W&B API key is configured. Use `wandb login --relogin` to force relogin
+wandb: setting up run wfn1avvj
+wandb: Tracking run with wandb version 0.26.1
+wandb: Run data is saved locally in /workspace/wandb/run-20260514_120013-wfn1avvj
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Resuming run trial2
+wandb: ⭐️ View project at https://wandb.ai/jasonna24-/triplane-ae
+wandb: 🚀 View run at https://wandb.ai/jasonna24-/triplane-ae/runs/wfn1avvj
+[train] latent data_range from snapshot = 5.7366
+/opt/conda/lib/python3.11/site-packages/torch/nn/modules/transformer.py:382: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+[train] exp=trial2  model=TriplaneAE  device=cuda
+[train] batches=313  batch_size=16  epochs=500
+[resume] continuing at epoch=51 skip_first_steps_in_epoch=0 global_step=250000
+[eval] Loading MAISI decoder for image-domain validation...
+[load_state] missing=0 unexpected=0
+[eval] torch.compile disabled (eval.compile_maisi=false).
+[eval] MAISI decoder ready.
+[train] AMP mode: bfloat16 autocast (no GradScaler needed)
+[epoch 51 step 000]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.8  cos=0.5348
+wandb: WARNING Tried to log to step 250000 that is less than the current step 250001. Steps must be monotonically increasing, so this data will be ignored. See https://wandb.me/define-metric to log data out of order.
+[epoch 51 step 050]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.6  cos=0.5352
+[epoch 51 step 100]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.7  cos=0.5216
+[epoch 51 step 150]  loss=5.68e-01  l1=5.68e-01  l2=0.00e+00  psnr=17.0  cos=0.5444
+[epoch 51 step 200]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=17.0  cos=0.5295
+[epoch 51 step 250]  loss=5.67e-01  l1=5.67e-01  l2=0.00e+00  psnr=17.0  cos=0.5487
+[epoch 51 step 300]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.8  cos=0.5276
+[epoch 51 DONE]  final_loss=5.93e-01  psnr=16.77  cos=0.5276
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0051.pt
+[val epoch 51]  latent_l1=0.5886  latent_l2=0.8358  latent_psnr=26.2841
+[best] new best latent_psnr=26.2841 (prev=n/a) -> /workspace/runs/trial2/checkpoints/best.pt
+[epoch 52 step 000]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5323
+[epoch 52 step 050]  loss=5.68e-01  l1=5.68e-01  l2=0.00e+00  psnr=17.0  cos=0.5358
+[epoch 52 step 100]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.9  cos=0.5375
+[epoch 52 step 150]  loss=6.04e-01  l1=6.04e-01  l2=0.00e+00  psnr=16.6  cos=0.5228
+[epoch 52 step 200]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.7  cos=0.5447
+[epoch 52 step 250]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.8  cos=0.5294
+[epoch 52 step 300]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5490
+[epoch 52 DONE]  final_loss=6.17e-01  psnr=16.81  cos=0.5490
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0052.pt
+[val epoch 52]  latent_l1=0.5886  latent_l2=0.8357  latent_psnr=26.2850
+[best] new best latent_psnr=26.2850 (prev=26.2841) -> /workspace/runs/trial2/checkpoints/best.pt
+[epoch 53 step 000]  loss=6.21e-01  l1=6.21e-01  l2=0.00e+00  psnr=16.4  cos=0.5286
+[epoch 53 step 050]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5618
+[epoch 53 step 100]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.9  cos=0.5323
+[epoch 53 step 150]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5643
+[epoch 53 step 200]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5343
+[epoch 53 step 250]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5386
+[epoch 53 step 300]  loss=5.69e-01  l1=5.69e-01  l2=0.00e+00  psnr=17.0  cos=0.5660
+[epoch 53 DONE]  final_loss=5.75e-01  psnr=16.97  cos=0.5660
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0053.pt
+[val epoch 53]  latent_l1=0.5886  latent_l2=0.8357  latent_psnr=26.2850
+[best] new best latent_psnr=26.2850 (prev=26.2850) -> /workspace/runs/trial2/checkpoints/best.pt
+[epoch 54 step 000]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5437
+[epoch 54 step 050]  loss=5.64e-01  l1=5.64e-01  l2=0.00e+00  psnr=17.0  cos=0.5661
+[epoch 54 step 100]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5501
+[epoch 54 step 150]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5564
+[epoch 54 step 200]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5489
+[epoch 54 step 250]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.6  cos=0.5415
+[epoch 54 step 300]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=17.0  cos=0.5423
+[epoch 54 DONE]  final_loss=5.53e-01  psnr=16.98  cos=0.5423
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0054.pt
+[val epoch 54]  latent_l1=0.5887  latent_l2=0.8360  latent_psnr=26.2823
+[epoch 55 step 000]  loss=5.65e-01  l1=5.65e-01  l2=0.00e+00  psnr=17.1  cos=0.5427
+[epoch 55 step 050]  loss=6.08e-01  l1=6.08e-01  l2=0.00e+00  psnr=16.5  cos=0.5310
+[epoch 55 step 100]  loss=6.09e-01  l1=6.09e-01  l2=0.00e+00  psnr=16.4  cos=0.5389
+[epoch 55 step 150]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5388
+[epoch 55 step 200]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5449
+[epoch 55 step 250]  loss=5.63e-01  l1=5.63e-01  l2=0.00e+00  psnr=17.1  cos=0.5720
+[epoch 55 step 300]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5600
+[epoch 55 DONE]  final_loss=5.89e-01  psnr=16.80  cos=0.5600
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0055.pt
+[val epoch 55]  latent_l1=0.5840  latent_l2=0.8328  latent_psnr=26.3755  gap_to_upper_psnr=14.3446  gap_to_upper_ssim_3d=0.2224  image_psnr_3d=16.5951  image_ssim_3d=0.4971
+[best] new best latent_psnr=26.3755 (prev=26.2850) -> /workspace/runs/trial2/checkpoints/best.pt
+[epoch 56 step 000]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.5  cos=0.5357
+[epoch 56 step 050]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=17.0  cos=0.5464
+[epoch 56 step 100]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5481
+[epoch 56 step 150]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5383
+[epoch 56 step 200]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.6  cos=0.5453
+[epoch 56 step 250]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.8  cos=0.5304
+[epoch 56 step 300]  loss=6.04e-01  l1=6.04e-01  l2=0.00e+00  psnr=16.6  cos=0.5110
+[epoch 56 DONE]  final_loss=5.66e-01  psnr=16.64  cos=0.5110
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0056.pt
+[val epoch 56]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2855
+[epoch 57 step 000]  loss=6.25e-01  l1=6.25e-01  l2=0.00e+00  psnr=16.3  cos=0.5122
+[epoch 57 step 050]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.8  cos=0.5494
+[epoch 57 step 100]  loss=5.68e-01  l1=5.68e-01  l2=0.00e+00  psnr=17.0  cos=0.5557
+[epoch 57 step 150]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5172
+[epoch 57 step 200]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.9  cos=0.5314
+[epoch 57 step 250]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5461
+[epoch 57 step 300]  loss=5.72e-01  l1=5.72e-01  l2=0.00e+00  psnr=17.0  cos=0.5458
+[epoch 57 DONE]  final_loss=5.81e-01  psnr=16.95  cos=0.5458
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0057.pt
+[val epoch 57]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2842
+[epoch 58 step 000]  loss=5.55e-01  l1=5.55e-01  l2=0.00e+00  psnr=17.2  cos=0.5789
+[epoch 58 step 050]  loss=6.17e-01  l1=6.17e-01  l2=0.00e+00  psnr=16.4  cos=0.5372
+[epoch 58 step 100]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.7  cos=0.5395
+[epoch 58 step 150]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.6  cos=0.5495
+[epoch 58 step 200]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.9  cos=0.5289
+[epoch 58 step 250]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.8  cos=0.5378
+[epoch 58 step 300]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.7  cos=0.5100
+[epoch 58 DONE]  final_loss=6.06e-01  psnr=16.70  cos=0.5100
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0058.pt
+[val epoch 58]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2841
+[epoch 59 step 000]  loss=5.68e-01  l1=5.68e-01  l2=0.00e+00  psnr=17.0  cos=0.5441
+[epoch 59 step 050]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.8  cos=0.5357
+[epoch 59 step 100]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5472
+[epoch 59 step 150]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=16.9  cos=0.5477
+[epoch 59 step 200]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.9  cos=0.5493
+[epoch 59 step 250]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5436
+[epoch 59 step 300]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5407
+[epoch 59 DONE]  final_loss=5.82e-01  psnr=16.86  cos=0.5407
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0059.pt
+[val epoch 59]  latent_l1=0.5887  latent_l2=0.8359  latent_psnr=26.2836
+[epoch 60 step 000]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=17.0  cos=0.5409
+[epoch 60 step 050]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5364
+[epoch 60 step 100]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.6  cos=0.5502
+[epoch 60 step 150]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5511
+[epoch 60 step 200]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5308
+[epoch 60 step 250]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5378
+[epoch 60 step 300]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5646
+[epoch 60 DONE]  final_loss=5.59e-01  psnr=16.86  cos=0.5646
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0060.pt
+[val epoch 60]  latent_l1=0.5840  latent_l2=0.8330  latent_psnr=26.3733  gap_to_upper_psnr=14.3065  gap_to_upper_ssim_3d=0.2228  image_psnr_3d=16.6332  image_ssim_3d=0.4967
+[epoch 61 step 000]  loss=6.14e-01  l1=6.14e-01  l2=0.00e+00  psnr=16.4  cos=0.5329
+[epoch 61 step 050]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.6  cos=0.5427
+[epoch 61 step 100]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.6  cos=0.5404
+[epoch 61 step 150]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5594
+[epoch 61 step 200]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5384
+[epoch 61 step 250]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.6  cos=0.5387
+[epoch 61 step 300]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.7  cos=0.5323
+[epoch 61 DONE]  final_loss=5.64e-01  psnr=16.67  cos=0.5323
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0061.pt
+[val epoch 61]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2842
+[epoch 62 step 000]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5416
+[epoch 62 step 050]  loss=6.10e-01  l1=6.10e-01  l2=0.00e+00  psnr=16.5  cos=0.5259
+[epoch 62 step 100]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5413
+[epoch 62 step 150]  loss=5.69e-01  l1=5.69e-01  l2=0.00e+00  psnr=16.9  cos=0.5549
+[epoch 62 step 200]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5448
+[epoch 62 step 250]  loss=6.12e-01  l1=6.12e-01  l2=0.00e+00  psnr=16.5  cos=0.5358
+[epoch 62 step 300]  loss=5.66e-01  l1=5.66e-01  l2=0.00e+00  psnr=17.0  cos=0.5394
+[epoch 62 DONE]  final_loss=5.98e-01  psnr=17.01  cos=0.5394
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0062.pt
+[val epoch 62]  latent_l1=0.5887  latent_l2=0.8359  latent_psnr=26.2834
+[epoch 63 step 000]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5272
+[epoch 63 step 050]  loss=6.04e-01  l1=6.04e-01  l2=0.00e+00  psnr=16.5  cos=0.5337
+[epoch 63 step 100]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5410
+[epoch 63 step 150]  loss=6.09e-01  l1=6.09e-01  l2=0.00e+00  psnr=16.5  cos=0.5364
+[epoch 63 step 200]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.7  cos=0.5224
+[epoch 63 step 250]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5426
+[epoch 63 step 300]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.7  cos=0.5223
+[epoch 63 DONE]  final_loss=5.45e-01  psnr=16.68  cos=0.5223
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0063.pt
+[val epoch 63]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2845
+[epoch 64 step 000]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5304
+[epoch 64 step 050]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.8  cos=0.5523
+[epoch 64 step 100]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=16.9  cos=0.5623
+[epoch 64 step 150]  loss=6.09e-01  l1=6.09e-01  l2=0.00e+00  psnr=16.5  cos=0.5325
+[epoch 64 step 200]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.6  cos=0.5479
+[epoch 64 step 250]  loss=6.01e-01  l1=6.01e-01  l2=0.00e+00  psnr=16.7  cos=0.5240
+[epoch 64 step 300]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.7  cos=0.5324
+[epoch 64 DONE]  final_loss=5.85e-01  psnr=16.67  cos=0.5324
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0064.pt
+[val epoch 64]  latent_l1=0.5887  latent_l2=0.8359  latent_psnr=26.2827
+[epoch 65 step 000]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.5  cos=0.5445
+[epoch 65 step 050]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.8  cos=0.5571
+[epoch 65 step 100]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5397
+[epoch 65 step 150]  loss=5.60e-01  l1=5.60e-01  l2=0.00e+00  psnr=17.1  cos=0.5523
+[epoch 65 step 200]  loss=6.01e-01  l1=6.01e-01  l2=0.00e+00  psnr=16.6  cos=0.5345
+[epoch 65 step 250]  loss=6.17e-01  l1=6.17e-01  l2=0.00e+00  psnr=16.5  cos=0.5127
+[epoch 65 step 300]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5466
+[epoch 65 DONE]  final_loss=5.72e-01  psnr=16.70  cos=0.5466
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0065.pt
+[val epoch 65]  latent_l1=0.5841  latent_l2=0.8327  latent_psnr=26.3763  gap_to_upper_psnr=14.3186  gap_to_upper_ssim_3d=0.2218  image_psnr_3d=16.6212  image_ssim_3d=0.4976
+[best] new best latent_psnr=26.3763 (prev=26.3755) -> /workspace/runs/trial2/checkpoints/best.pt
+[epoch 66 step 000]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.6  cos=0.5342
+[epoch 66 step 050]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.7  cos=0.5241
+[epoch 66 step 100]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.7  cos=0.5410
+[epoch 66 step 150]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5482
+[epoch 66 step 200]  loss=6.10e-01  l1=6.10e-01  l2=0.00e+00  psnr=16.4  cos=0.5428
+[epoch 66 step 250]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.6  cos=0.5693
+[epoch 66 step 300]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5298
+[epoch 66 DONE]  final_loss=5.69e-01  psnr=16.84  cos=0.5298
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0066.pt
+[val epoch 66]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2857
+[epoch 67 step 000]  loss=6.07e-01  l1=6.07e-01  l2=0.00e+00  psnr=16.6  cos=0.5185
+[epoch 67 step 050]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5529
+[epoch 67 step 100]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5372
+[epoch 67 step 150]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5529
+[epoch 67 step 200]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5216
+[epoch 67 step 250]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.8  cos=0.5309
+[epoch 67 step 300]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5588
+[epoch 67 DONE]  final_loss=5.84e-01  psnr=16.68  cos=0.5588
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0067.pt
+[val epoch 67]  latent_l1=0.5886  latent_l2=0.8360  latent_psnr=26.2825
+[epoch 68 step 000]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5305
+[epoch 68 step 050]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.9  cos=0.5259
+[epoch 68 step 100]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.6  cos=0.5529
+[epoch 68 step 150]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.8  cos=0.5441
+[epoch 68 step 200]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5494
+[epoch 68 step 250]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5373
+[epoch 68 step 300]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5373
+[epoch 68 DONE]  final_loss=5.39e-01  psnr=16.73  cos=0.5373
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0068.pt
+[val epoch 68]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2850
+[epoch 69 step 000]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=16.9  cos=0.5518
+[epoch 69 step 050]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5398
+[epoch 69 step 100]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5461
+[epoch 69 step 150]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5541
+[epoch 69 step 200]  loss=6.27e-01  l1=6.27e-01  l2=0.00e+00  psnr=16.3  cos=0.5214
+[epoch 69 step 250]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5463
+[epoch 69 step 300]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5306
+[epoch 69 DONE]  final_loss=6.14e-01  psnr=16.83  cos=0.5306
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0069.pt
+[val epoch 69]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2845
+[epoch 70 step 000]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5305
+[epoch 70 step 050]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=16.9  cos=0.5412
+[epoch 70 step 100]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.6  cos=0.5515
+[epoch 70 step 150]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5465
+[epoch 70 step 200]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=16.9  cos=0.5508
+[epoch 70 step 250]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5542
+[epoch 70 step 300]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5541
+[epoch 70 DONE]  final_loss=5.80e-01  psnr=16.80  cos=0.5541
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0070.pt
+[val epoch 70]  latent_l1=0.5840  latent_l2=0.8329  latent_psnr=26.3740  gap_to_upper_psnr=14.1110  gap_to_upper_ssim_3d=0.2196  image_psnr_3d=16.8287  image_ssim_3d=0.4998
+[epoch 71 step 000]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.8  cos=0.5279
+[epoch 71 step 050]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.6  cos=0.5333
+[epoch 71 step 100]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.9  cos=0.5439
+[epoch 71 step 150]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5455
+[epoch 71 step 200]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=16.9  cos=0.5537
+[epoch 71 step 250]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5264
+[epoch 71 step 300]  loss=6.04e-01  l1=6.04e-01  l2=0.00e+00  psnr=16.6  cos=0.5256
+[epoch 71 DONE]  final_loss=5.83e-01  psnr=16.61  cos=0.5256
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0071.pt
+[val epoch 71]  latent_l1=0.5887  latent_l2=0.8360  latent_psnr=26.2824
+[epoch 72 step 000]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5450
+[epoch 72 step 050]  loss=5.64e-01  l1=5.64e-01  l2=0.00e+00  psnr=17.0  cos=0.5632
+[epoch 72 step 100]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.8  cos=0.5496
+[epoch 72 step 150]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.7  cos=0.5290
+[epoch 72 step 200]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5426
+[epoch 72 step 250]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.6  cos=0.5373
+[epoch 72 step 300]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5453
+[epoch 72 DONE]  final_loss=5.79e-01  psnr=16.92  cos=0.5453
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0072.pt
+[val epoch 72]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2842
+[epoch 73 step 000]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=16.9  cos=0.5492
+[epoch 73 step 050]  loss=6.26e-01  l1=6.26e-01  l2=0.00e+00  psnr=16.3  cos=0.5398
+[epoch 73 step 100]  loss=6.02e-01  l1=6.02e-01  l2=0.00e+00  psnr=16.6  cos=0.5452
+[epoch 73 step 150]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.9  cos=0.5306
+[epoch 73 step 200]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.7  cos=0.5427
+[epoch 73 step 250]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5450
+[epoch 73 step 300]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5471
+[epoch 73 DONE]  final_loss=6.09e-01  psnr=16.70  cos=0.5471
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0073.pt
+[val epoch 73]  latent_l1=0.5886  latent_l2=0.8358  latent_psnr=26.2841
+[epoch 74 step 000]  loss=5.67e-01  l1=5.67e-01  l2=0.00e+00  psnr=17.0  cos=0.5616
+[epoch 74 step 050]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5420
+[epoch 74 step 100]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.7  cos=0.5194
+[epoch 74 step 150]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5492
+[epoch 74 step 200]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.6  cos=0.5387
+[epoch 74 step 250]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5431
+[epoch 74 step 300]  loss=5.62e-01  l1=5.62e-01  l2=0.00e+00  psnr=17.1  cos=0.5610
+[epoch 74 DONE]  final_loss=6.09e-01  psnr=17.07  cos=0.5610
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0074.pt
+[val epoch 74]  latent_l1=0.5886  latent_l2=0.8357  latent_psnr=26.2852
+[epoch 75 step 000]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=16.9  cos=0.5542
+[epoch 75 step 050]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.7  cos=0.5340
+[epoch 75 step 100]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.8  cos=0.5517
+[epoch 75 step 150]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5383
+[epoch 75 step 200]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5341
+[epoch 75 step 250]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.6  cos=0.5454
+[epoch 75 step 300]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5440
+[epoch 75 DONE]  final_loss=6.07e-01  psnr=16.58  cos=0.5440
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0075.pt
+[val epoch 75]  latent_l1=0.5840  latent_l2=0.8326  latent_psnr=26.3776  gap_to_upper_psnr=14.1414  gap_to_upper_ssim_3d=0.2208  image_psnr_3d=16.7984  image_ssim_3d=0.4987
+[best] new best latent_psnr=26.3776 (prev=26.3763) -> /workspace/runs/trial2/checkpoints/best.pt
+[epoch 76 step 000]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.8  cos=0.5314
+[epoch 76 step 050]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5467
+[epoch 76 step 100]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.6  cos=0.5423
+[epoch 76 step 150]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5487
+[epoch 76 step 200]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.8  cos=0.5540
+[epoch 76 step 250]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5421
+[epoch 76 step 300]  loss=6.01e-01  l1=6.01e-01  l2=0.00e+00  psnr=16.6  cos=0.5405
+[epoch 76 DONE]  final_loss=5.89e-01  psnr=16.57  cos=0.5405
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0076.pt
+[val epoch 76]  latent_l1=0.5886  latent_l2=0.8357  latent_psnr=26.2855
+[epoch 77 step 000]  loss=5.60e-01  l1=5.60e-01  l2=0.00e+00  psnr=17.0  cos=0.5561
+[epoch 77 step 050]  loss=5.47e-01  l1=5.47e-01  l2=0.00e+00  psnr=17.2  cos=0.5701
+[epoch 77 step 100]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.9  cos=0.5400
+[epoch 77 step 150]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.6  cos=0.5445
+[epoch 77 step 200]  loss=6.16e-01  l1=6.16e-01  l2=0.00e+00  psnr=16.4  cos=0.5332
+[epoch 77 step 250]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5386
+[epoch 77 step 300]  loss=5.69e-01  l1=5.69e-01  l2=0.00e+00  psnr=17.0  cos=0.5530
+[epoch 77 DONE]  final_loss=6.14e-01  psnr=17.01  cos=0.5530
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0077.pt
+[val epoch 77]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2845
+[epoch 78 step 000]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5363
+[epoch 78 step 050]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5383
+[epoch 78 step 100]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.7  cos=0.5345
+[epoch 78 step 150]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5347
+[epoch 78 step 200]  loss=6.21e-01  l1=6.21e-01  l2=0.00e+00  psnr=16.3  cos=0.5329
+[epoch 78 step 250]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5430
+[epoch 78 step 300]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.7  cos=0.5340
+[epoch 78 DONE]  final_loss=5.86e-01  psnr=16.74  cos=0.5340
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0078.pt
+[val epoch 78]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2851
+[epoch 79 step 000]  loss=6.08e-01  l1=6.08e-01  l2=0.00e+00  psnr=16.6  cos=0.5153
+[epoch 79 step 050]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5374
+[epoch 79 step 100]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=16.9  cos=0.5782
+[epoch 79 step 150]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5429
+[epoch 79 step 200]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5404
+[epoch 79 step 250]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5550
+[epoch 79 step 300]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5290
+[epoch 79 DONE]  final_loss=5.87e-01  psnr=16.63  cos=0.5290
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0079.pt
+[val epoch 79]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2852
+[epoch 80 step 000]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5342
+[epoch 80 step 050]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5366
+[epoch 80 step 100]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.7  cos=0.5218
+[epoch 80 step 150]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5596
+[epoch 80 step 200]  loss=5.59e-01  l1=5.59e-01  l2=0.00e+00  psnr=17.1  cos=0.5581
+[epoch 80 step 250]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.7  cos=0.5455
+[epoch 80 step 300]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.6  cos=0.5477
+[epoch 80 DONE]  final_loss=5.81e-01  psnr=16.65  cos=0.5477
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0080.pt
+[val epoch 80]  latent_l1=0.5840  latent_l2=0.8328  latent_psnr=26.3756  gap_to_upper_psnr=14.2206  gap_to_upper_ssim_3d=0.2194  image_psnr_3d=16.7192  image_ssim_3d=0.5000
+[epoch 81 step 000]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.7  cos=0.5271
+[epoch 81 step 050]  loss=6.07e-01  l1=6.07e-01  l2=0.00e+00  psnr=16.5  cos=0.5326
+[epoch 81 step 100]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.6  cos=0.5420
+[epoch 81 step 150]  loss=6.10e-01  l1=6.10e-01  l2=0.00e+00  psnr=16.5  cos=0.5285
+[epoch 81 step 200]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5338
+[epoch 81 step 250]  loss=6.20e-01  l1=6.20e-01  l2=0.00e+00  psnr=16.4  cos=0.5309
+[epoch 81 step 300]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5379
+[epoch 81 DONE]  final_loss=5.77e-01  psnr=16.69  cos=0.5379
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0081.pt
+[val epoch 81]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2863
+[epoch 82 step 000]  loss=5.68e-01  l1=5.68e-01  l2=0.00e+00  psnr=17.0  cos=0.5413
+[epoch 82 step 050]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5346
+[epoch 82 step 100]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.8  cos=0.5352
+[epoch 82 step 150]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.9  cos=0.5419
+[epoch 82 step 200]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5453
+[epoch 82 step 250]  loss=5.66e-01  l1=5.66e-01  l2=0.00e+00  psnr=17.0  cos=0.5436
+[epoch 82 step 300]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5471
+[epoch 82 DONE]  final_loss=5.91e-01  psnr=16.84  cos=0.5471
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0082.pt
+[val epoch 82]  latent_l1=0.5886  latent_l2=0.8357  latent_psnr=26.2850
+[epoch 83 step 000]  loss=6.06e-01  l1=6.06e-01  l2=0.00e+00  psnr=16.5  cos=0.5390
+[epoch 83 step 050]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.6  cos=0.5325
+[epoch 83 step 100]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.8  cos=0.5461
+[epoch 83 step 150]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.9  cos=0.5405
+[epoch 83 step 200]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5360
+[epoch 83 step 250]  loss=5.62e-01  l1=5.62e-01  l2=0.00e+00  psnr=17.1  cos=0.5656
+[epoch 83 step 300]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.6  cos=0.5520
+[epoch 83 DONE]  final_loss=5.65e-01  psnr=16.61  cos=0.5520
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0083.pt
+[val epoch 83]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2866
+[epoch 84 step 000]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5293
+[epoch 84 step 050]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5365
+[epoch 84 step 100]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.6  cos=0.5547
+[epoch 84 step 150]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.9  cos=0.5497
+[epoch 84 step 200]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5416
+[epoch 84 step 250]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.9  cos=0.5341
+[epoch 84 step 300]  loss=6.08e-01  l1=6.08e-01  l2=0.00e+00  psnr=16.5  cos=0.5275
+[epoch 84 DONE]  final_loss=5.90e-01  psnr=16.55  cos=0.5275
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0084.pt
+[val epoch 84]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2855
+[epoch 85 step 000]  loss=5.66e-01  l1=5.66e-01  l2=0.00e+00  psnr=17.0  cos=0.5522
+[epoch 85 step 050]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5319
+[epoch 85 step 100]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.6  cos=0.5353
+[epoch 85 step 150]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.6  cos=0.5334
+[epoch 85 step 200]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5411
+[epoch 85 step 250]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5513
+[epoch 85 step 300]  loss=5.55e-01  l1=5.55e-01  l2=0.00e+00  psnr=17.1  cos=0.5671
+[epoch 85 DONE]  final_loss=6.07e-01  psnr=17.11  cos=0.5671
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0085.pt
+[val epoch 85]  latent_l1=0.5841  latent_l2=0.8330  latent_psnr=26.3735  gap_to_upper_psnr=14.1844  gap_to_upper_ssim_3d=0.2208  image_psnr_3d=16.7553  image_ssim_3d=0.4987
+[epoch 86 step 000]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.8  cos=0.5495
+[epoch 86 step 050]  loss=6.09e-01  l1=6.09e-01  l2=0.00e+00  psnr=16.5  cos=0.5374
+[epoch 86 step 100]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=16.8  cos=0.5513
+[epoch 86 step 150]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.7  cos=0.5406
+[epoch 86 step 200]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5461
+[epoch 86 step 250]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=16.9  cos=0.5384
+[epoch 86 step 300]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.6  cos=0.5489
+[epoch 86 DONE]  final_loss=5.69e-01  psnr=16.61  cos=0.5489
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0086.pt
+[val epoch 86]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2843
+[epoch 87 step 000]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5375
+[epoch 87 step 050]  loss=5.66e-01  l1=5.66e-01  l2=0.00e+00  psnr=17.0  cos=0.5483
+[epoch 87 step 100]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=16.9  cos=0.5600
+[epoch 87 step 150]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5395
+[epoch 87 step 200]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5406
+[epoch 87 step 250]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5524
+[epoch 87 step 300]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=16.9  cos=0.5519
+[epoch 87 DONE]  final_loss=5.79e-01  psnr=16.92  cos=0.5519
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0087.pt
+[val epoch 87]  latent_l1=0.5887  latent_l2=0.8360  latent_psnr=26.2815
+[epoch 88 step 000]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5381
+[epoch 88 step 050]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5385
+[epoch 88 step 100]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.6  cos=0.5472
+[epoch 88 step 150]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.7  cos=0.5300
+[epoch 88 step 200]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5309
+[epoch 88 step 250]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5374
+[epoch 88 step 300]  loss=6.12e-01  l1=6.12e-01  l2=0.00e+00  psnr=16.5  cos=0.5258
+[epoch 88 DONE]  final_loss=6.18e-01  psnr=16.45  cos=0.5258
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0088.pt
+[val epoch 88]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2867
+[epoch 89 step 000]  loss=6.08e-01  l1=6.08e-01  l2=0.00e+00  psnr=16.5  cos=0.5183
+[epoch 89 step 050]  loss=6.04e-01  l1=6.04e-01  l2=0.00e+00  psnr=16.6  cos=0.5414
+[epoch 89 step 100]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.7  cos=0.5569
+[epoch 89 step 150]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5315
+[epoch 89 step 200]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5449
+[epoch 89 step 250]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.6  cos=0.5385
+[epoch 89 step 300]  loss=5.65e-01  l1=5.65e-01  l2=0.00e+00  psnr=17.1  cos=0.5510
+[epoch 89 DONE]  final_loss=6.11e-01  psnr=17.08  cos=0.5510
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0089.pt
+[val epoch 89]  latent_l1=0.5886  latent_l2=0.8356  latent_psnr=26.2860
+[epoch 90 step 000]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5315
+[epoch 90 step 050]  loss=5.61e-01  l1=5.61e-01  l2=0.00e+00  psnr=17.0  cos=0.5510
+[epoch 90 step 100]  loss=5.49e-01  l1=5.49e-01  l2=0.00e+00  psnr=17.3  cos=0.5536
+[epoch 90 step 150]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.8  cos=0.5548
+[epoch 90 step 200]  loss=6.23e-01  l1=6.23e-01  l2=0.00e+00  psnr=16.4  cos=0.5074
+[epoch 90 step 250]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5404
+[epoch 90 step 300]  loss=6.25e-01  l1=6.25e-01  l2=0.00e+00  psnr=16.3  cos=0.5322
+[epoch 90 DONE]  final_loss=5.95e-01  psnr=16.26  cos=0.5322
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0090.pt
+[val epoch 90]  latent_l1=0.5840  latent_l2=0.8328  latent_psnr=26.3754  gap_to_upper_psnr=14.1913  gap_to_upper_ssim_3d=0.2184  image_psnr_3d=16.7484  image_ssim_3d=0.5011
+[epoch 91 step 000]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5516
+[epoch 91 step 050]  loss=6.22e-01  l1=6.22e-01  l2=0.00e+00  psnr=16.3  cos=0.5260
+[epoch 91 step 100]  loss=5.65e-01  l1=5.65e-01  l2=0.00e+00  psnr=17.0  cos=0.5631
+[epoch 91 step 150]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5291
+[epoch 91 step 200]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5315
+[epoch 91 step 250]  loss=6.02e-01  l1=6.02e-01  l2=0.00e+00  psnr=16.5  cos=0.5363
+[epoch 91 step 300]  loss=6.02e-01  l1=6.02e-01  l2=0.00e+00  psnr=16.6  cos=0.5348
+[epoch 91 DONE]  final_loss=6.24e-01  psnr=16.57  cos=0.5348
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0091.pt
+[val epoch 91]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2857
+[epoch 92 step 000]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5475
+[epoch 92 step 050]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5397
+[epoch 92 step 100]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=16.9  cos=0.5470
+[epoch 92 step 150]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5259
+[epoch 92 step 200]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5373
+[epoch 92 step 250]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5615
+[epoch 92 step 300]  loss=6.19e-01  l1=6.19e-01  l2=0.00e+00  psnr=16.4  cos=0.5290
+[epoch 92 DONE]  final_loss=5.83e-01  psnr=16.38  cos=0.5290
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0092.pt
+[val epoch 92]  latent_l1=0.5886  latent_l2=0.8357  latent_psnr=26.2849
+[epoch 93 step 000]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5417
+[epoch 93 step 050]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.6  cos=0.5447
+[epoch 93 step 100]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5307
+[epoch 93 step 150]  loss=5.68e-01  l1=5.68e-01  l2=0.00e+00  psnr=17.0  cos=0.5587
+[epoch 93 step 200]  loss=6.02e-01  l1=6.02e-01  l2=0.00e+00  psnr=16.6  cos=0.5351
+[epoch 93 step 250]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5440
+[epoch 93 step 300]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.6  cos=0.5477
+[epoch 93 DONE]  final_loss=5.94e-01  psnr=16.64  cos=0.5477
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0093.pt
+[val epoch 93]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2861
+[epoch 94 step 000]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=16.9  cos=0.5560
+[epoch 94 step 050]  loss=6.05e-01  l1=6.05e-01  l2=0.00e+00  psnr=16.5  cos=0.5394
+[epoch 94 step 100]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.6  cos=0.5230
+[epoch 94 step 150]  loss=6.14e-01  l1=6.14e-01  l2=0.00e+00  psnr=16.4  cos=0.5395
+[epoch 94 step 200]  loss=6.13e-01  l1=6.13e-01  l2=0.00e+00  psnr=16.5  cos=0.5311
+[epoch 94 step 250]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.6  cos=0.5351
+[epoch 94 step 300]  loss=5.60e-01  l1=5.60e-01  l2=0.00e+00  psnr=17.1  cos=0.5346
+[epoch 94 DONE]  final_loss=5.83e-01  psnr=17.10  cos=0.5346
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0094.pt
+[val epoch 94]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2848
+[epoch 95 step 000]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.9  cos=0.5386
+[epoch 95 step 050]  loss=5.72e-01  l1=5.72e-01  l2=0.00e+00  psnr=17.0  cos=0.5305
+[epoch 95 step 100]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=16.9  cos=0.5540
+[epoch 95 step 150]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5506
+[epoch 95 step 200]  loss=5.57e-01  l1=5.57e-01  l2=0.00e+00  psnr=17.1  cos=0.5651
+[epoch 95 step 250]  loss=6.02e-01  l1=6.02e-01  l2=0.00e+00  psnr=16.6  cos=0.5247
+[epoch 95 step 300]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=16.9  cos=0.5461
+[epoch 95 DONE]  final_loss=6.46e-01  psnr=16.92  cos=0.5461
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0095.pt
+[val epoch 95]  latent_l1=0.5840  latent_l2=0.8325  latent_psnr=26.3781  gap_to_upper_psnr=14.2456  gap_to_upper_ssim_3d=0.2209  image_psnr_3d=16.6942  image_ssim_3d=0.4985
+[best] new best latent_psnr=26.3781 (prev=26.3776) -> /workspace/runs/trial2/checkpoints/best.pt
+[epoch 96 step 000]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=17.0  cos=0.5151
+[epoch 96 step 050]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5466
+[epoch 96 step 100]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5608
+[epoch 96 step 150]  loss=6.02e-01  l1=6.02e-01  l2=0.00e+00  psnr=16.6  cos=0.5390
+[epoch 96 step 200]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.7  cos=0.5501
+[epoch 96 step 250]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5427
+[epoch 96 step 300]  loss=5.72e-01  l1=5.72e-01  l2=0.00e+00  psnr=16.9  cos=0.5567
+[epoch 96 DONE]  final_loss=6.05e-01  psnr=16.88  cos=0.5567
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0096.pt
+[val epoch 96]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2848
+[epoch 97 step 000]  loss=6.10e-01  l1=6.10e-01  l2=0.00e+00  psnr=16.4  cos=0.5365
+[epoch 97 step 050]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5304
+[epoch 97 step 100]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5517
+[epoch 97 step 150]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.7  cos=0.5597
+[epoch 97 step 200]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5584
+[epoch 97 step 250]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5500
+[epoch 97 step 300]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5440
+[epoch 97 DONE]  final_loss=5.87e-01  psnr=16.77  cos=0.5440
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0097.pt
+[val epoch 97]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2849
+[epoch 98 step 000]  loss=6.20e-01  l1=6.20e-01  l2=0.00e+00  psnr=16.3  cos=0.5354
+[epoch 98 step 050]  loss=6.13e-01  l1=6.13e-01  l2=0.00e+00  psnr=16.5  cos=0.5169
+[epoch 98 step 100]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5479
+[epoch 98 step 150]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5381
+[epoch 98 step 200]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.8  cos=0.5433
+[epoch 98 step 250]  loss=6.14e-01  l1=6.14e-01  l2=0.00e+00  psnr=16.4  cos=0.5340
+[epoch 98 step 300]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5375
+[epoch 98 DONE]  final_loss=5.96e-01  psnr=16.88  cos=0.5375
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0098.pt
+[val epoch 98]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2836
+[epoch 99 step 000]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.6  cos=0.5355
+[epoch 99 step 050]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.7  cos=0.5199
+[epoch 99 step 100]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.6  cos=0.5610
+[epoch 99 step 150]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5401
+[epoch 99 step 200]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5559
+[epoch 99 step 250]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.8  cos=0.5250
+[epoch 99 step 300]  loss=5.72e-01  l1=5.72e-01  l2=0.00e+00  psnr=17.0  cos=0.5541
+[epoch 99 DONE]  final_loss=5.80e-01  psnr=16.96  cos=0.5541
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0099.pt
+[val epoch 99]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2851
+[epoch 100 step 000]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5389
+[epoch 100 step 050]  loss=6.07e-01  l1=6.07e-01  l2=0.00e+00  psnr=16.5  cos=0.5279
+[epoch 100 step 100]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5300
+[epoch 100 step 150]  loss=6.01e-01  l1=6.01e-01  l2=0.00e+00  psnr=16.6  cos=0.5474
+[epoch 100 step 200]  loss=6.02e-01  l1=6.02e-01  l2=0.00e+00  psnr=16.6  cos=0.5433
+[epoch 100 step 250]  loss=6.06e-01  l1=6.06e-01  l2=0.00e+00  psnr=16.5  cos=0.5449
+[epoch 100 step 300]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=17.0  cos=0.5634
+[epoch 100 DONE]  final_loss=5.59e-01  psnr=16.95  cos=0.5634
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0100.pt
+[val epoch 100]  latent_l1=0.5840  latent_l2=0.8329  latent_psnr=26.3743  gap_to_upper_psnr=14.2814  gap_to_upper_ssim_3d=0.2216  image_psnr_3d=16.6583  image_ssim_3d=0.4979
+[epoch 101 step 000]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5324
+[epoch 101 step 050]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.7  cos=0.5493
+[epoch 101 step 100]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5383
+[epoch 101 step 150]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5424
+[epoch 101 step 200]  loss=6.06e-01  l1=6.06e-01  l2=0.00e+00  psnr=16.5  cos=0.5235
+[epoch 101 step 250]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=16.9  cos=0.5434
+[epoch 101 step 300]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.7  cos=0.5355
+[epoch 101 DONE]  final_loss=6.01e-01  psnr=16.65  cos=0.5355
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0101.pt
+[val epoch 101]  latent_l1=0.5886  latent_l2=0.8356  latent_psnr=26.2856
+[epoch 102 step 000]  loss=5.68e-01  l1=5.68e-01  l2=0.00e+00  psnr=17.0  cos=0.5362
+[epoch 102 step 050]  loss=6.25e-01  l1=6.25e-01  l2=0.00e+00  psnr=16.3  cos=0.5166
+[epoch 102 step 100]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5569
+[epoch 102 step 150]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5409
+[epoch 102 step 200]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.7  cos=0.5363
+[epoch 102 step 250]  loss=6.11e-01  l1=6.11e-01  l2=0.00e+00  psnr=16.5  cos=0.5255
+[epoch 102 step 300]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5438
+[epoch 102 DONE]  final_loss=5.50e-01  psnr=16.88  cos=0.5438
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0102.pt
+[val epoch 102]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2866
+[epoch 103 step 000]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5729
+[epoch 103 step 050]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.7  cos=0.5172
+[epoch 103 step 100]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.6  cos=0.5426
+[epoch 103 step 150]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5546
+[epoch 103 step 200]  loss=6.17e-01  l1=6.17e-01  l2=0.00e+00  psnr=16.4  cos=0.5334
+[epoch 103 step 250]  loss=5.54e-01  l1=5.54e-01  l2=0.00e+00  psnr=17.2  cos=0.5598
+[epoch 103 step 300]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5537
+[epoch 103 DONE]  final_loss=5.52e-01  psnr=16.80  cos=0.5537
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0103.pt
+[val epoch 103]  latent_l1=0.5887  latent_l2=0.8359  latent_psnr=26.2831
+[epoch 104 step 000]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5437
+[epoch 104 step 050]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.9  cos=0.5354
+[epoch 104 step 100]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5378
+[epoch 104 step 150]  loss=6.07e-01  l1=6.07e-01  l2=0.00e+00  psnr=16.5  cos=0.5361
+[epoch 104 step 200]  loss=5.64e-01  l1=5.64e-01  l2=0.00e+00  psnr=17.0  cos=0.5477
+[epoch 104 step 250]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.7  cos=0.5478
+[epoch 104 step 300]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.7  cos=0.5373
+[epoch 104 DONE]  final_loss=5.88e-01  psnr=16.70  cos=0.5373
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0104.pt
+[val epoch 104]  latent_l1=0.5886  latent_l2=0.8358  latent_psnr=26.2845
+[epoch 105 step 000]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.6  cos=0.5587
+[epoch 105 step 050]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5499
+[epoch 105 step 100]  loss=6.12e-01  l1=6.12e-01  l2=0.00e+00  psnr=16.5  cos=0.5190
+[epoch 105 step 150]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.9  cos=0.5392
+[epoch 105 step 200]  loss=6.35e-01  l1=6.35e-01  l2=0.00e+00  psnr=16.2  cos=0.5198
+[epoch 105 step 250]  loss=6.11e-01  l1=6.11e-01  l2=0.00e+00  psnr=16.4  cos=0.5393
+[epoch 105 step 300]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5238
+[epoch 105 DONE]  final_loss=5.60e-01  psnr=16.63  cos=0.5238
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0105.pt
+[val epoch 105]  latent_l1=0.5840  latent_l2=0.8328  latent_psnr=26.3759  gap_to_upper_psnr=14.0002  gap_to_upper_ssim_3d=0.2205  image_psnr_3d=16.9396  image_ssim_3d=0.4990
+[epoch 106 step 000]  loss=6.37e-01  l1=6.37e-01  l2=0.00e+00  psnr=16.2  cos=0.5179
+[epoch 106 step 050]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.7  cos=0.5346
+[epoch 106 step 100]  loss=6.02e-01  l1=6.02e-01  l2=0.00e+00  psnr=16.6  cos=0.5334
+[epoch 106 step 150]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=17.0  cos=0.5595
+[epoch 106 step 200]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.9  cos=0.5281
+[epoch 106 step 250]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5405
+[epoch 106 step 300]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5179
+[epoch 106 DONE]  final_loss=5.71e-01  psnr=16.65  cos=0.5179
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0106.pt
+[val epoch 106]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2858
+[epoch 107 step 000]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.7  cos=0.5428
+[epoch 107 step 050]  loss=6.06e-01  l1=6.06e-01  l2=0.00e+00  psnr=16.6  cos=0.5283
+[epoch 107 step 100]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.9  cos=0.5317
+[epoch 107 step 150]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.7  cos=0.5617
+[epoch 107 step 200]  loss=5.61e-01  l1=5.61e-01  l2=0.00e+00  psnr=17.0  cos=0.5517
+[epoch 107 step 250]  loss=6.01e-01  l1=6.01e-01  l2=0.00e+00  psnr=16.6  cos=0.5367
+[epoch 107 step 300]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.8  cos=0.5562
+[epoch 107 DONE]  final_loss=5.89e-01  psnr=16.82  cos=0.5562
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0107.pt
+[val epoch 107]  latent_l1=0.5887  latent_l2=0.8359  latent_psnr=26.2826
+[epoch 108 step 000]  loss=6.04e-01  l1=6.04e-01  l2=0.00e+00  psnr=16.5  cos=0.5343
+[epoch 108 step 050]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5472
+[epoch 108 step 100]  loss=6.05e-01  l1=6.05e-01  l2=0.00e+00  psnr=16.6  cos=0.5356
+[epoch 108 step 150]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5491
+[epoch 108 step 200]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5448
+[epoch 108 step 250]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.8  cos=0.5580
+[epoch 108 step 300]  loss=5.67e-01  l1=5.67e-01  l2=0.00e+00  psnr=17.0  cos=0.5514
+[epoch 108 DONE]  final_loss=5.62e-01  psnr=16.98  cos=0.5514
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0108.pt
+[val epoch 108]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2861
+[epoch 109 step 000]  loss=6.02e-01  l1=6.02e-01  l2=0.00e+00  psnr=16.6  cos=0.5307
+[epoch 109 step 050]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5441
+[epoch 109 step 100]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.8  cos=0.5691
+[epoch 109 step 150]  loss=5.66e-01  l1=5.66e-01  l2=0.00e+00  psnr=17.0  cos=0.5608
+[epoch 109 step 200]  loss=6.04e-01  l1=6.04e-01  l2=0.00e+00  psnr=16.5  cos=0.5414
+[epoch 109 step 250]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5352
+[epoch 109 step 300]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=17.0  cos=0.5474
+[epoch 109 DONE]  final_loss=6.03e-01  psnr=17.00  cos=0.5474
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0109.pt
+[val epoch 109]  latent_l1=0.5887  latent_l2=0.8355  latent_psnr=26.2868
+[epoch 110 step 000]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5501
+[epoch 110 step 050]  loss=5.64e-01  l1=5.64e-01  l2=0.00e+00  psnr=17.0  cos=0.5585
+[epoch 110 step 100]  loss=5.62e-01  l1=5.62e-01  l2=0.00e+00  psnr=17.1  cos=0.5540
+[epoch 110 step 150]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.7  cos=0.5633
+[epoch 110 step 200]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5345
+[epoch 110 step 250]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.7  cos=0.5362
+[epoch 110 step 300]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5367
+[epoch 110 DONE]  final_loss=5.91e-01  psnr=16.57  cos=0.5367
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0110.pt
+[val epoch 110]  latent_l1=0.5840  latent_l2=0.8327  latent_psnr=26.3766  gap_to_upper_psnr=14.1977  gap_to_upper_ssim_3d=0.2211  image_psnr_3d=16.7420  image_ssim_3d=0.4984
+[epoch 111 step 000]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.6  cos=0.5386
+[epoch 111 step 050]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.9  cos=0.5554
+[epoch 111 step 100]  loss=6.20e-01  l1=6.20e-01  l2=0.00e+00  psnr=16.4  cos=0.5193
+[epoch 111 step 150]  loss=5.63e-01  l1=5.63e-01  l2=0.00e+00  psnr=17.0  cos=0.5681
+[epoch 111 step 200]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5395
+[epoch 111 step 250]  loss=6.15e-01  l1=6.15e-01  l2=0.00e+00  psnr=16.4  cos=0.5182
+[epoch 111 step 300]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.6  cos=0.5377
+[epoch 111 DONE]  final_loss=5.80e-01  psnr=16.61  cos=0.5377
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0111.pt
+[val epoch 111]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2858
+[epoch 112 step 000]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5384
+[epoch 112 step 050]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.8  cos=0.5317
+[epoch 112 step 100]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.9  cos=0.5605
+[epoch 112 step 150]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5404
+[epoch 112 step 200]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5320
+[epoch 112 step 250]  loss=5.67e-01  l1=5.67e-01  l2=0.00e+00  psnr=17.0  cos=0.5594
+[epoch 112 step 300]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5708
+[epoch 112 DONE]  final_loss=5.64e-01  psnr=16.65  cos=0.5708
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0112.pt
+[val epoch 112]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2860
+[epoch 113 step 000]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5410
+[epoch 113 step 050]  loss=6.10e-01  l1=6.10e-01  l2=0.00e+00  psnr=16.5  cos=0.5269
+[epoch 113 step 100]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5715
+[epoch 113 step 150]  loss=5.62e-01  l1=5.62e-01  l2=0.00e+00  psnr=17.0  cos=0.5601
+[epoch 113 step 200]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=16.9  cos=0.5585
+[epoch 113 step 250]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5327
+[epoch 113 step 300]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=17.0  cos=0.5386
+[epoch 113 DONE]  final_loss=5.91e-01  psnr=16.97  cos=0.5386
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0113.pt
+[val epoch 113]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2850
+[epoch 114 step 000]  loss=6.06e-01  l1=6.06e-01  l2=0.00e+00  psnr=16.5  cos=0.5316
+[epoch 114 step 050]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5386
+[epoch 114 step 100]  loss=6.01e-01  l1=6.01e-01  l2=0.00e+00  psnr=16.6  cos=0.5484
+[epoch 114 step 150]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=17.0  cos=0.5358
+[epoch 114 step 200]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.6  cos=0.5422
+[epoch 114 step 250]  loss=6.12e-01  l1=6.12e-01  l2=0.00e+00  psnr=16.5  cos=0.5191
+[epoch 114 step 300]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5392
+[epoch 114 DONE]  final_loss=6.05e-01  psnr=16.58  cos=0.5392
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0114.pt
+[val epoch 114]  latent_l1=0.5887  latent_l2=0.8359  latent_psnr=26.2833
+[epoch 115 step 000]  loss=5.63e-01  l1=5.63e-01  l2=0.00e+00  psnr=17.0  cos=0.5573
+[epoch 115 step 050]  loss=5.57e-01  l1=5.57e-01  l2=0.00e+00  psnr=17.2  cos=0.5629
+[epoch 115 step 100]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5372
+[epoch 115 step 150]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.8  cos=0.5442
+[epoch 115 step 200]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.7  cos=0.5274
+[epoch 115 step 250]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5407
+[epoch 115 step 300]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5504
+[epoch 115 DONE]  final_loss=6.00e-01  psnr=16.93  cos=0.5504
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0115.pt
+[val epoch 115]  latent_l1=0.5840  latent_l2=0.8326  latent_psnr=26.3775  gap_to_upper_psnr=14.1574  gap_to_upper_ssim_3d=0.2193  image_psnr_3d=16.7823  image_ssim_3d=0.5002
+[epoch 116 step 000]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5362
+[epoch 116 step 050]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.7  cos=0.5153
+[epoch 116 step 100]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5376
+[epoch 116 step 150]  loss=6.35e-01  l1=6.35e-01  l2=0.00e+00  psnr=16.1  cos=0.5310
+[epoch 116 step 200]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.9  cos=0.5444
+[epoch 116 step 250]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5527
+[epoch 116 step 300]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.8  cos=0.5447
+[epoch 116 DONE]  final_loss=5.98e-01  psnr=16.76  cos=0.5447
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0116.pt
+[val epoch 116]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2843
+[epoch 117 step 000]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5401
+[epoch 117 step 050]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.7  cos=0.5594
+[epoch 117 step 100]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.7  cos=0.5445
+[epoch 117 step 150]  loss=6.09e-01  l1=6.09e-01  l2=0.00e+00  psnr=16.4  cos=0.5474
+[epoch 117 step 200]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5489
+[epoch 117 step 250]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.8  cos=0.5395
+[epoch 117 step 300]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.7  cos=0.5583
+[epoch 117 DONE]  final_loss=6.14e-01  psnr=16.73  cos=0.5583
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0117.pt
+[val epoch 117]  latent_l1=0.5887  latent_l2=0.8359  latent_psnr=26.2834
+[epoch 118 step 000]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.6  cos=0.5446
+[epoch 118 step 050]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5298
+[epoch 118 step 100]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5518
+[epoch 118 step 150]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5349
+[epoch 118 step 200]  loss=6.04e-01  l1=6.04e-01  l2=0.00e+00  psnr=16.6  cos=0.5226
+[epoch 118 step 250]  loss=5.69e-01  l1=5.69e-01  l2=0.00e+00  psnr=16.9  cos=0.5588
+[epoch 118 step 300]  loss=6.19e-01  l1=6.19e-01  l2=0.00e+00  psnr=16.4  cos=0.5398
+[epoch 118 DONE]  final_loss=6.29e-01  psnr=16.35  cos=0.5398
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0118.pt
+[val epoch 118]  latent_l1=0.5888  latent_l2=0.8356  latent_psnr=26.2864
+[epoch 119 step 000]  loss=6.06e-01  l1=6.06e-01  l2=0.00e+00  psnr=16.6  cos=0.5329
+[epoch 119 step 050]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5426
+[epoch 119 step 100]  loss=6.23e-01  l1=6.23e-01  l2=0.00e+00  psnr=16.3  cos=0.5246
+[epoch 119 step 150]  loss=5.69e-01  l1=5.69e-01  l2=0.00e+00  psnr=17.0  cos=0.5432
+[epoch 119 step 200]  loss=6.05e-01  l1=6.05e-01  l2=0.00e+00  psnr=16.6  cos=0.5237
+[epoch 119 step 250]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.8  cos=0.5418
+[epoch 119 step 300]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5481
+[epoch 119 DONE]  final_loss=6.28e-01  psnr=16.86  cos=0.5481
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0119.pt
+[val epoch 119]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2838
+[epoch 120 step 000]  loss=6.07e-01  l1=6.07e-01  l2=0.00e+00  psnr=16.6  cos=0.5262
+[epoch 120 step 050]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5408
+[epoch 120 step 100]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.7  cos=0.5370
+[epoch 120 step 150]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5531
+[epoch 120 step 200]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.7  cos=0.5319
+[epoch 120 step 250]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.8  cos=0.5415
+[epoch 120 step 300]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.6  cos=0.5288
+[epoch 120 DONE]  final_loss=6.04e-01  psnr=16.64  cos=0.5288
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0120.pt
+[val epoch 120]  latent_l1=0.5840  latent_l2=0.8327  latent_psnr=26.3761  gap_to_upper_psnr=14.1622  gap_to_upper_ssim_3d=0.2185  image_psnr_3d=16.7775  image_ssim_3d=0.5009
+[epoch 121 step 000]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.6  cos=0.5336
+[epoch 121 step 050]  loss=5.62e-01  l1=5.62e-01  l2=0.00e+00  psnr=17.1  cos=0.5481
+[epoch 121 step 100]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5508
+[epoch 121 step 150]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5305
+[epoch 121 step 200]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5352
+[epoch 121 step 250]  loss=5.66e-01  l1=5.66e-01  l2=0.00e+00  psnr=17.1  cos=0.5394
+[epoch 121 step 300]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5432
+[epoch 121 DONE]  final_loss=5.70e-01  psnr=16.72  cos=0.5432
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0121.pt
+[val epoch 121]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2861
+[epoch 122 step 000]  loss=5.69e-01  l1=5.69e-01  l2=0.00e+00  psnr=17.0  cos=0.5448
+[epoch 122 step 050]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5410
+[epoch 122 step 100]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.7  cos=0.5533
+[epoch 122 step 150]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5483
+[epoch 122 step 200]  loss=6.09e-01  l1=6.09e-01  l2=0.00e+00  psnr=16.5  cos=0.5188
+[epoch 122 step 250]  loss=6.08e-01  l1=6.08e-01  l2=0.00e+00  psnr=16.6  cos=0.5225
+[epoch 122 step 300]  loss=6.05e-01  l1=6.05e-01  l2=0.00e+00  psnr=16.6  cos=0.5170
+[epoch 122 DONE]  final_loss=6.22e-01  psnr=16.59  cos=0.5170
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0122.pt
+[val epoch 122]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2860
+[epoch 123 step 000]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.6  cos=0.5429
+[epoch 123 step 050]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.6  cos=0.5372
+[epoch 123 step 100]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.5  cos=0.5431
+[epoch 123 step 150]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.8  cos=0.5489
+[epoch 123 step 200]  loss=6.04e-01  l1=6.04e-01  l2=0.00e+00  psnr=16.6  cos=0.5374
+[epoch 123 step 250]  loss=5.58e-01  l1=5.58e-01  l2=0.00e+00  psnr=17.1  cos=0.5474
+[epoch 123 step 300]  loss=6.05e-01  l1=6.05e-01  l2=0.00e+00  psnr=16.6  cos=0.5204
+[epoch 123 DONE]  final_loss=5.87e-01  psnr=16.59  cos=0.5204
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0123.pt
+[val epoch 123]  latent_l1=0.5887  latent_l2=0.8359  latent_psnr=26.2832
+[epoch 124 step 000]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.6  cos=0.5381
+[epoch 124 step 050]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5486
+[epoch 124 step 100]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5347
+[epoch 124 step 150]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.6  cos=0.5396
+[epoch 124 step 200]  loss=5.56e-01  l1=5.56e-01  l2=0.00e+00  psnr=17.2  cos=0.5694
+[epoch 124 step 250]  loss=5.67e-01  l1=5.67e-01  l2=0.00e+00  psnr=17.0  cos=0.5547
+[epoch 124 step 300]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.5  cos=0.5430
+[epoch 124 DONE]  final_loss=6.12e-01  psnr=16.54  cos=0.5430
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0124.pt
+[val epoch 124]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2845
+[epoch 125 step 000]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5367
+[epoch 125 step 050]  loss=6.13e-01  l1=6.13e-01  l2=0.00e+00  psnr=16.5  cos=0.5230
+[epoch 125 step 100]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5306
+[epoch 125 step 150]  loss=5.63e-01  l1=5.63e-01  l2=0.00e+00  psnr=17.0  cos=0.5610
+[epoch 125 step 200]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5586
+[epoch 125 step 250]  loss=5.61e-01  l1=5.61e-01  l2=0.00e+00  psnr=17.2  cos=0.5556
+[epoch 125 step 300]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5481
+[epoch 125 DONE]  final_loss=6.11e-01  psnr=16.67  cos=0.5481
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0125.pt
+[val epoch 125]  latent_l1=0.5840  latent_l2=0.8324  latent_psnr=26.3792  gap_to_upper_psnr=14.2232  gap_to_upper_ssim_3d=0.2191  image_psnr_3d=16.7166  image_ssim_3d=0.5003
+[best] new best latent_psnr=26.3792 (prev=26.3781) -> /workspace/runs/trial2/checkpoints/best.pt
+[epoch 126 step 000]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5493
+[epoch 126 step 050]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.8  cos=0.5545
+[epoch 126 step 100]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5323
+[epoch 126 step 150]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5588
+[epoch 126 step 200]  loss=5.54e-01  l1=5.54e-01  l2=0.00e+00  psnr=17.2  cos=0.5731
+[epoch 126 step 250]  loss=6.13e-01  l1=6.13e-01  l2=0.00e+00  psnr=16.5  cos=0.5297
+[epoch 126 step 300]  loss=6.34e-01  l1=6.34e-01  l2=0.00e+00  psnr=16.2  cos=0.5151
+[epoch 126 DONE]  final_loss=5.94e-01  psnr=16.23  cos=0.5151
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0126.pt
+[val epoch 126]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2849
+[epoch 127 step 000]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5403
+[epoch 127 step 050]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5352
+[epoch 127 step 100]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.6  cos=0.5291
+[epoch 127 step 150]  loss=5.68e-01  l1=5.68e-01  l2=0.00e+00  psnr=17.0  cos=0.5380
+[epoch 127 step 200]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5488
+[epoch 127 step 250]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.7  cos=0.5215
+[epoch 127 step 300]  loss=5.53e-01  l1=5.53e-01  l2=0.00e+00  psnr=17.2  cos=0.5831
+[epoch 127 DONE]  final_loss=5.99e-01  psnr=17.21  cos=0.5831
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0127.pt
+[val epoch 127]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2847
+[epoch 128 step 000]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5338
+[epoch 128 step 050]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5475
+[epoch 128 step 100]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.8  cos=0.5471
+[epoch 128 step 150]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5460
+[epoch 128 step 200]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5518
+[epoch 128 step 250]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.6  cos=0.5460
+[epoch 128 step 300]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5379
+[epoch 128 DONE]  final_loss=5.86e-01  psnr=16.91  cos=0.5379
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0128.pt
+[val epoch 128]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2856
+[epoch 129 step 000]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5547
+[epoch 129 step 050]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5483
+[epoch 129 step 100]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5392
+[epoch 129 step 150]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5353
+[epoch 129 step 200]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5484
+[epoch 129 step 250]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5463
+[epoch 129 step 300]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5395
+[epoch 129 DONE]  final_loss=6.11e-01  psnr=16.60  cos=0.5395
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0129.pt
+[val epoch 129]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2853
+[epoch 130 step 000]  loss=5.61e-01  l1=5.61e-01  l2=0.00e+00  psnr=17.0  cos=0.5682
+[epoch 130 step 050]  loss=6.25e-01  l1=6.25e-01  l2=0.00e+00  psnr=16.3  cos=0.5224
+[epoch 130 step 100]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5548
+[epoch 130 step 150]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5521
+[epoch 130 step 200]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5486
+[epoch 130 step 250]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.7  cos=0.5557
+[epoch 130 step 300]  loss=6.05e-01  l1=6.05e-01  l2=0.00e+00  psnr=16.6  cos=0.5201
+[epoch 130 DONE]  final_loss=5.54e-01  psnr=16.62  cos=0.5201
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0130.pt
+[val epoch 130]  latent_l1=0.5840  latent_l2=0.8328  latent_psnr=26.3753  gap_to_upper_psnr=14.1263  gap_to_upper_ssim_3d=0.2209  image_psnr_3d=16.8134  image_ssim_3d=0.4985
+[epoch 131 step 000]  loss=5.45e-01  l1=5.45e-01  l2=0.00e+00  psnr=17.2  cos=0.5740
+[epoch 131 step 050]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5424
+[epoch 131 step 100]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5481
+[epoch 131 step 150]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.6  cos=0.5337
+[epoch 131 step 200]  loss=5.69e-01  l1=5.69e-01  l2=0.00e+00  psnr=16.9  cos=0.5536
+[epoch 131 step 250]  loss=6.12e-01  l1=6.12e-01  l2=0.00e+00  psnr=16.5  cos=0.5257
+[epoch 131 step 300]  loss=6.05e-01  l1=6.05e-01  l2=0.00e+00  psnr=16.5  cos=0.5323
+[epoch 131 DONE]  final_loss=6.18e-01  psnr=16.55  cos=0.5323
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0131.pt
+[val epoch 131]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2841
+[epoch 132 step 000]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.6  cos=0.5304
+[epoch 132 step 050]  loss=6.04e-01  l1=6.04e-01  l2=0.00e+00  psnr=16.6  cos=0.5156
+[epoch 132 step 100]  loss=5.68e-01  l1=5.68e-01  l2=0.00e+00  psnr=17.0  cos=0.5409
+[epoch 132 step 150]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5341
+[epoch 132 step 200]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.6  cos=0.5546
+[epoch 132 step 250]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5234
+[epoch 132 step 300]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.6  cos=0.5444
+[epoch 132 DONE]  final_loss=6.11e-01  psnr=16.59  cos=0.5444
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0132.pt
+[val epoch 132]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2850
+[epoch 133 step 000]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5499
+[epoch 133 step 050]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5475
+[epoch 133 step 100]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5481
+[epoch 133 step 150]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5490
+[epoch 133 step 200]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.7  cos=0.5577
+[epoch 133 step 250]  loss=6.06e-01  l1=6.06e-01  l2=0.00e+00  psnr=16.5  cos=0.5346
+[epoch 133 step 300]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5496
+[epoch 133 DONE]  final_loss=5.67e-01  psnr=16.84  cos=0.5496
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0133.pt
+[val epoch 133]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2837
+[epoch 134 step 000]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=17.0  cos=0.5435
+[epoch 134 step 050]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=16.9  cos=0.5624
+[epoch 134 step 100]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.7  cos=0.5310
+[epoch 134 step 150]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5262
+[epoch 134 step 200]  loss=5.65e-01  l1=5.65e-01  l2=0.00e+00  psnr=17.2  cos=0.5502
+[epoch 134 step 250]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.9  cos=0.5369
+[epoch 134 step 300]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5498
+[epoch 134 DONE]  final_loss=5.98e-01  psnr=16.82  cos=0.5498
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0134.pt
+[val epoch 134]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2843
+[epoch 135 step 000]  loss=5.57e-01  l1=5.57e-01  l2=0.00e+00  psnr=17.0  cos=0.5782
+[epoch 135 step 050]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5376
+[epoch 135 step 100]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5383
+[epoch 135 step 150]  loss=5.69e-01  l1=5.69e-01  l2=0.00e+00  psnr=17.0  cos=0.5467
+[epoch 135 step 200]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.7  cos=0.5447
+[epoch 135 step 250]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5448
+[epoch 135 step 300]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5456
+[epoch 135 DONE]  final_loss=5.51e-01  psnr=16.66  cos=0.5456
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0135.pt
+[val epoch 135]  latent_l1=0.5840  latent_l2=0.8326  latent_psnr=26.3770  gap_to_upper_psnr=14.1996  gap_to_upper_ssim_3d=0.2186  image_psnr_3d=16.7401  image_ssim_3d=0.5009
+[epoch 136 step 000]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=16.9  cos=0.5523
+[epoch 136 step 050]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.6  cos=0.5397
+[epoch 136 step 100]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5569
+[epoch 136 step 150]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5412
+[epoch 136 step 200]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.6  cos=0.5443
+[epoch 136 step 250]  loss=5.72e-01  l1=5.72e-01  l2=0.00e+00  psnr=16.9  cos=0.5530
+[epoch 136 step 300]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5445
+[epoch 136 DONE]  final_loss=6.33e-01  psnr=16.69  cos=0.5445
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0136.pt
+[val epoch 136]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2855
+[epoch 137 step 000]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.6  cos=0.5459
+[epoch 137 step 050]  loss=6.13e-01  l1=6.13e-01  l2=0.00e+00  psnr=16.4  cos=0.5390
+[epoch 137 step 100]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5518
+[epoch 137 step 150]  loss=6.08e-01  l1=6.08e-01  l2=0.00e+00  psnr=16.4  cos=0.5495
+[epoch 137 step 200]  loss=6.10e-01  l1=6.10e-01  l2=0.00e+00  psnr=16.5  cos=0.5529
+[epoch 137 step 250]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5409
+[epoch 137 step 300]  loss=6.14e-01  l1=6.14e-01  l2=0.00e+00  psnr=16.5  cos=0.5105
+[epoch 137 DONE]  final_loss=5.78e-01  psnr=16.49  cos=0.5105
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0137.pt
+[val epoch 137]  latent_l1=0.5888  latent_l2=0.8359  latent_psnr=26.2833
+[epoch 138 step 000]  loss=6.02e-01  l1=6.02e-01  l2=0.00e+00  psnr=16.6  cos=0.5212
+[epoch 138 step 050]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5510
+[epoch 138 step 100]  loss=6.07e-01  l1=6.07e-01  l2=0.00e+00  psnr=16.6  cos=0.5237
+[epoch 138 step 150]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5603
+[epoch 138 step 200]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=16.9  cos=0.5523
+[epoch 138 step 250]  loss=6.06e-01  l1=6.06e-01  l2=0.00e+00  psnr=16.5  cos=0.5286
+[epoch 138 step 300]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5405
+[epoch 138 DONE]  final_loss=6.05e-01  psnr=16.78  cos=0.5405
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0138.pt
+[val epoch 138]  latent_l1=0.5888  latent_l2=0.8356  latent_psnr=26.2863
+[epoch 139 step 000]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.8  cos=0.5217
+[epoch 139 step 050]  loss=6.12e-01  l1=6.12e-01  l2=0.00e+00  psnr=16.5  cos=0.5062
+[epoch 139 step 100]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5422
+[epoch 139 step 150]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5465
+[epoch 139 step 200]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5698
+[epoch 139 step 250]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.8  cos=0.5667
+[epoch 139 step 300]  loss=5.59e-01  l1=5.59e-01  l2=0.00e+00  psnr=17.1  cos=0.5456
+[epoch 139 DONE]  final_loss=5.85e-01  psnr=17.12  cos=0.5456
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0139.pt
+[val epoch 139]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2859
+[epoch 140 step 000]  loss=5.66e-01  l1=5.66e-01  l2=0.00e+00  psnr=17.0  cos=0.5619
+[epoch 140 step 050]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.6  cos=0.5552
+[epoch 140 step 100]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5382
+[epoch 140 step 150]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5431
+[epoch 140 step 200]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5543
+[epoch 140 step 250]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5343
+[epoch 140 step 300]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5346
+[epoch 140 DONE]  final_loss=6.01e-01  psnr=16.79  cos=0.5346
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0140.pt
+[val epoch 140]  latent_l1=0.5840  latent_l2=0.8328  latent_psnr=26.3751  gap_to_upper_psnr=14.0179  gap_to_upper_ssim_3d=0.2202  image_psnr_3d=16.9218  image_ssim_3d=0.4992
+[epoch 141 step 000]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5484
+[epoch 141 step 050]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5401
+[epoch 141 step 100]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5467
+[epoch 141 step 150]  loss=5.60e-01  l1=5.60e-01  l2=0.00e+00  psnr=17.1  cos=0.5508
+[epoch 141 step 200]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5346
+[epoch 141 step 250]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5389
+[epoch 141 step 300]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5584
+[epoch 141 DONE]  final_loss=5.91e-01  psnr=16.89  cos=0.5584
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0141.pt
+[val epoch 141]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2841
+[epoch 142 step 000]  loss=5.72e-01  l1=5.72e-01  l2=0.00e+00  psnr=16.9  cos=0.5552
+[epoch 142 step 050]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5462
+[epoch 142 step 100]  loss=5.51e-01  l1=5.51e-01  l2=0.00e+00  psnr=17.2  cos=0.5676
+[epoch 142 step 150]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5413
+[epoch 142 step 200]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5455
+[epoch 142 step 250]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=16.9  cos=0.5356
+[epoch 142 step 300]  loss=5.56e-01  l1=5.56e-01  l2=0.00e+00  psnr=17.2  cos=0.5457
+[epoch 142 DONE]  final_loss=5.47e-01  psnr=17.21  cos=0.5457
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0142.pt
+[val epoch 142]  latent_l1=0.5887  latent_l2=0.8355  latent_psnr=26.2867
+[epoch 143 step 000]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5339
+[epoch 143 step 050]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5449
+[epoch 143 step 100]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.7  cos=0.5384
+[epoch 143 step 150]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5531
+[epoch 143 step 200]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5343
+[epoch 143 step 250]  loss=5.60e-01  l1=5.60e-01  l2=0.00e+00  psnr=17.1  cos=0.5500
+[epoch 143 step 300]  loss=6.10e-01  l1=6.10e-01  l2=0.00e+00  psnr=16.5  cos=0.5371
+[epoch 143 DONE]  final_loss=6.24e-01  psnr=16.48  cos=0.5371
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0143.pt
+[val epoch 143]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2865
+[epoch 144 step 000]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.6  cos=0.5266
+[epoch 144 step 050]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5426
+[epoch 144 step 100]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5500
+[epoch 144 step 150]  loss=6.16e-01  l1=6.16e-01  l2=0.00e+00  psnr=16.4  cos=0.5377
+[epoch 144 step 200]  loss=5.60e-01  l1=5.60e-01  l2=0.00e+00  psnr=17.0  cos=0.5576
+[epoch 144 step 250]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=16.9  cos=0.5427
+[epoch 144 step 300]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.7  cos=0.5279
+[epoch 144 DONE]  final_loss=5.75e-01  psnr=16.68  cos=0.5279
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0144.pt
+[val epoch 144]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2841
+[epoch 145 step 000]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.8  cos=0.5515
+[epoch 145 step 050]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.5  cos=0.5383
+[epoch 145 step 100]  loss=5.59e-01  l1=5.59e-01  l2=0.00e+00  psnr=17.1  cos=0.5640
+[epoch 145 step 150]  loss=6.01e-01  l1=6.01e-01  l2=0.00e+00  psnr=16.6  cos=0.5239
+[epoch 145 step 200]  loss=6.09e-01  l1=6.09e-01  l2=0.00e+00  psnr=16.5  cos=0.5401
+[epoch 145 step 250]  loss=6.16e-01  l1=6.16e-01  l2=0.00e+00  psnr=16.4  cos=0.5254
+[epoch 145 step 300]  loss=5.58e-01  l1=5.58e-01  l2=0.00e+00  psnr=17.1  cos=0.5799
+[epoch 145 DONE]  final_loss=6.03e-01  psnr=17.10  cos=0.5799
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0145.pt
+[val epoch 145]  latent_l1=0.5840  latent_l2=0.8325  latent_psnr=26.3785  gap_to_upper_psnr=14.2705  gap_to_upper_ssim_3d=0.2206  image_psnr_3d=16.6692  image_ssim_3d=0.4989
+[epoch 146 step 000]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.9  cos=0.5476
+[epoch 146 step 050]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5511
+[epoch 146 step 100]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5437
+[epoch 146 step 150]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.8  cos=0.5488
+[epoch 146 step 200]  loss=6.05e-01  l1=6.05e-01  l2=0.00e+00  psnr=16.5  cos=0.5412
+[epoch 146 step 250]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5407
+[epoch 146 step 300]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=17.0  cos=0.5452
+[epoch 146 DONE]  final_loss=6.27e-01  psnr=16.96  cos=0.5452
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0146.pt
+[val epoch 146]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2851
+[epoch 147 step 000]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.6  cos=0.5269
+[epoch 147 step 050]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5409
+[epoch 147 step 100]  loss=6.04e-01  l1=6.04e-01  l2=0.00e+00  psnr=16.6  cos=0.5398
+[epoch 147 step 150]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5207
+[epoch 147 step 200]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5358
+[epoch 147 step 250]  loss=6.06e-01  l1=6.06e-01  l2=0.00e+00  psnr=16.5  cos=0.5444
+[epoch 147 step 300]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5527
+[epoch 147 DONE]  final_loss=5.89e-01  psnr=16.71  cos=0.5527
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0147.pt
+[val epoch 147]  latent_l1=0.5887  latent_l2=0.8355  latent_psnr=26.2871
+[epoch 148 step 000]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=17.0  cos=0.5395
+[epoch 148 step 050]  loss=5.61e-01  l1=5.61e-01  l2=0.00e+00  psnr=17.0  cos=0.5601
+[epoch 148 step 100]  loss=5.61e-01  l1=5.61e-01  l2=0.00e+00  psnr=17.2  cos=0.5606
+[epoch 148 step 150]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5462
+[epoch 148 step 200]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.7  cos=0.5370
+[epoch 148 step 250]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5417
+[epoch 148 step 300]  loss=6.45e-01  l1=6.45e-01  l2=0.00e+00  psnr=16.1  cos=0.5196
+[epoch 148 DONE]  final_loss=5.92e-01  psnr=16.09  cos=0.5196
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0148.pt
+[val epoch 148]  latent_l1=0.5888  latent_l2=0.8359  latent_psnr=26.2829
+[epoch 149 step 000]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5612
+[epoch 149 step 050]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5348
+[epoch 149 step 100]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=16.9  cos=0.5522
+[epoch 149 step 150]  loss=5.50e-01  l1=5.50e-01  l2=0.00e+00  psnr=17.3  cos=0.5665
+[epoch 149 step 200]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5438
+[epoch 149 step 250]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5514
+[epoch 149 step 300]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5413
+[epoch 149 DONE]  final_loss=5.82e-01  psnr=16.73  cos=0.5413
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0149.pt
+[val epoch 149]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2866
+[epoch 150 step 000]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.7  cos=0.5648
+[epoch 150 step 050]  loss=6.14e-01  l1=6.14e-01  l2=0.00e+00  psnr=16.4  cos=0.5358
+[epoch 150 step 100]  loss=5.66e-01  l1=5.66e-01  l2=0.00e+00  psnr=17.0  cos=0.5539
+[epoch 150 step 150]  loss=5.67e-01  l1=5.67e-01  l2=0.00e+00  psnr=17.1  cos=0.5535
+[epoch 150 step 200]  loss=5.62e-01  l1=5.62e-01  l2=0.00e+00  psnr=17.0  cos=0.5482
+[epoch 150 step 250]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.9  cos=0.5540
+[epoch 150 step 300]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5463
+[epoch 150 DONE]  final_loss=6.11e-01  psnr=16.91  cos=0.5463
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0150.pt
+[val epoch 150]  latent_l1=0.5840  latent_l2=0.8325  latent_psnr=26.3784  gap_to_upper_psnr=14.6147  gap_to_upper_ssim_3d=0.2250  image_psnr_3d=16.3250  image_ssim_3d=0.4945
+[epoch 151 step 000]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=16.9  cos=0.5496
+[epoch 151 step 050]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5530
+[epoch 151 step 100]  loss=6.02e-01  l1=6.02e-01  l2=0.00e+00  psnr=16.5  cos=0.5511
+[epoch 151 step 150]  loss=6.02e-01  l1=6.02e-01  l2=0.00e+00  psnr=16.6  cos=0.5238
+[epoch 151 step 200]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5284
+[epoch 151 step 250]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=16.9  cos=0.5511
+[epoch 151 step 300]  loss=6.09e-01  l1=6.09e-01  l2=0.00e+00  psnr=16.5  cos=0.5440
+[epoch 151 DONE]  final_loss=5.89e-01  psnr=16.51  cos=0.5440
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0151.pt
+[val epoch 151]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2860
+[epoch 152 step 000]  loss=6.07e-01  l1=6.07e-01  l2=0.00e+00  psnr=16.5  cos=0.5414
+[epoch 152 step 050]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5238
+[epoch 152 step 100]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5439
+[epoch 152 step 150]  loss=5.67e-01  l1=5.67e-01  l2=0.00e+00  psnr=17.0  cos=0.5477
+[epoch 152 step 200]  loss=6.05e-01  l1=6.05e-01  l2=0.00e+00  psnr=16.6  cos=0.5330
+[epoch 152 step 250]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.6  cos=0.5375
+[epoch 152 step 300]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5301
+[epoch 152 DONE]  final_loss=5.78e-01  psnr=16.81  cos=0.5301
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0152.pt
+[val epoch 152]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2843
+[epoch 153 step 000]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5343
+[epoch 153 step 050]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=17.0  cos=0.5675
+[epoch 153 step 100]  loss=5.67e-01  l1=5.67e-01  l2=0.00e+00  psnr=17.0  cos=0.5507
+[epoch 153 step 150]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5466
+[epoch 153 step 200]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=17.0  cos=0.5506
+[epoch 153 step 250]  loss=6.07e-01  l1=6.07e-01  l2=0.00e+00  psnr=16.4  cos=0.5471
+[epoch 153 step 300]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5273
+[epoch 153 DONE]  final_loss=5.73e-01  psnr=16.63  cos=0.5273
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0153.pt
+[val epoch 153]  latent_l1=0.5888  latent_l2=0.8355  latent_psnr=26.2869
+[epoch 154 step 000]  loss=5.62e-01  l1=5.62e-01  l2=0.00e+00  psnr=17.1  cos=0.5583
+[epoch 154 step 050]  loss=5.65e-01  l1=5.65e-01  l2=0.00e+00  psnr=17.0  cos=0.5546
+[epoch 154 step 100]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5628
+[epoch 154 step 150]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.6  cos=0.5487
+[epoch 154 step 200]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5353
+[epoch 154 step 250]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5323
+[epoch 154 step 300]  loss=6.07e-01  l1=6.07e-01  l2=0.00e+00  psnr=16.5  cos=0.5250
+[epoch 154 DONE]  final_loss=5.97e-01  psnr=16.54  cos=0.5250
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0154.pt
+[val epoch 154]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2853
+[epoch 155 step 000]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=16.9  cos=0.5573
+[epoch 155 step 050]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=17.0  cos=0.5287
+[epoch 155 step 100]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5571
+[epoch 155 step 150]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=17.0  cos=0.5526
+[epoch 155 step 200]  loss=6.11e-01  l1=6.11e-01  l2=0.00e+00  psnr=16.4  cos=0.5286
+[epoch 155 step 250]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.8  cos=0.5649
+[epoch 155 step 300]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.8  cos=0.5521
+[epoch 155 DONE]  final_loss=5.58e-01  psnr=16.85  cos=0.5521
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0155.pt
+[val epoch 155]  latent_l1=0.5840  latent_l2=0.8327  latent_psnr=26.3766  gap_to_upper_psnr=14.2060  gap_to_upper_ssim_3d=0.2205  image_psnr_3d=16.7337  image_ssim_3d=0.4990
+[epoch 156 step 000]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5307
+[epoch 156 step 050]  loss=5.69e-01  l1=5.69e-01  l2=0.00e+00  psnr=16.9  cos=0.5582
+[epoch 156 step 100]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.9  cos=0.5340
+[epoch 156 step 150]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5402
+[epoch 156 step 200]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.6  cos=0.5491
+[epoch 156 step 250]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.6  cos=0.5412
+[epoch 156 step 300]  loss=6.01e-01  l1=6.01e-01  l2=0.00e+00  psnr=16.7  cos=0.5361
+[epoch 156 DONE]  final_loss=6.12e-01  psnr=16.67  cos=0.5361
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0156.pt
+[val epoch 156]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2837
+[epoch 157 step 000]  loss=5.63e-01  l1=5.63e-01  l2=0.00e+00  psnr=17.1  cos=0.5650
+[epoch 157 step 050]  loss=5.67e-01  l1=5.67e-01  l2=0.00e+00  psnr=17.1  cos=0.5537
+[epoch 157 step 100]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5408
+[epoch 157 step 150]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5282
+[epoch 157 step 200]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.6  cos=0.5269
+[epoch 157 step 250]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.7  cos=0.5329
+[epoch 157 step 300]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.9  cos=0.5435
+[epoch 157 DONE]  final_loss=6.12e-01  psnr=16.85  cos=0.5435
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0157.pt
+[val epoch 157]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2859
+[epoch 158 step 000]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.5  cos=0.5361
+[epoch 158 step 050]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.7  cos=0.5330
+[epoch 158 step 100]  loss=5.55e-01  l1=5.55e-01  l2=0.00e+00  psnr=17.1  cos=0.5813
+[epoch 158 step 150]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=17.0  cos=0.5411
+[epoch 158 step 200]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.7  cos=0.5395
+[epoch 158 step 250]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5443
+[epoch 158 step 300]  loss=6.06e-01  l1=6.06e-01  l2=0.00e+00  psnr=16.5  cos=0.5411
+[epoch 158 DONE]  final_loss=5.82e-01  psnr=16.49  cos=0.5411
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0158.pt
+[val epoch 158]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2850
+[epoch 159 step 000]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5318
+[epoch 159 step 050]  loss=6.04e-01  l1=6.04e-01  l2=0.00e+00  psnr=16.5  cos=0.5385
+[epoch 159 step 100]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.8  cos=0.5542
+[epoch 159 step 150]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5200
+[epoch 159 step 200]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=17.0  cos=0.5527
+[epoch 159 step 250]  loss=6.01e-01  l1=6.01e-01  l2=0.00e+00  psnr=16.5  cos=0.5446
+[epoch 159 step 300]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.7  cos=0.5351
+[epoch 159 DONE]  final_loss=5.67e-01  psnr=16.70  cos=0.5351
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0159.pt
+[val epoch 159]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2846
+[epoch 160 step 000]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5347
+[epoch 160 step 050]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5427
+[epoch 160 step 100]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5413
+[epoch 160 step 150]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.8  cos=0.5367
+[epoch 160 step 200]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.8  cos=0.5594
+[epoch 160 step 250]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5500
+[epoch 160 step 300]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5489
+[epoch 160 DONE]  final_loss=5.88e-01  psnr=16.76  cos=0.5489
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0160.pt
+[val epoch 160]  latent_l1=0.5840  latent_l2=0.8327  latent_psnr=26.3765  gap_to_upper_psnr=14.1521  gap_to_upper_ssim_3d=0.2189  image_psnr_3d=16.7877  image_ssim_3d=0.5006
+[epoch 161 step 000]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5376
+[epoch 161 step 050]  loss=6.04e-01  l1=6.04e-01  l2=0.00e+00  psnr=16.5  cos=0.5300
+[epoch 161 step 100]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5452
+[epoch 161 step 150]  loss=5.65e-01  l1=5.65e-01  l2=0.00e+00  psnr=17.1  cos=0.5550
+[epoch 161 step 200]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5565
+[epoch 161 step 250]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.6  cos=0.5405
+[epoch 161 step 300]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.6  cos=0.5509
+[epoch 161 DONE]  final_loss=5.64e-01  psnr=16.63  cos=0.5509
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0161.pt
+[val epoch 161]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2859
+[epoch 162 step 000]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5382
+[epoch 162 step 050]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5588
+[epoch 162 step 100]  loss=6.05e-01  l1=6.05e-01  l2=0.00e+00  psnr=16.5  cos=0.5368
+[epoch 162 step 150]  loss=6.20e-01  l1=6.20e-01  l2=0.00e+00  psnr=16.3  cos=0.5271
+[epoch 162 step 200]  loss=6.32e-01  l1=6.32e-01  l2=0.00e+00  psnr=16.2  cos=0.5280
+[epoch 162 step 250]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5481
+[epoch 162 step 300]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5429
+[epoch 162 DONE]  final_loss=5.72e-01  psnr=16.70  cos=0.5429
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0162.pt
+[val epoch 162]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2847
+[epoch 163 step 000]  loss=5.66e-01  l1=5.66e-01  l2=0.00e+00  psnr=17.0  cos=0.5603
+[epoch 163 step 050]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.6  cos=0.5302
+[epoch 163 step 100]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5386
+[epoch 163 step 150]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.8  cos=0.5344
+[epoch 163 step 200]  loss=5.69e-01  l1=5.69e-01  l2=0.00e+00  psnr=17.0  cos=0.5541
+[epoch 163 step 250]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5396
+[epoch 163 step 300]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5345
+[epoch 163 DONE]  final_loss=6.11e-01  psnr=16.93  cos=0.5345
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0163.pt
+[val epoch 163]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2863
+[epoch 164 step 000]  loss=6.01e-01  l1=6.01e-01  l2=0.00e+00  psnr=16.6  cos=0.5258
+[epoch 164 step 050]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=17.0  cos=0.5350
+[epoch 164 step 100]  loss=5.69e-01  l1=5.69e-01  l2=0.00e+00  psnr=17.0  cos=0.5477
+[epoch 164 step 150]  loss=5.45e-01  l1=5.45e-01  l2=0.00e+00  psnr=17.2  cos=0.5755
+[epoch 164 step 200]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5339
+[epoch 164 step 250]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5349
+[epoch 164 step 300]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5431
+[epoch 164 DONE]  final_loss=5.67e-01  psnr=16.74  cos=0.5431
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0164.pt
+[val epoch 164]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2845
+[epoch 165 step 000]  loss=6.07e-01  l1=6.07e-01  l2=0.00e+00  psnr=16.5  cos=0.5383
+[epoch 165 step 050]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.7  cos=0.5353
+[epoch 165 step 100]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=16.9  cos=0.5575
+[epoch 165 step 150]  loss=6.05e-01  l1=6.05e-01  l2=0.00e+00  psnr=16.6  cos=0.5251
+[epoch 165 step 200]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.9  cos=0.5330
+[epoch 165 step 250]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5505
+[epoch 165 step 300]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5491
+[epoch 165 DONE]  final_loss=5.96e-01  psnr=16.69  cos=0.5491
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0165.pt
+[val epoch 165]  latent_l1=0.5840  latent_l2=0.8327  latent_psnr=26.3769  gap_to_upper_psnr=14.0110  gap_to_upper_ssim_3d=0.2185  image_psnr_3d=16.9287  image_ssim_3d=0.5009
+[epoch 166 step 000]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.6  cos=0.5307
+[epoch 166 step 050]  loss=5.61e-01  l1=5.61e-01  l2=0.00e+00  psnr=17.0  cos=0.5594
+[epoch 166 step 100]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.7  cos=0.5380
+[epoch 166 step 150]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5596
+[epoch 166 step 200]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.6  cos=0.5374
+[epoch 166 step 250]  loss=5.67e-01  l1=5.67e-01  l2=0.00e+00  psnr=16.9  cos=0.5658
+[epoch 166 step 300]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.9  cos=0.5356
+[epoch 166 DONE]  final_loss=5.88e-01  psnr=16.86  cos=0.5356
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0166.pt
+[val epoch 166]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2836
+[epoch 167 step 000]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5314
+[epoch 167 step 050]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.7  cos=0.5354
+[epoch 167 step 100]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5328
+[epoch 167 step 150]  loss=6.01e-01  l1=6.01e-01  l2=0.00e+00  psnr=16.6  cos=0.5356
+[epoch 167 step 200]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.9  cos=0.5427
+[epoch 167 step 250]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5261
+[epoch 167 step 300]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.8  cos=0.5532
+[epoch 167 DONE]  final_loss=5.66e-01  psnr=16.81  cos=0.5532
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0167.pt
+[val epoch 167]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2863
+[epoch 168 step 000]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5398
+[epoch 168 step 050]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.8  cos=0.5283
+[epoch 168 step 100]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5481
+[epoch 168 step 150]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.9  cos=0.5441
+[epoch 168 step 200]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5385
+[epoch 168 step 250]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5481
+[epoch 168 step 300]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5514
+[epoch 168 DONE]  final_loss=5.95e-01  psnr=16.79  cos=0.5514
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0168.pt
+[val epoch 168]  latent_l1=0.5887  latent_l2=0.8355  latent_psnr=26.2866
+[epoch 169 step 000]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=16.9  cos=0.5560
+[epoch 169 step 050]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.7  cos=0.5288
+[epoch 169 step 100]  loss=5.69e-01  l1=5.69e-01  l2=0.00e+00  psnr=17.0  cos=0.5596
+[epoch 169 step 150]  loss=5.45e-01  l1=5.45e-01  l2=0.00e+00  psnr=17.2  cos=0.5683
+[epoch 169 step 200]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5456
+[epoch 169 step 250]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.9  cos=0.5366
+[epoch 169 step 300]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5457
+[epoch 169 DONE]  final_loss=6.22e-01  psnr=16.80  cos=0.5457
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0169.pt
+[val epoch 169]  latent_l1=0.5888  latent_l2=0.8356  latent_psnr=26.2863
+[epoch 170 step 000]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.7  cos=0.5256
+[epoch 170 step 050]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.7  cos=0.5413
+[epoch 170 step 100]  loss=5.66e-01  l1=5.66e-01  l2=0.00e+00  psnr=17.0  cos=0.5573
+[epoch 170 step 150]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.6  cos=0.5249
+[epoch 170 step 200]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.9  cos=0.5439
+[epoch 170 step 250]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=16.9  cos=0.5500
+[epoch 170 step 300]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.7  cos=0.5291
+[epoch 170 DONE]  final_loss=5.96e-01  psnr=16.68  cos=0.5291
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0170.pt
+[val epoch 170]  latent_l1=0.5840  latent_l2=0.8326  latent_psnr=26.3779  gap_to_upper_psnr=14.2573  gap_to_upper_ssim_3d=0.2207  image_psnr_3d=16.6824  image_ssim_3d=0.4988
+[epoch 171 step 000]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.8  cos=0.5215
+[epoch 171 step 050]  loss=6.01e-01  l1=6.01e-01  l2=0.00e+00  psnr=16.6  cos=0.5369
+[epoch 171 step 100]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5375
+[epoch 171 step 150]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.6  cos=0.5393
+[epoch 171 step 200]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5542
+[epoch 171 step 250]  loss=6.07e-01  l1=6.07e-01  l2=0.00e+00  psnr=16.6  cos=0.5345
+[epoch 171 step 300]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5450
+[epoch 171 DONE]  final_loss=5.76e-01  psnr=16.90  cos=0.5450
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0171.pt
+[val epoch 171]  latent_l1=0.5889  latent_l2=0.8362  latent_psnr=26.2801
+[epoch 172 step 000]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.7  cos=0.5407
+[epoch 172 step 050]  loss=6.06e-01  l1=6.06e-01  l2=0.00e+00  psnr=16.5  cos=0.5485
+[epoch 172 step 100]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.6  cos=0.5443
+[epoch 172 step 150]  loss=6.08e-01  l1=6.08e-01  l2=0.00e+00  psnr=16.5  cos=0.5369
+[epoch 172 step 200]  loss=6.01e-01  l1=6.01e-01  l2=0.00e+00  psnr=16.6  cos=0.5540
+[epoch 172 step 250]  loss=6.03e-01  l1=6.03e-01  l2=0.00e+00  psnr=16.6  cos=0.5380
+[epoch 172 step 300]  loss=5.67e-01  l1=5.67e-01  l2=0.00e+00  psnr=17.1  cos=0.5465
+[epoch 172 DONE]  final_loss=5.88e-01  psnr=17.09  cos=0.5465
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0172.pt
+[val epoch 172]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2855
+[epoch 173 step 000]  loss=5.91e-01  l1=5.91e-01  l2=0.00e+00  psnr=16.7  cos=0.5415
+[epoch 173 step 050]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=17.0  cos=0.5494
+[epoch 173 step 100]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5364
+[epoch 173 step 150]  loss=6.10e-01  l1=6.10e-01  l2=0.00e+00  psnr=16.5  cos=0.5276
+[epoch 173 step 200]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5357
+[epoch 173 step 250]  loss=5.87e-01  l1=5.87e-01  l2=0.00e+00  psnr=16.8  cos=0.5394
+[epoch 173 step 300]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.8  cos=0.5290
+[epoch 173 DONE]  final_loss=5.93e-01  psnr=16.81  cos=0.5290
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0173.pt
+[val epoch 173]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2859
+[epoch 174 step 000]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5512
+[epoch 174 step 050]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5464
+[epoch 174 step 100]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.8  cos=0.5452
+[epoch 174 step 150]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5491
+[epoch 174 step 200]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.7  cos=0.5466
+[epoch 174 step 250]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5372
+[epoch 174 step 300]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.7  cos=0.5478
+[epoch 174 DONE]  final_loss=6.14e-01  psnr=16.75  cos=0.5478
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0174.pt
+[val epoch 174]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2850
+[epoch 175 step 000]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5529
+[epoch 175 step 050]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.8  cos=0.5590
+[epoch 175 step 100]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.6  cos=0.5601
+[epoch 175 step 150]  loss=6.19e-01  l1=6.19e-01  l2=0.00e+00  psnr=16.3  cos=0.5289
+[epoch 175 step 200]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=17.0  cos=0.5422
+[epoch 175 step 250]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.8  cos=0.5407
+[epoch 175 step 300]  loss=6.13e-01  l1=6.13e-01  l2=0.00e+00  psnr=16.5  cos=0.5247
+[epoch 175 DONE]  final_loss=5.90e-01  psnr=16.47  cos=0.5247
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0175.pt
+[val epoch 175]  latent_l1=0.5840  latent_l2=0.8326  latent_psnr=26.3770  gap_to_upper_psnr=14.1665  gap_to_upper_ssim_3d=0.2202  image_psnr_3d=16.7732  image_ssim_3d=0.4992
+[epoch 176 step 000]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5284
+[epoch 176 step 050]  loss=5.66e-01  l1=5.66e-01  l2=0.00e+00  psnr=17.0  cos=0.5433
+[epoch 176 step 100]  loss=5.98e-01  l1=5.98e-01  l2=0.00e+00  psnr=16.6  cos=0.5481
+[epoch 176 step 150]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.7  cos=0.5257
+[epoch 176 step 200]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5564
+[epoch 176 step 250]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.7  cos=0.5374
+[epoch 176 step 300]  loss=5.51e-01  l1=5.51e-01  l2=0.00e+00  psnr=17.2  cos=0.5487
+[epoch 176 DONE]  final_loss=5.90e-01  psnr=17.22  cos=0.5487
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0176.pt
+[val epoch 176]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2838
+[epoch 177 step 000]  loss=6.02e-01  l1=6.02e-01  l2=0.00e+00  psnr=16.6  cos=0.5257
+[epoch 177 step 050]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5433
+[epoch 177 step 100]  loss=5.96e-01  l1=5.96e-01  l2=0.00e+00  psnr=16.6  cos=0.5399
+[epoch 177 step 150]  loss=6.21e-01  l1=6.21e-01  l2=0.00e+00  psnr=16.3  cos=0.5289
+[epoch 177 step 200]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5519
+[epoch 177 step 250]  loss=5.82e-01  l1=5.82e-01  l2=0.00e+00  psnr=16.9  cos=0.5385
+[epoch 177 step 300]  loss=5.61e-01  l1=5.61e-01  l2=0.00e+00  psnr=17.1  cos=0.5753
+[epoch 177 DONE]  final_loss=5.71e-01  psnr=17.07  cos=0.5753
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0177.pt
+[val epoch 177]  latent_l1=0.5887  latent_l2=0.8359  latent_psnr=26.2830
+[epoch 178 step 000]  loss=5.88e-01  l1=5.88e-01  l2=0.00e+00  psnr=16.7  cos=0.5349
+[epoch 178 step 050]  loss=6.16e-01  l1=6.16e-01  l2=0.00e+00  psnr=16.4  cos=0.5284
+[epoch 178 step 100]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.9  cos=0.5414
+[epoch 178 step 150]  loss=6.13e-01  l1=6.13e-01  l2=0.00e+00  psnr=16.4  cos=0.5299
+[epoch 178 step 200]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.7  cos=0.5427
+[epoch 178 step 250]  loss=5.63e-01  l1=5.63e-01  l2=0.00e+00  psnr=17.0  cos=0.5589
+[epoch 178 step 300]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.9  cos=0.5414
+[epoch 178 DONE]  final_loss=6.02e-01  psnr=16.88  cos=0.5414
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0178.pt
+[val epoch 178]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2841
+[epoch 179 step 000]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.8  cos=0.5184
+[epoch 179 step 050]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.6  cos=0.5374
+[epoch 179 step 100]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5459
+[epoch 179 step 150]  loss=6.04e-01  l1=6.04e-01  l2=0.00e+00  psnr=16.6  cos=0.5317
+[epoch 179 step 200]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.9  cos=0.5327
+[epoch 179 step 250]  loss=5.78e-01  l1=5.78e-01  l2=0.00e+00  psnr=16.9  cos=0.5319
+[epoch 179 step 300]  loss=5.83e-01  l1=5.83e-01  l2=0.00e+00  psnr=16.8  cos=0.5437
+[epoch 179 DONE]  final_loss=5.66e-01  psnr=16.78  cos=0.5437
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0179.pt
+[val epoch 179]  latent_l1=0.5887  latent_l2=0.8356  latent_psnr=26.2860
+[epoch 180 step 000]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5251
+[epoch 180 step 050]  loss=5.54e-01  l1=5.54e-01  l2=0.00e+00  psnr=17.1  cos=0.5649
+[epoch 180 step 100]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5449
+[epoch 180 step 150]  loss=5.92e-01  l1=5.92e-01  l2=0.00e+00  psnr=16.6  cos=0.5515
+[epoch 180 step 200]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.9  cos=0.5340
+[epoch 180 step 250]  loss=6.00e-01  l1=6.00e-01  l2=0.00e+00  psnr=16.6  cos=0.5576
+[epoch 180 step 300]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=17.0  cos=0.5523
+[epoch 180 DONE]  final_loss=5.98e-01  psnr=16.95  cos=0.5523
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0180.pt
+[val epoch 180]  latent_l1=0.5840  latent_l2=0.8324  latent_psnr=26.3794  gap_to_upper_psnr=14.1476  gap_to_upper_ssim_3d=0.2184  image_psnr_3d=16.7921  image_ssim_3d=0.5011
+[best] new best latent_psnr=26.3794 (prev=26.3792) -> /workspace/runs/trial2/checkpoints/best.pt
+[epoch 181 step 000]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5458
+[epoch 181 step 050]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.7  cos=0.5322
+[epoch 181 step 100]  loss=6.06e-01  l1=6.06e-01  l2=0.00e+00  psnr=16.5  cos=0.5408
+[epoch 181 step 150]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=16.8  cos=0.5690
+[epoch 181 step 200]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.8  cos=0.5442
+[epoch 181 step 250]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5532
+[epoch 181 step 300]  loss=6.07e-01  l1=6.07e-01  l2=0.00e+00  psnr=16.5  cos=0.5439
+[epoch 181 DONE]  final_loss=5.72e-01  psnr=16.49  cos=0.5439
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0181.pt
+[val epoch 181]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2846
+[epoch 182 step 000]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.9  cos=0.5412
+[epoch 182 step 050]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.9  cos=0.5466
+[epoch 182 step 100]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.8  cos=0.5502
+[epoch 182 step 150]  loss=6.01e-01  l1=6.01e-01  l2=0.00e+00  psnr=16.6  cos=0.5375
+[epoch 182 step 200]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5417
+[epoch 182 step 250]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5466
+[epoch 182 step 300]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.8  cos=0.5373
+[epoch 182 DONE]  final_loss=5.64e-01  psnr=16.83  cos=0.5373
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0182.pt
+[val epoch 182]  latent_l1=0.5888  latent_l2=0.8359  latent_psnr=26.2827
+[epoch 183 step 000]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.7  cos=0.5563
+[epoch 183 step 050]  loss=5.70e-01  l1=5.70e-01  l2=0.00e+00  psnr=16.9  cos=0.5479
+[epoch 183 step 100]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.8  cos=0.5446
+[epoch 183 step 150]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5456
+[epoch 183 step 200]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.9  cos=0.5587
+[epoch 183 step 250]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5482
+[epoch 183 step 300]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5509
+[epoch 183 DONE]  final_loss=6.04e-01  psnr=16.79  cos=0.5509
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0183.pt
+[val epoch 183]  latent_l1=0.5888  latent_l2=0.8358  latent_psnr=26.2845
+[epoch 184 step 000]  loss=5.99e-01  l1=5.99e-01  l2=0.00e+00  psnr=16.7  cos=0.5263
+[epoch 184 step 050]  loss=5.75e-01  l1=5.75e-01  l2=0.00e+00  psnr=16.9  cos=0.5469
+[epoch 184 step 100]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.8  cos=0.5451
+[epoch 184 step 150]  loss=5.71e-01  l1=5.71e-01  l2=0.00e+00  psnr=16.9  cos=0.5606
+[epoch 184 step 200]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5407
+[epoch 184 step 250]  loss=5.90e-01  l1=5.90e-01  l2=0.00e+00  psnr=16.7  cos=0.5267
+[epoch 184 step 300]  loss=5.84e-01  l1=5.84e-01  l2=0.00e+00  psnr=16.8  cos=0.5325
+[epoch 184 DONE]  final_loss=6.20e-01  psnr=16.81  cos=0.5325
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0184.pt
+[val epoch 184]  latent_l1=0.5887  latent_l2=0.8357  latent_psnr=26.2847
+[epoch 185 step 000]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5451
+[epoch 185 step 050]  loss=6.02e-01  l1=6.02e-01  l2=0.00e+00  psnr=16.6  cos=0.5311
+[epoch 185 step 100]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.8  cos=0.5510
+[epoch 185 step 150]  loss=5.52e-01  l1=5.52e-01  l2=0.00e+00  psnr=17.3  cos=0.5700
+[epoch 185 step 200]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5424
+[epoch 185 step 250]  loss=5.79e-01  l1=5.79e-01  l2=0.00e+00  psnr=16.9  cos=0.5606
+[epoch 185 step 300]  loss=5.68e-01  l1=5.68e-01  l2=0.00e+00  psnr=17.0  cos=0.5339
+[epoch 185 DONE]  final_loss=5.95e-01  psnr=17.02  cos=0.5339
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0185.pt
+[val epoch 185]  latent_l1=0.5841  latent_l2=0.8325  latent_psnr=26.3780  gap_to_upper_psnr=14.1125  gap_to_upper_ssim_3d=0.2191  image_psnr_3d=16.8272  image_ssim_3d=0.5004
+[epoch 186 step 000]  loss=5.94e-01  l1=5.94e-01  l2=0.00e+00  psnr=16.6  cos=0.5478
+[epoch 186 step 050]  loss=5.97e-01  l1=5.97e-01  l2=0.00e+00  psnr=16.7  cos=0.5349
+[epoch 186 step 100]  loss=6.05e-01  l1=6.05e-01  l2=0.00e+00  psnr=16.5  cos=0.5372
+[epoch 186 step 150]  loss=5.77e-01  l1=5.77e-01  l2=0.00e+00  psnr=16.9  cos=0.5376
+[epoch 186 step 200]  loss=5.81e-01  l1=5.81e-01  l2=0.00e+00  psnr=16.9  cos=0.5480
+[epoch 186 step 250]  loss=5.54e-01  l1=5.54e-01  l2=0.00e+00  psnr=17.2  cos=0.5512
+[epoch 186 step 300]  loss=5.53e-01  l1=5.53e-01  l2=0.00e+00  psnr=17.1  cos=0.5793
+[epoch 186 DONE]  final_loss=5.95e-01  psnr=17.12  cos=0.5793
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0186.pt
+[val epoch 186]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2836
+[epoch 187 step 000]  loss=5.76e-01  l1=5.76e-01  l2=0.00e+00  psnr=16.8  cos=0.5485
+[epoch 187 step 050]  loss=5.69e-01  l1=5.69e-01  l2=0.00e+00  psnr=17.0  cos=0.5579
+[epoch 187 step 100]  loss=5.73e-01  l1=5.73e-01  l2=0.00e+00  psnr=16.9  cos=0.5657
+[epoch 187 step 150]  loss=5.66e-01  l1=5.66e-01  l2=0.00e+00  psnr=17.0  cos=0.5494
+[epoch 187 step 200]  loss=5.85e-01  l1=5.85e-01  l2=0.00e+00  psnr=16.7  cos=0.5506
+[epoch 187 step 250]  loss=6.23e-01  l1=6.23e-01  l2=0.00e+00  psnr=16.3  cos=0.5262
+[epoch 187 step 300]  loss=5.80e-01  l1=5.80e-01  l2=0.00e+00  psnr=16.9  cos=0.5351
+[epoch 187 DONE]  final_loss=5.82e-01  psnr=16.88  cos=0.5351
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0187.pt
+[val epoch 187]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2844
+[epoch 188 step 000]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.8  cos=0.5379
+[epoch 188 step 050]  loss=5.95e-01  l1=5.95e-01  l2=0.00e+00  psnr=16.7  cos=0.5399
+[epoch 188 step 100]  loss=5.93e-01  l1=5.93e-01  l2=0.00e+00  psnr=16.7  cos=0.5345
+[epoch 188 step 150]  loss=6.07e-01  l1=6.07e-01  l2=0.00e+00  psnr=16.5  cos=0.5244
+[epoch 188 step 200]  loss=5.72e-01  l1=5.72e-01  l2=0.00e+00  psnr=16.9  cos=0.5634
+[epoch 188 step 250]  loss=5.89e-01  l1=5.89e-01  l2=0.00e+00  psnr=16.7  cos=0.5544
+[epoch 188 step 300]  loss=5.86e-01  l1=5.86e-01  l2=0.00e+00  psnr=16.7  cos=0.5548
+[epoch 188 DONE]  final_loss=6.03e-01  psnr=16.73  cos=0.5548
+[checkpoint] /workspace/runs/trial2/checkpoints/epoch_0188.pt
+[val epoch 188]  latent_l1=0.5887  latent_l2=0.8358  latent_psnr=26.2843
+[epoch 189 step 000]  loss=5.74e-01  l1=5.74e-01  l2=0.00e+00  psnr=17.0  cos=0.5370
+W0515 02:40:28.797000 2723214 site-packages/torch/distributed/elastic/agent/server/api.py:719] Received 15 death signal, shutting down workers
+W0515 02:40:28.798000 2723214 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2723304 closing signal SIGTERM
+Traceback (most recent call last):
+  File "/opt/conda/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/run.py", line 892, in main
+    run(args)
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/run.py", line 883, in run
+    elastic_launch(
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 139, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 261, in launch_agent
+    result = agent.run()
+             ^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+    result = f(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/elastic/agent/server/api.py", line 711, in run
+    result = self._invoke_run(role)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/elastic/agent/server/api.py", line 870, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 2723214 got signal: 15

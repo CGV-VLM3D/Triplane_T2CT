@@ -1,0 +1,24 @@
+# Tier-1 toy: Compress3D TriplaneAE with CrossAttention3D, 2mm latents.
+
+defaults:
+  - data: latents_2mm
+  - model: triplane_ae
+  - train: tier1
+  - eval: latent_only
+  - loss: l1
+  - wb: default
+  - _self_
+
+exp_name: trial_toy_compress3d_attn
+
+model:
+  encoder:
+    latent_shape: [60, 60, 32]
+    use_cross_attn: true
+
+loss:
+  kl_weight: 1.0e-6
+
+hydra:
+  run:
+    dir: runs/${exp_name}/hydra/${now:%Y-%m-%d_%H-%M-%S}

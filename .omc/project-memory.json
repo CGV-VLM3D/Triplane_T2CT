@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1779364140014,
-  "projectRoot": "C:\\Users\\jason\\000_CGV_PC\\002_Research\\003_Triplane_T2CT\\Triplane_T2CT",
+  "lastScanned": 1779758312695,
+  "projectRoot": "/workspace",
   "techStack": {
     "languages": [
       {
@@ -19,7 +19,7 @@
   },
   "build": {
     "buildCommand": null,
-    "testCommand": "/c/Users/jason/anaconda3/envs/py311/python.exe -m pytest tests/test_tier0_overfit.py -m tier0 -k compress3d -x -v 2>&1 | tail -25",
+    "testCommand": "pytest tests/test_hydra_compose.py tests/test_maisi_frozen_load.py tests/test_generatect_adapter.py tests/test_report2ct_module.py tests/test_lightning_fit_smoke.py tests/test_diagnostic_cross_attn_generatect_smoke.py 2>&1 | tail -10",
     "lintCommand": null,
     "devCommand": null,
     "scripts": {}
@@ -38,29 +38,46 @@
       "src",
       "tests"
     ],
-    "gitBranches": {
-      "defaultBranch": "main",
-      "branchingStrategy": null
-    }
+    "gitBranches": null
   },
   "customNotes": [],
   "directoryMap": {
+    "analysis": {
+      "path": "analysis",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1779758312689,
+      "keyFiles": []
+    },
+    "configs": {
+      "path": "configs",
+      "purpose": null,
+      "fileCount": 16,
+      "lastAccessed": 1779758312690,
+      "keyFiles": [
+        "example.yaml",
+        "trial2.yaml",
+        "trial_d3t.yaml",
+        "trial_mid.yaml",
+        "trial_mid_baseline.yaml"
+      ]
+    },
     "data": {
       "path": "data",
       "purpose": "Data files",
       "fileCount": 0,
-      "lastAccessed": 1779364139983,
+      "lastAccessed": 1779758312690,
       "keyFiles": []
     },
     "datasets": {
       "path": "datasets",
       "purpose": null,
       "fileCount": 6,
-      "lastAccessed": 1779364139984,
+      "lastAccessed": 1779758312690,
       "keyFiles": [
+        "Dockerfile",
         "conc_info.json",
         "desc_info.json",
-        "Dockerfile",
         "download_ct_rate.py",
         "make_split.py"
       ]
@@ -69,21 +86,34 @@
       "path": "maisi_bundle",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1779364139984,
+      "lastAccessed": 1779758312691,
       "keyFiles": []
+    },
+    "paper_pdf": {
+      "path": "paper_pdf",
+      "purpose": null,
+      "fileCount": 24,
+      "lastAccessed": 1779758312691,
+      "keyFiles": [
+        "Blaze3DM.pdf",
+        "CT-Rate.pdf",
+        "Compress3D.pdf",
+        "D3T_Dual-Domain_Diffusion_Transformer_in_Triplanar.pdf",
+        "Direct3D.pdf"
+      ]
     },
     "reference": {
       "path": "reference",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1779364139985,
+      "lastAccessed": 1779758312692,
       "keyFiles": []
     },
     "research_summary": {
       "path": "research_summary",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1779364139985,
+      "lastAccessed": 1779758312692,
       "keyFiles": [
         "summary.md"
       ]
@@ -91,34 +121,41 @@
     "results": {
       "path": "results",
       "purpose": null,
-      "fileCount": 7,
-      "lastAccessed": 1779364139986,
+      "fileCount": 8,
+      "lastAccessed": 1779758312692,
       "keyFiles": [
         "cache_recon.log",
         "measure_upper_bound_2mm.log",
+        "tier1_d3t.log",
         "tier1_runs.log",
-        "upper_bound.json",
-        "upper_bound_2mm.json"
+        "upper_bound.json"
       ]
+    },
+    "runs": {
+      "path": "runs",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1779758312692,
+      "keyFiles": []
     },
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
-      "fileCount": 7,
-      "lastAccessed": 1779364139986,
+      "fileCount": 10,
+      "lastAccessed": 1779758312692,
       "keyFiles": [
+        "analyze_maisi_latent_distribution.py",
+        "build_latent_shard.py",
         "check_sdpa.py",
         "extend_2mm_precompute.py",
-        "measure_upper_bound.py",
-        "measure_upper_bound_2mm.py",
-        "run_tier.py"
+        "extend_analysis_c6_c7.py"
       ]
     },
     "src": {
       "path": "src",
       "purpose": "Source code",
       "fileCount": 1,
-      "lastAccessed": 1779364139986,
+      "lastAccessed": 1779758312692,
       "keyFiles": [
         "__init__.py"
       ]
@@ -126,88 +163,116 @@
     "tests": {
       "path": "tests",
       "purpose": "Test files",
-      "fileCount": 11,
-      "lastAccessed": 1779364139986,
+      "fileCount": 14,
+      "lastAccessed": 1779758312692,
       "keyFiles": [
+        "__init__.py",
         "conftest.py",
+        "test_cross_attn_3d.py",
         "test_d3t.py",
-        "test_dataset.py",
-        "test_forward_backward.py",
-        "test_metrics.py"
+        "test_dataset.py"
       ]
     },
-    "maisi_bundle\\docs": {
-      "path": "maisi_bundle\\docs",
+    "wandb": {
+      "path": "wandb",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1779758312693,
+      "keyFiles": [
+        "debug-cli.root.log"
+      ]
+    },
+    "configs/data": {
+      "path": "configs/data",
+      "purpose": "Data files",
+      "fileCount": 2,
+      "lastAccessed": 1779758312693,
+      "keyFiles": [
+        "latents_1mm.yaml",
+        "latents_2mm.yaml"
+      ]
+    },
+    "maisi_bundle/docs": {
+      "path": "maisi_bundle/docs",
       "purpose": "Documentation",
       "fileCount": 2,
-      "lastAccessed": 1779364139987,
+      "lastAccessed": 1779758312693,
       "keyFiles": [
-        "data_license.txt",
-        "README.md"
+        "README.md",
+        "data_license.txt"
       ]
     },
-    "maisi_bundle\\scripts": {
-      "path": "maisi_bundle\\scripts",
+    "maisi_bundle/models": {
+      "path": "maisi_bundle/models",
+      "purpose": "Data models",
+      "fileCount": 1,
+      "lastAccessed": 1779758312693,
+      "keyFiles": [
+        "autoencoder.pt"
+      ]
+    },
+    "maisi_bundle/scripts": {
+      "path": "maisi_bundle/scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 8,
-      "lastAccessed": 1779364139987,
+      "lastAccessed": 1779758312694,
       "keyFiles": [
+        "__init__.py",
         "augmentation.py",
-        "find_masks.py",
-        "quality_check.py"
+        "find_masks.py"
       ]
     },
-    "reference\\models": {
-      "path": "reference\\models",
+    "reference/models": {
+      "path": "reference/models",
       "purpose": "Data models",
-      "fileCount": 5,
-      "lastAccessed": 1779364139988,
+      "fileCount": 7,
+      "lastAccessed": 1779758312694,
       "keyFiles": [
+        "__init__.py",
         "dataloader.py",
-        "latent_dataset.py",
-        "trivae.py"
+        "latent_dataset.py"
       ]
     },
-    "reference\\scripts": {
-      "path": "reference\\scripts",
+    "reference/scripts": {
+      "path": "reference/scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 6,
-      "lastAccessed": 1779364139988,
+      "lastAccessed": 1779758312694,
       "keyFiles": [
         "compute_latent_stats.py",
         "extract_maisi_latent.py",
         "recon_test.py"
       ]
     },
-    "src\\data": {
-      "path": "src\\data",
+    "src/data": {
+      "path": "src/data",
       "purpose": "Data files",
       "fileCount": 2,
-      "lastAccessed": 1779364139989,
+      "lastAccessed": 1779758312694,
       "keyFiles": [
-        "maisi_latent_dataset.py",
-        "__init__.py"
+        "__init__.py",
+        "maisi_latent_dataset.py"
       ]
     },
-    "src\\models": {
-      "path": "src\\models",
+    "src/models": {
+      "path": "src/models",
       "purpose": "Data models",
-      "fileCount": 6,
-      "lastAccessed": 1779364139989,
+      "fileCount": 13,
+      "lastAccessed": 1779758312694,
       "keyFiles": [
-        "triplane_ae.py",
-        "triplane_decoder.py",
-        "triplane_encoder.py"
+        "__init__.py",
+        "cross_attention_3d.py",
+        "tri_conv.py"
       ]
     },
-    "src\\utils": {
-      "path": "src\\utils",
+    "src/utils": {
+      "path": "src/utils",
       "purpose": "Utility functions",
       "fileCount": 2,
-      "lastAccessed": 1779364139990,
+      "lastAccessed": 1779758312694,
       "keyFiles": [
-        "discord_notifier.py",
-        "__init__.py"
+        "__init__.py",
+        "discord_notifier.py"
       ]
     }
   },
@@ -225,6 +290,12 @@
       "type": "file"
     },
     {
+      "path": "src/models/triplane_ae.py",
+      "accessCount": 7,
+      "lastAccessed": 1779388317009,
+      "type": "file"
+    },
+    {
       "path": "scripts\\train.py",
       "accessCount": 6,
       "lastAccessed": 1779373280062,
@@ -234,6 +305,24 @@
       "path": "src\\models\\triplane_encoder.py",
       "accessCount": 6,
       "lastAccessed": 1779374075862,
+      "type": "file"
+    },
+    {
+      "path": "CLAUDE.md",
+      "accessCount": 6,
+      "lastAccessed": 1779779313677,
+      "type": "file"
+    },
+    {
+      "path": "configs/model/triplane_ae.yaml",
+      "accessCount": 5,
+      "lastAccessed": 1779384358948,
+      "type": "file"
+    },
+    {
+      "path": "src/models/triplane_encoder.py",
+      "accessCount": 5,
+      "lastAccessed": 1779385128087,
       "type": "file"
     },
     {
@@ -255,6 +344,12 @@
       "type": "file"
     },
     {
+      "path": "src/models/__init__.py",
+      "accessCount": 4,
+      "lastAccessed": 1779386506934,
+      "type": "file"
+    },
+    {
       "path": "src\\models\\tri_conv.py",
       "accessCount": 3,
       "lastAccessed": 1779373082062,
@@ -270,6 +365,18 @@
       "path": "src\\losses\\recon_loss.py",
       "accessCount": 3,
       "lastAccessed": 1779373253693,
+      "type": "file"
+    },
+    {
+      "path": "configs/trial_toy_compress3d_no_attn.yaml",
+      "accessCount": 3,
+      "lastAccessed": 1779379049346,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_shapes.py",
+      "accessCount": 3,
+      "lastAccessed": 1779386198115,
       "type": "file"
     },
     {
@@ -315,6 +422,30 @@
       "type": "file"
     },
     {
+      "path": "tests/test_d3t.py",
+      "accessCount": 2,
+      "lastAccessed": 1779376730340,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_z_init_gradient.py",
+      "accessCount": 2,
+      "lastAccessed": 1779377067298,
+      "type": "file"
+    },
+    {
+      "path": "configs/trial_toy_compress3d_attn.yaml",
+      "accessCount": 2,
+      "lastAccessed": 1779378045889,
+      "type": "file"
+    },
+    {
+      "path": "configs/model/triplane_ae_compress3d.yaml",
+      "accessCount": 2,
+      "lastAccessed": 1779386680790,
+      "type": "file"
+    },
+    {
       "path": "research_summary\\summary.md",
       "accessCount": 1,
       "lastAccessed": 1779364837239,
@@ -331,12 +462,6 @@
       "accessCount": 1,
       "lastAccessed": 1779367603074,
       "type": "directory"
-    },
-    {
-      "path": "CLAUDE.md",
-      "accessCount": 1,
-      "lastAccessed": 1779370727222,
-      "type": "file"
     },
     {
       "path": "reference\\configs\\trivae.yaml",
@@ -426,6 +551,30 @@
       "path": "src\\configs\\trial_toy_compress3d_attn.yaml",
       "accessCount": 1,
       "lastAccessed": 1779373877309,
+      "type": "file"
+    },
+    {
+      "path": "src/configs/trial_toy_compress3d_attn.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1779375229551,
+      "type": "file"
+    },
+    {
+      "path": "src/configs/trial_toy_compress3d_no_attn.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1779375229990,
+      "type": "file"
+    },
+    {
+      "path": "src/models/deprecated/__init__.py",
+      "accessCount": 1,
+      "lastAccessed": 1779376683800,
+      "type": "file"
+    },
+    {
+      "path": "configs/trial2.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1779377118094,
       "type": "file"
     }
   ],

@@ -1,0 +1,9 @@
+[submodule "third_party/report2ct"]
+	path = third_party/report2ct
+	url = https://github.com/sinaamirrajab/report2ct.git
+[submodule "third_party/generatect"]
+	path = third_party/generatect
+	url = https://github.com/ibrahimethemhamamci/GenerateCT.git
+[submodule "third_party/vlm3d_dockers"]
+	path = third_party/vlm3d_dockers
+	url = https://github.com/forithmus/VLM3D-Dockers.git

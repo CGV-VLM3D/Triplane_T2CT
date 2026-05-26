@@ -1,0 +1,19 @@
+# Compress3D TriplaneAE — standard params for 1mm latent (120×120×64).
+# Encoder: axis-collapse Conv3d + 2D ResBlocks + optional CrossAttention3D.
+# Decoder: TriConv-based upsampler.
+#
+# Override latent_shape to [60, 60, 32] in the launch yaml for 2mm toy data.
+kind: TriplaneAE
+encoder:
+  in_channels: 4
+  latent_shape: [120, 120, 64]
+  plane_channels: 32 # 16 -> 32
+  latent_channels: 32 # 16 -> 32
+  n_resblocks: [2, 2, 4]
+  downsampling: false
+  use_cross_attn: true
+  cross_attn_heads: 4
+  cross_attn_d_kv: 16
+  cross_attn_window: 1
+decoder:
+  n_tri_resblocks: 5 # 3 -> 5

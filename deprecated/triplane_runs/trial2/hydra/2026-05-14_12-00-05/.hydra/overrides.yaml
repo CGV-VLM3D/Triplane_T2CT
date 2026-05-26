@@ -1,0 +1,4 @@
+- train.resume=auto
+- train.epochs=500
+- train.batch_size=16
+- train.lr=4.0e-4

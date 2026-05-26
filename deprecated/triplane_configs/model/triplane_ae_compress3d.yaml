@@ -1,0 +1,22 @@
+# Paper-faithful Compress3D TriplaneAE for MAISI latents.
+# Encoder: feature lift (4→32) + axis-collapse + per-plane 2D ResBlock stages
+#          with 2× downsample × 2 (4× total spatial down) + 3D-aware cube
+#          cross-attention against a downsampled (o=2) feature volume.
+# Decoder: 2D ResBlock + 2× upsample × 2, broadcast-fuse to 3D.
+#
+# Override latent_shape to [60, 60, 32] for 2mm toy, [120, 120, 64] for 1mm full.
+kind: TriplaneAECompress3D
+encoder:
+  in_channels: 4
+  latent_shape: [120, 120, 64]
+  feature_lift_channels: 32
+  plane_channels_progression: [32, 64, 128]
+  n_blocks_per_stage: [2, 2, 4]
+  n_triplane_downsamples: 2
+  volume_downsample: 2
+  volume_kv_channels: null   # null → defaults to feature_lift_channels
+  cross_attn_heads: 4
+  cross_attn_d_kv: 32
+  latent_channels: 32
+decoder:
+  n_blocks_per_stage: [3, 3, 5]
