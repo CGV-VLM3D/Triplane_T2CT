@@ -39,6 +39,15 @@ huggingface_hub==0.26.3
 # --------- HF accelerate (used by some third_party baselines) --------- #
 accelerate
 
+# --------- GenerateCT runtime (transformer_maskgit deps; submodule imported via sys.path, no pip install -e) --------- #
+beartype
+ema-pytorch
+torchtyping
+vector-quantize-pytorch==1.1.2
+opencv-python-headless          # container-friendly opencv (no libGL system dep)
+sentencepiece
+openpyxl                        # GenerateCT example data is .xlsx
+
 # --------- testing & dev --------- #
 pytest==8.3.3
 pytest-cov==5.0.0
