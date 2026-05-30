@@ -7,3 +7,12 @@
 [submodule "third_party/vlm3d_dockers"]
 	path = third_party/vlm3d_dockers
 	url = https://github.com/forithmus/VLM3D-Dockers.git
+[submodule "third_party/fvlm"]
+	path = third_party/fvlm
+	url = https://github.com/alibaba-damo-academy/fvlm.git
+[submodule "third_party/visd_boost"]
+	path = third_party/visd_boost
+	url = https://github.com/alibaba-damo-academy/ViSD-Boost.git
+[submodule "third_party/ct_clip"]
+	path = third_party/ct_clip
+	url = https://github.com/ibrahimethemhamamci/CT-CLIP.git
