@@ -1,0 +1,23 @@
+# @package _global_.model
+name: report2ct
+
+_target_: src.eval.samplers.report2ct.Report2CTSampler
+
+# Must be provided on the CLI:
+#   model.ckpt_path=/workspace/data/report2ct_work_dir/checkpoints/epoch_079_valloss_1.3198.ckpt
+ckpt_path: ???
+
+# RFlow denoising steps (100 ≈ 2 min/sample on A6000; 50 for quick eval)
+n_steps: 100
+
+modality_class_label: 1   # CT class (matches training config)
+
+# Voxel spacing (mm) — UNet conditioning AND saved .mha affine (must match; scaled × 100
+# internally for conditioning). Upstream diff_model_infer_vlm3D.py uses (1.0, 1.0, 1.5)
+# (:95, :320); the FID runner then resamples to 1mm like the proxy-GT.
+spacing_mm: [1.0, 1.0, 1.5]
+
+# Classifier-free guidance scale. 1.0 = no guidance = faithful repro (upstream infer
+# has no cfg). Override with model.cfg_scale=5 for the paper's cfg variant.
+# NOTE: cfg RAISES FID (paper ablation 3.79→4.04→4.19); it only helps CLIPScore.
+cfg_scale: 1.0

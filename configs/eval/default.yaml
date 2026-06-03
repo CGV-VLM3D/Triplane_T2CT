@@ -1,0 +1,12 @@
+defaults:
+  - task: ctgen
+  - model: report2ct
+  - _self_
+
+# Output root: each run lands under out_dir/task_name/model_name/
+out_dir: /workspace/data/vlm3d_eval/${task.name}/${model.name}
+
+# Set via CUDA_VISIBLE_DEVICES externally; this selects the logical device index.
+device: cuda
+
+seed: 42
