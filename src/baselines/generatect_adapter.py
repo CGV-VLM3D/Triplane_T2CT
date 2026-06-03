@@ -254,6 +254,24 @@ class GenerateCTAdapter(LightningModule):
         self._model: torch.nn.Module | None = None
         self._sr_infer: object | None = None
 
+    @property
+    def output_spacing(self) -> tuple[float, float, float]:
+        """Native voxel spacing (mm) in the SQUEEZED-ARRAY axis order (D, H, W) = (z, y, x).
+
+        GenerateCT trains on CT-RATE resampled to (x, y, z) = (0.75, 0.75, 1.5) mm at 512²
+        in-plane (third_party/vlm3d_dockers/.../data_preprocess/preprocess_ctrate_train.py:93-95).
+        `.inference()` returns (1, 1, D, H, W); after squeeze the axes are (D, H, W), so the
+        spacing is (1.5, 0.75, 0.75). The low-res CTViT path covers the same FOV at 128² →
+        in-plane 0.75 × 512/128 = 3.0 mm.
+
+        Read ONLY by src/inference.py (visualization). NOTE the eval sampler
+        (src/eval/samplers/generatect.py) stamps the same physical truth but in ITK (x, y, z)
+        order — do not "reconcile" the two; they encode identical geometry in different axis
+        conventions (CLAUDE.md audit checklist #4).
+        """
+        in_plane = 0.75 if self._load_super_resolution else 3.0
+        return (1.5, in_plane, in_plane)
+
     # Lazy build so an instance can be created without ckpts present (e.g. in tests).
     def _ensure_built(self) -> None:
         # third_party t5.py uses bare `.cuda()` and attention.py uses `torch.device('cuda')`,

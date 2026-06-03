@@ -39,6 +39,7 @@ MODELS_DIR = Path(os.environ.get("MODELS_DIR", "/opt/app/models"))
 
 # Final output volume specification (from VLM3D-Dockers ctgen contract).
 FINAL_SHAPE: tuple[int, int, int] = (512, 512, 256)  # (H, W, D)
+# Keep isotropic until save_mha's numpy→ITK axis order is reconciled (Phase D) — see save_mha.
 FINAL_SPACING: tuple[float, float, float] = (1.0, 1.0, 1.0)
 HU_RANGE: tuple[int, int] = (-1000, 1000)
 
@@ -81,6 +82,16 @@ def generate_volume(prompt: str, seed: int) -> np.ndarray:
 
 
 def save_mha(volume: np.ndarray, out_path: Path) -> None:
+    # AXIS-ORDER LANDMINE (Phase D): sitk.GetImageFromArray reverses axes — numpy (a, b, c)
+    # → ITK size (c, b, a) — and SetSpacing takes ITK (x, y, z). `volume` is FINAL_SHAPE
+    # = (H, W, D) and we do NOT transpose, so ITK (x, y, z) = (D, W, H). That is harmless
+    # ONLY because FINAL_SPACING is isotropic. When Phase D swaps in a real generator with
+    # anisotropic spacing, mirror the eval samplers (src/eval/samplers/*: arr.transpose(2, 1, 0)
+    # then SetSpacing([x, y, z])) so the slice spacing lands on the slice axis. (CLAUDE.md #4/#6.)
+    assert len(set(FINAL_SPACING)) == 1, (
+        f"FINAL_SPACING={FINAL_SPACING} is anisotropic, but save_mha does not transpose axes — "
+        "reconcile numpy (H,W,D) → ITK (x,y,z) ordering before using non-isotropic spacing."
+    )
     itk = sitk.GetImageFromArray(volume)
     itk.SetSpacing(FINAL_SPACING)
     itk.SetOrigin((0.0, 0.0, 0.0))

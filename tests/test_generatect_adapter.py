@@ -38,6 +38,26 @@ def test_ctvit_constructs_with_paper_kwargs_no_weights() -> None:
     assert n_params > 10_000_000, f"CTViT param count unexpectedly small: {n_params}"
 
 
+def test_output_spacing_tracks_resolution() -> None:
+    """output_spacing is in squeezed-array order (D, H, W) and depends on super-res.
+
+    Hires (512²) → in-plane 0.75 mm; low-res (128²) → 0.75 × 512/128 = 3.0 mm; slice = 1.5 mm.
+    Read by src/inference.py to write a truthful NIfTI affine (visualization path).
+    """
+    from src.baselines.generatect_adapter import GenerateCTAdapter  # noqa: PLC0415
+
+    assert GenerateCTAdapter(load_super_resolution=True).output_spacing == (
+        1.5,
+        0.75,
+        0.75,
+    )
+    assert GenerateCTAdapter(load_super_resolution=False).output_spacing == (
+        1.5,
+        3.0,
+        3.0,
+    )
+
+
 @pytest.mark.skipif(
     not CTVIT_CKPT.is_file(), reason=f"CTViT ckpt not downloaded yet at {CTVIT_CKPT}"
 )
