@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import logging
 import os
-import re
 import shutil
 import subprocess
 import sys
@@ -103,6 +102,63 @@ def _populate_shared_gt_features(gt_feat_dir: Path, shared_gt: Path) -> int:
     if added:
         log.info("FID GT cache: populated %d new GT features into %s", added, shared_gt)
     return added
+
+
+def _fid_from_cached_features(
+    features_dir: Path, n_gt: int, n_pred: int
+) -> dict[str, float] | None:
+    """Compute 2.5D-FID on CPU from the per-volume feature files the FID loop already wrote.
+
+    The upstream loop extracts features to ``features_dir/{gt,pred}`` but computes the final
+    FID statistics on the GPU, which OOMs at full scale (~512k slice-features per plane across
+    6 matrices). Since every per-volume feature file is on disk, we always compute the FID here
+    on CPU instead (the host has far more RAM than the GPU). Returns ``None`` if the cached
+    features are incomplete (i.e. the subprocess died before finishing extraction).
+    """
+    import numpy as _np  # noqa: PLC0415
+
+    if not hasattr(
+        _np, "float_"
+    ):  # MONAI fid._sqrtm uses the NumPy-2-removed np.float_
+        _np.float_ = _np.float64
+    import torch  # noqa: PLC0415
+    from monai.metrics import FIDMetric  # noqa: PLC0415
+
+    gt_files = sorted(p for p in (features_dir / "gt").glob("*") if p.is_file())
+    pred_files = sorted(p for p in (features_dir / "pred").glob("*") if p.is_file())
+    if len(gt_files) < n_gt or len(pred_files) < n_pred:
+        log.error(
+            "CPU FID fallback: incomplete cached features (gt %d/%d, pred %d/%d).",
+            len(gt_files),
+            n_gt,
+            len(pred_files),
+            n_pred,
+        )
+        return None
+
+    # Per-volume feature files are tuples (xy, yz, zx); upstream reports zx as XZ.
+    plane_keys = {0: "FID_2p5D_XY", 1: "FID_2p5D_YZ", 2: "FID_2p5D_XZ"}
+    fids: dict[str, float] = {}
+    for idx, key in plane_keys.items():
+        real = torch.vstack(
+            [torch.load(f, weights_only=True)[idx].float() for f in gt_files]
+        )
+        synth = torch.vstack(
+            [torch.load(f, weights_only=True)[idx].float() for f in pred_files]
+        )
+        fids[key] = float(FIDMetric()(synth, real))
+        del real, synth
+    fids["FID_2p5D_Avg"] = (
+        fids["FID_2p5D_XY"] + fids["FID_2p5D_YZ"] + fids["FID_2p5D_XZ"]
+    ) / 3.0
+    log.info(
+        "CPU FID fallback: Avg=%.4f (XY=%.4f YZ=%.4f XZ=%.4f)",
+        fids["FID_2p5D_Avg"],
+        fids["FID_2p5D_XY"],
+        fids["FID_2p5D_YZ"],
+        fids["FID_2p5D_XZ"],
+    )
+    return fids
 
 
 class CTGenEvaluator:
@@ -397,38 +453,35 @@ class CTGenEvaluator:
             text=True,
         )
         combined = result.stdout + "\n" + result.stderr
-        fid_data = self._parse_fid_output(combined)
+
+        # The subprocess is used purely as a GPU feature *extractor*: it writes per-volume
+        # features to features_dir/{gt,pred} incrementally (torch.save), then attempts the final
+        # FID statistic on the GPU. At full scale that aggregation — ~512k slice-features per
+        # plane stacked across 6 matrices, plus an all_gather copy — OOMs the GPU. We therefore
+        # always compute the FID ourselves on CPU from those cached features: deterministic,
+        # memory-safe (plane-by-plane), ~1-2 min for 1000. This avoids the GPU OOM by design
+        # rather than depending on (and parsing) the subprocess's doomed GPU FID. Feature
+        # extraction is the only step that needs the GPU.
+        fid_data = _fid_from_cached_features(
+            features_dir, len(gt_files), len(pred_files)
+        )
 
         if not fid_data:
+            # Incomplete features -> the subprocess died *before* finishing extraction (a real
+            # failure, distinct from the expected post-extraction GPU-FID OOM).
             log.error(
-                "FID-2.5D: could not parse results from output.\n%s", combined[-2000:]
+                "FID-2.5D: feature extraction did not complete; cannot compute FID.\n%s",
+                combined[-2000:],
             )
             return _nan
 
-        # Successful run: persist this run's GT features into the shared cache so the next
-        # model reuses them (first model to reach here populates it for everyone).
+        # Persist this run's GT features into the shared cache so the next model reuses them.
         _populate_shared_gt_features(gt_feat_dir, shared_gt)
 
         out_json = out_dir / "fid.json"
         with open(out_json, "w") as f:
             json.dump(fid_data, f, indent=2)
         return fid_data
-
-    @staticmethod
-    def _parse_fid_output(text: str) -> dict[str, float]:
-        """Parse FID results from logger.info lines in script output."""
-        result = {}
-        patterns = {
-            "FID_2p5D_XY": r"FID XY:\s*([\d.]+)",
-            "FID_2p5D_YZ": r"FID YZ:\s*([\d.]+)",
-            "FID_2p5D_XZ": r"FID ZX:\s*([\d.]+)",  # script says ZX
-            "FID_2p5D_Avg": r"FID Avg:\s*([\d.]+)",
-        }
-        for key, pat in patterns.items():
-            m = re.search(pat, text)
-            if m:
-                result[key] = float(m.group(1))
-        return result
 
     # ------------------------------------------------------------------ #
     #  Helper                                                              #
