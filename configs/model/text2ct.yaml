@@ -1,0 +1,11 @@
+# Text2CT baseline (danielemolino/Text2CT) — radiology report → 3D CT.
+# MAISI-latent rectified-flow latent diffusion (same family as Report2CT).
+# Inference-only adapter; reuses upstream scripts.diff_model_demo.run_inference verbatim.
+# Weights: HuggingFace dmolino/text2ct-weights — see docs/text2ct_runbook.md.
+_target_: src.baselines.text2ct_adapter.Text2CTAdapter
+
+ckpt_dir: /workspace/data/checkpoints/text2ct
+device_str: "cuda:0"   # lazy build; CUDA-only (FrozenCLIP3D.cuda() + flash attention)
+load_weights: true
+guidance_scale: 5.0          # upstream environment_diff_model_eval.json
+num_inference_steps: 30      # upstream config_diff_model.json diffusion_unet_inference
