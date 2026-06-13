@@ -6,7 +6,7 @@ the pretrained `CT-CLIP_v2.pt` checkpoint without modifying the submodule
 alignment used by all three VLM3D 2026 eval dockers (ctgen / reportgen /
 abnclass), so this is the de-facto reference encoder.
 
-Surface (uniform across CT-CLIP / fVLM / ViSD-Boost):
+Surface (uniform across CT-CLIP / fVLM):
     image_dim, text_dim : int    -- documented latent dims (post-projection, L2-normalized)
     encode_image(vol)            -- (B, 1, D, H, W) -> (B, image_dim)
     encode_text(input_ids, mask) -- (B, L)          -> (B, text_dim)
@@ -41,8 +41,8 @@ from torch import nn
 # so whichever loads first poisons `sys.modules` for the other. We therefore
 # (a) do NOT mutate sys.path at module import, and (b) scrub + re-prioritize
 # inside `_ensure_built` so the most recent caller wins. Same pattern as
-# `visd_boost_adapter._ensure_built` (which handles the fvlm vs visd_boost
-# lavis-package collision).
+# `fvlm_adapter._ensure_built` (which handles the analogous lavis-package
+# collision for fVLM).
 # ----------------------------------------------------------------------------
 _CTCLIP_REPO: Final[Path] = Path("/workspace/third_party/ct_clip")
 _CTCLIP_PKG_DIR: Final[Path] = _CTCLIP_REPO / "CT_CLIP"
@@ -124,7 +124,7 @@ class CTCLIPBackbone(nn.Module):
         # causing `TypeError: CTViT.forward() got an unexpected keyword
         # argument 'return_encoded_tokens'`. Scrub the cache, remove the
         # generatect path if present, and prepend our path. Same fix pattern
-        # as `visd_boost_adapter._ensure_built` for the lavis collision.
+        # as `fvlm_adapter._ensure_built` for the lavis collision.
         for _name in [
             m
             for m in sys.modules
@@ -144,8 +144,6 @@ class CTCLIPBackbone(nn.Module):
             # Imports deferred so adapter can be imported without the heavy deps
             # being installed (matches generatect_adapter._import_transformer_maskgit).
             from transformer_maskgit import CTViT  # noqa: PLC0415
-            from transformer_maskgit.attention import ContinuousPositionBias  # noqa: PLC0415
-            from einops import rearrange  # noqa: PLC0415
             from ct_clip import CTCLIP  # noqa: PLC0415
             from transformers import BertModel, BertTokenizer  # noqa: PLC0415
         finally:
@@ -154,30 +152,16 @@ class CTCLIPBackbone(nn.Module):
             if _genct_tm_had_path and _genct_tm_str not in sys.path:
                 sys.path.append(_genct_tm_str)
 
-        # Monkey-patch — same upstream bug as the one generatect_adapter patches.
-        # attention.py:260 hardcodes `device=torch.device('cuda')`, ignoring the
-        # `device` arg passed by `CTViT.encode`. With our model on CPU (default
-        # device_str), this causes a cuda:0/cpu mixed-device crash. third_party/
-        # is read-only (P2) so we patch the class at runtime.
-        # Source being fixed: third_party/ct_clip/transformer_maskgit/transformer_maskgit/attention.py:257-276
-        def _cpb_forward_patched(self, *dimensions, device=torch.device("cpu")):
-            if self.rel_pos is None or not self.cache_rel_pos:
-                positions = [torch.arange(d, device=device) for d in dimensions]
-                grid = torch.stack(torch.meshgrid(*positions, indexing="ij"))
-                grid = rearrange(grid, "c ... -> (...) c")
-                rel_pos = rearrange(grid, "i c -> i 1 c") - rearrange(
-                    grid, "j c -> 1 j c"
-                )
-                if self.log_dist:
-                    rel_pos = torch.sign(rel_pos) * torch.log(rel_pos.abs() + 1)
-                self.register_buffer("rel_pos", rel_pos, persistent=False)
-            rel_pos = self.rel_pos.to(torch.float32)
-            for layer in self.net:
-                rel_pos = layer(rel_pos.float())
-            return rearrange(rel_pos, "i j h -> h i j")
-
-        ContinuousPositionBias.forward = _cpb_forward_patched
-
+        # NOTE: no monkey-patch here (unlike generatect_adapter). CT-CLIP upstream
+        # hardcodes `device=torch.device('cuda')` in ~7 places across attention.py /
+        # ctvit.py, and the only ContinuousPositionBias caller — `CTViT.encode`
+        # (ctvit.py:292-293) — passes `device=cuda` *explicitly*. So the encoder runs
+        # on cuda:0 only: a CPB patch would be a no-op on cuda:0 and still can't fix a
+        # CPU run (Attention/AlibiPositionalBias at attention.py:135/171/195/219 fire
+        # regardless). To target a different physical GPU use CUDA_VISIBLE_DEVICES=N
+        # (remaps to cuda:0) — do NOT pass device_str='cuda:1'. (generatect_adapter
+        # DOES patch CPB because its MaskGit path passes the real x.device
+        # — MaskGITTransformer.py:177,184 — which does not apply to CT-CLIP.)
         tokenizer = BertTokenizer.from_pretrained(HF_TEXT_ENCODER, do_lower_case=True)
         text_encoder = BertModel.from_pretrained(HF_TEXT_ENCODER)
         text_encoder.resize_token_embeddings(len(tokenizer))
@@ -218,8 +202,22 @@ class CTCLIPBackbone(nn.Module):
         self._clip = clip
         self._tokenizer = tokenizer
 
-    # --- uniform contract ---------------------------------------------------
+    # --- grad-enabled access (parity with FVLMBackbone.model) ----------------
+    @property
+    def clip(self) -> nn.Module:
+        """Built CT-CLIP module (CTCLIP), lazily constructed + weight-loaded.
 
+        Parity with `FVLMBackbone.model`. Exists so callers that need a
+        *grad-enabled* forward (e.g. Grad-CAM / saliency) can drive the encoder
+        submodules directly — the `encode_image` / `encode_text` methods are
+        `@torch.no_grad()` and so cannot back-propagate to the input volume.
+        Read-only; does not relax the no_grad guard on the encode_* path.
+        """
+        self._ensure_built()
+        return self._clip
+
+    # --- uniform contract ---------------------------------------------------
+    # 실질적으로 아래의 코드만 보면
     def tokenize(self, text: str | list[str]) -> dict:
         """Return a dict with `input_ids` and `attention_mask` tensors on CPU."""
         self._ensure_built()
@@ -283,6 +281,6 @@ class CTCLIPBackbone(nn.Module):
         text_output = clip.text_transformer(
             input_ids=input_ids, attention_mask=attention_mask
         )
-        cls_hidden = text_output.last_hidden_state[:, 0]
+        cls_hidden = text_output.last_hidden_state[:, 0]  # class token output
         text_latent = clip.to_text_latent(cls_hidden)
         return F.normalize(text_latent, dim=-1)

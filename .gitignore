@@ -34,3 +34,6 @@ logs/
 outputs/
 
 paper_pdf/
+
+# Saliency experiment outputs (Experiment 3)
+tests/saliency_map/results/
