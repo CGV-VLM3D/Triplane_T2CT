@@ -5,7 +5,15 @@ defaults:
 
 # Output root: each eval run lands under outputs/<model>/eval_<timestamp>/ (mirrors training's
 # outputs/<model>/<timestamp>/). Shared GT / FID-feature caches stay under data/vlm3d_eval/ (see ctgen task).
-out_dir: /workspace/outputs/${model.name}/eval_${now:%Y-%m-%d}_${now:%H-%M-%S}
+# out_dir mirrors Hydra's run dir (set below) so .hydra/config.yaml + run_eval.log land in the SAME
+# folder as metrics.json / summary.json / predictions/ — single timestamp, nothing split off.
+out_dir: ${hydra:runtime.output_dir}
+
+# Point Hydra's run dir at the model-namespaced eval folder (its default would scatter .hydra/ + the
+# .log under outputs/<date>/<time>/). This is the single source of the run timestamp.
+hydra:
+  run:
+    dir: /workspace/outputs/${model.name}/eval_${now:%Y-%m-%d}_${now:%H-%M-%S}
 
 # Set via CUDA_VISIBLE_DEVICES externally; this selects the logical device index.
 device: cuda
