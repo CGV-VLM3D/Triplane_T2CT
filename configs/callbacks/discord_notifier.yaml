@@ -1,0 +1,4 @@
+discord_notifier:
+  _target_: src.callbacks.discord_notifier.DiscordNotifier
+  experiment_name: ${task_name}
+  webhook_url: null  # reads DISCORD_WEBHOOK_URL from env when null

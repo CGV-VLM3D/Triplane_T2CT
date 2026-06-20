@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Final
 
+import nibabel as nib
 import pandas as pd
 
 from src.baselines.fvlm_preprocess import ts_mask_path
@@ -21,7 +22,7 @@ from src.eval.ct_rate_cases import _volume_name_to_nifti, load_eval_cases
 
 _ROOT: Final[Path] = Path("/workspace/datasets/datasets/CT-RATE/dataset")
 _LABELS_CSV: Final[Path] = (
-    _ROOT / "multi_abnormality_labels" / "valid_predicted_labels.csv" # valid 예측 라
+    _ROOT / "multi_abnormality_labels" / "valid_predicted_labels.csv"  # valid 예측 라
 )
 _METADATA_CSV: Final[Path] = _ROOT / "metadata" / "validation_metadata.csv"
 
@@ -69,7 +70,7 @@ def select_cases(
     positive_for: list[str] | None = None,
     require_mask: bool = True,
 ) -> list[SaliencyCase]:
-    """proxy_test(1304, valid_fixed 1-per-patient)에서 SaliencyCase 목록 구성.
+    """valid_v2(1304, valid_fixed 1-per-patient)에서 SaliencyCase 목록 구성.
 
     positive_for 지정 시 해당 abnormality 라벨이 모두 1인 케이스만(AND) 유지.
     n 캡은 필터 *후* seeded-shuffle+head (모델 간 동일 부분집합 → 공정 비교).
@@ -116,8 +117,20 @@ def select_cases(
             )
         )
 
-    if n is not None and n < len(cases): # n개만 평가에 사용하고 싶을 때
+    if n is not None and n < len(cases):  # n개만 평가에 사용하고 싶을 때
         rng = random.Random(seed)
         rng.shuffle(cases)
         cases = cases[:n]
     return cases
+
+
+def display_axcodes(ct_path: Path, perm: tuple[int, int, int]) -> tuple[str, str, str]:
+    """NIfTI 방향코드(X,Y,Z) → 모델 display (D,H,W) 축 방향코드.
+
+    perm 은 (X,Y,Z) → (D,H,W) 축 매핑 (전처리 transpose, 부호반전 없음):
+      fVLM  (D,H,W)=(Z,Y,X) → perm=(2,1,0)
+      CT-CLIP (D,H,W)=(Z,X,Y) → perm=(2,0,1)
+    예: CT-RATE ('L','P','S') → fVLM ('S','P','L'), CT-CLIP ('S','L','P').
+    """
+    ax = nib.aff2axcodes(nib.load(str(ct_path)).affine)  # (codeX, codeY, codeZ)
+    return tuple(ax[i] for i in perm)  # (codeD, codeH, codeW)

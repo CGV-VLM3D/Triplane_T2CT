@@ -1,6 +1,6 @@
 """VLM3D-Dockers Task 4 (ctgen) evaluation runner.
 
-Subprocess-wraps `third_party/vlm3d_dockers/ctgen_evaluation/` so any generated
+Subprocess-wraps `third_party/vlm3d_dockers/ct_challenges/ctgen_evaluation/` so any generated
 volume directory can be scored against the FVD_CTNet + CLIPScore +
 FID_2p5D evaluation pipeline.
 
@@ -26,12 +26,14 @@ import sys
 from pathlib import Path
 from typing import Final
 
-CTGEN_EVAL_DIR: Final[Path] = Path(
-    "/workspace/third_party/vlm3d_dockers/ctgen_evaluation"
-)
+from src.eval._vlm3d_paths import ctgen_eval_dir
+
+# ct_challenges/ layout (a945900+) with old-path fallback; see src/eval/_vlm3d_paths.py.
+CTGEN_EVAL_DIR: Final[Path] = ctgen_eval_dir()
 DEFAULT_IMAGE: Final[str] = "forithmus/ctgen-eval:latest"
 
-# Schema from third_party/vlm3d_dockers/ctgen_evaluation/README.md
+# Schema from third_party/vlm3d_dockers/ct_challenges/ctgen_evaluation/README.md
+# (a945900 nests these 8 keys under a top-level "metrics" key — unwrapped in run_docker_eval).
 EXPECTED_KEYS: Final[tuple[str, ...]] = (
     "FVD_CTNet",
     "CLIPScore",
@@ -84,7 +86,10 @@ def run_docker_eval(
     metrics_path = out_dir / "metrics.json"
     if not metrics_path.is_file():
         raise RuntimeError(f"Expected metrics.json at {metrics_path} after docker run")
-    return json.loads(metrics_path.read_text())
+    payload = json.loads(metrics_path.read_text())
+    # a945900 wraps the scores under a "metrics" key: {"metrics": {...8 keys...}}.
+    # Older containers wrote the keys flat; accept both.
+    return payload.get("metrics", payload)
 
 
 def dry_run_metrics(out_path: Path) -> dict:
@@ -109,6 +114,11 @@ def validate_metrics(metrics: dict) -> None:
 
 
 def main() -> int:
+    """CLI entry point: parse args, run docker eval or dry-run, validate and print metrics.
+
+    Returns:
+        Exit code — 0 on success, 2 when ``--predictions`` is omitted in non-dry-run mode.
+    """
     parser = argparse.ArgumentParser(
         description="VLM3D-Dockers Task 4 evaluation runner"
     )

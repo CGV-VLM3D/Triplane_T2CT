@@ -91,7 +91,7 @@ Confirmed from `third_party/report2ct/vlm3D_work_dir/config_maisi_2560.json:diff
 ## License & non-commercial note
 
 - All 3 text encoders are licensed for research use (MedEmbed / ClinicalBERT / BiomedVLP-CXR-BERT — check each card for exact terms).
-- CT-CLIP for retrieval diagnostic: CC-BY-NC-SA (non-commercial research) — see `docs/ct_clip_check.md`.
+- CT-CLIP for retrieval diagnostic: CC-BY-NC-SA (non-commercial research).
 - MAISI bundle: Apache 2.0 (MONAI Consortium).
 - Report2CT submodule: license file present (`third_party/report2ct/LICENSE`), check Day 3 before adapter ships.
 

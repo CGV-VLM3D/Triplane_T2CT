@@ -16,3 +16,10 @@ docker run -dit \
   -v /home/user/hyunjun/datasets:/workspace/datasets:ro \
   -w /workspace \
   woojin/triplane-t2ct:latest
+
+
+
+# docker start triplane_t2ct
+# docker exec -it triplane_t2ct bash
+
+# docker update --restart unless-stopped triplane_t2ct

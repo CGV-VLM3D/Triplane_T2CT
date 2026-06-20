@@ -26,7 +26,7 @@ class SaliencyConfig:
     native_map: bool = False  # native token-text sim 맵 산출
     prompt_scheme: str = "fvlm"  # "fvlm" (16) | "ctclip" (18)
     abnormalities: Optional[List[str]] = None  # None = 스킴 전체
-    n_cases: Optional[int] = None  # None = proxy_test 전체(1304)
+    n_cases: Optional[int] = None  # None = valid_v2 전체(1304)
     positive_only: bool = False  # abnormalities 라벨이 모두 1인 케이스만
     seed: int = 42
     out_root: str = "tests/saliency_map/results"

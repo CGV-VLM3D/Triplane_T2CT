@@ -1,11 +1,7 @@
-"""End-of-Phase-A Lightning wiring proof.
+"""Lightning 배선 스모크 테스트.
 
-Runs `lightning.Trainer.fit` for 1 step on a dummy LightningModule + LightningDataModule
-to confirm the full pl.Trainer.fit happy-path works before Phase B kickoff. Catches
-import-time issues, version mismatches, and basic config sanity in one go.
-
-This is the Phase A acceptance criterion `pl.Trainer.fit runs >=1 step` (plan section
-'Phase A — 5/26 -> 5/31' Day 5).
+더미 LightningModule + DataModule로 Trainer.fit를 1 스텝 돌려 전체 happy-path가
+동작하는지(import 오류·버전 불일치·기본 config 이상) 한 번에 확인한다.
 """
 
 from __future__ import annotations

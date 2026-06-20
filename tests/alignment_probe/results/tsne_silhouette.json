@@ -1,0 +1,122 @@
+{
+  "ctclip": {
+    "5": {
+      "Lung nodule": 0.013493443839251995,
+      "Lung opacity": 0.11182355135679245,
+      "Arterial wall calcification": 0.08351060003042221,
+      "Pulmonary fibrotic sequela": -0.0337500125169754
+    },
+    "30": {
+      "Lung nodule": 0.01281894464045763,
+      "Lung opacity": 0.1279192417860031,
+      "Arterial wall calcification": 0.11975782364606857,
+      "Pulmonary fibrotic sequela": -0.008478179574012756
+    },
+    "50": {
+      "Lung nodule": 0.013807132840156555,
+      "Lung opacity": 0.12578436732292175,
+      "Arterial wall calcification": 0.1426985263824463,
+      "Pulmonary fibrotic sequela": -0.014071493409574032
+    }
+  },
+  "fvlm": {
+    "5": {
+      "Lung nodule": 0.08572068810462952,
+      "Lung opacity": 0.0722603052854538,
+      "Arterial wall calcification": -0.016274260357022285,
+      "Pulmonary fibrotic sequela": 0.05015222728252411
+    },
+    "30": {
+      "Lung nodule": 0.12501081824302673,
+      "Lung opacity": 0.04641423746943474,
+      "Arterial wall calcification": 0.005018698517233133,
+      "Pulmonary fibrotic sequela": 0.05799473822116852
+    },
+    "50": {
+      "Lung nodule": 0.12275905162096024,
+      "Lung opacity": 0.07792671769857407,
+      "Arterial wall calcification": 0.05986877903342247,
+      "Pulmonary fibrotic sequela": 0.080292247235775
+    }
+  },
+  "report2ct": {
+    "5": {
+      "Lung nodule": 0.048120055347681046,
+      "Lung opacity": 0.19123290479183197,
+      "Arterial wall calcification": 0.057182177901268005,
+      "Pulmonary fibrotic sequela": -0.0353003665804863
+    },
+    "30": {
+      "Lung nodule": 0.05638284981250763,
+      "Lung opacity": 0.21113978326320648,
+      "Arterial wall calcification": 0.07149365544319153,
+      "Pulmonary fibrotic sequela": -0.049202799797058105
+    },
+    "50": {
+      "Lung nodule": 0.11206632107496262,
+      "Lung opacity": 0.0856802761554718,
+      "Arterial wall calcification": 0.019349776208400726,
+      "Pulmonary fibrotic sequela": -0.022163480520248413
+    }
+  },
+  "t5": {
+    "5": {
+      "Lung nodule": 0.0400305911898613,
+      "Lung opacity": 0.057651177048683167,
+      "Arterial wall calcification": 0.0523112490773201,
+      "Pulmonary fibrotic sequela": 0.029899224638938904
+    },
+    "30": {
+      "Lung nodule": 0.0548265166580677,
+      "Lung opacity": 0.05262600630521774,
+      "Arterial wall calcification": 0.06734016537666321,
+      "Pulmonary fibrotic sequela": 0.03705070540308952
+    },
+    "50": {
+      "Lung nodule": 0.05688309669494629,
+      "Lung opacity": 0.032472506165504456,
+      "Arterial wall calcification": 0.06632253527641296,
+      "Pulmonary fibrotic sequela": 0.04152059182524681
+    }
+  },
+  "text2ct": {
+    "5": {
+      "Lung nodule": -0.0009912734385579824,
+      "Lung opacity": 0.031245015561580658,
+      "Arterial wall calcification": 0.047487206757068634,
+      "Pulmonary fibrotic sequela": -0.01180308312177658
+    },
+    "30": {
+      "Lung nodule": 0.03087410144507885,
+      "Lung opacity": 0.044126737862825394,
+      "Arterial wall calcification": 0.1532001793384552,
+      "Pulmonary fibrotic sequela": 0.07092005014419556
+    },
+    "50": {
+      "Lung nodule": 0.020379185676574707,
+      "Lung opacity": 0.05245646834373474,
+      "Arterial wall calcification": 0.13682763278484344,
+      "Pulmonary fibrotic sequela": 0.019896525889635086
+    }
+  },
+  "visual_z": {
+    "5": {
+      "Lung nodule": 0.02197117544710636,
+      "Lung opacity": 0.07587336748838425,
+      "Arterial wall calcification": 0.09674053639173508,
+      "Pulmonary fibrotic sequela": -0.0034797268453985453
+    },
+    "30": {
+      "Lung nodule": 0.012227803468704224,
+      "Lung opacity": 0.09399908035993576,
+      "Arterial wall calcification": 0.11135420948266983,
+      "Pulmonary fibrotic sequela": -0.01135875005275011
+    },
+    "50": {
+      "Lung nodule": 0.01559458114206791,
+      "Lung opacity": 0.09688864648342133,
+      "Arterial wall calcification": 0.1222679391503334,
+      "Pulmonary fibrotic sequela": -0.0043993303552269936
+    }
+  }
+}

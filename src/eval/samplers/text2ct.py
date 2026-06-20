@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 # Text2CT native output spacing — config_diff_model.json `diffusion_unet_inference.spacing`.
 # The model always emits a (512, 512, 128) volume at this physical spacing, so we tag the
 # saved .mha with it (CT-CLIP / FID preprocessing resamples from physical spacing, like the
-# proxy-GT scans). This mirrors upstream save_image(out_spacing=(0.75, 0.75, 3.0)).
+# valid-GT scans). This mirrors upstream save_image(out_spacing=(0.75, 0.75, 3.0)).
 _OUTPUT_SPACING_MM = (0.75, 0.75, 3.0)
 
 
@@ -50,6 +50,17 @@ class Text2CTSampler(AbstractSampler):
         output_spacing_mm: list[float] | None = None,
         name: str | None = None,  # absorbed from Hydra config
     ) -> None:
+        """Store sampling configuration; adapter and weights are loaded lazily on first call.
+
+        Args:
+            ckpt_dir: directory containing the three Text2CT checkpoint files
+                (accepted by ``Text2CTAdapter``; may contain a ``models/`` subdirectory).
+            n_steps: number of RFlow denoising steps (upstream default 30).
+            guidance_scale: classifier-free-guidance scale (upstream default 5.0).
+            output_spacing_mm: physical voxel spacing (mm) written to the saved ``.mha``.
+                Defaults to Text2CT's native ``(0.75, 0.75, 3.0)`` so the FID runner
+                resamples to 1 mm correctly (mirrors upstream ``save_image`` call).
+        """
         self.ckpt_dir = ckpt_dir
         self.n_steps = int(n_steps)
         self.guidance_scale = float(guidance_scale)
@@ -62,6 +73,13 @@ class Text2CTSampler(AbstractSampler):
 
     # ------------------------------------------------------------------ #
     def _init(self, device: torch.device) -> None:
+        """Lazily build and load the ``Text2CTAdapter`` (CLIP3D encoder + RFlow UNet).
+
+        No-ops if already initialised.  Called automatically by ``generate``.
+
+        Args:
+            device: target device for model weights and sampling tensors.
+        """
         if self._adapter is not None:
             return
         if device.type == "cuda":

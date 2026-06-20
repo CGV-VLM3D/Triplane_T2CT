@@ -1,0 +1,34 @@
+# @package _global_
+# Report2CT reproduction experiment.
+# Launch: CUDA_VISIBLE_DEVICES=1,2 python src/train.py experiment=report2ct_repro
+# Smoke:  CUDA_VISIBLE_DEVICES=1,2 python src/train.py experiment=report2ct_repro trainer.max_epochs=1 trainer.limit_train_batches=50
+
+defaults:
+  - override /data: report2ct
+  - override /model: report2ct
+  - override /trainer: report2ct
+  - override /callbacks: default
+  - override /logger: wandb
+  - _self_
+
+task_name: report2ct   # → outputs/report2ct/<timestamp>/
+tags: ["report2ct", "repro"]
+seed: 42
+
+logger:
+  wandb:
+    group: "baseline-repro" # 다른 실험할 때 ours-v1 이런식으로 바꾸면 됨 
+test: false   # no test_step() in Report2CTModule
+
+# Diffusion: train the full schedule (no early stopping); val/loss is a weak FID proxy
+# so checkpoints are periodic snapshots picked by post-hoc FID, not by val/loss.
+callbacks:
+  early_stopping: null   # disabled: diffusion trains to fixed n_epochs
+  model_checkpoint:
+    monitor: null              # no metric-based "best" selection
+    every_n_epochs: 5          # ← periodic snapshot interval (tune here)
+    save_top_k: -1             # keep every snapshot (post-hoc FID select / future post-hoc EMA)
+    save_last: true            # keep last.ckpt for resume
+    filename: "epoch_{epoch:03d}"
+    auto_insert_metric_name: false
+  rich_progress_bar: null   # disabled: conflicts with wandb's Rich console

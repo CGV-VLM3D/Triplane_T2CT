@@ -1,14 +1,8 @@
-"""Text2CT adapter smoke tests.
+"""Text2CT 어댑터 스모크 테스트.
 
-CI-safe gates (no weights, no GPU):
-  * construct-without-build (lazy),
-  * default checkpoint paths under /workspace/data/checkpoints/text2ct/,
-  * the vendored MONAI-1.5 RFlowScheduler imports + steps under our pinned MONAI 1.4,
-  * the scheduler shim resolves the monai namespace name to that same vendored class.
-
-The ``requires_weights`` gate runs a full report→CT inference and only fires after
-docs/text2ct_runbook.md places the 3 checkpoints under /workspace/data/checkpoints/text2ct/
-on a CUDA box (FrozenCLIP3D hardcodes ``.cuda()`` and the UNet uses flash attention).
+가중치 없는 lazy 생성, 체크포인트 경로, native anisotropic spacing(0.75,0.75,3.0),
+그리고 vendored RFlowScheduler가 우리 MONAI 1.4에서 import·step되고 shim이 monai
+네임스페이스를 같은 클래스로 해석하는지 확인한다. 가중치가 있으면 report→CT 추론까지.
 """
 
 from __future__ import annotations

@@ -140,12 +140,28 @@ class CTRateMetadataDataset(Dataset):
     """Lightweight dataset returning only per-sample metadata (no NIfTI load)."""
 
     def __init__(self, records: list[CTRateRecord]) -> None:
+        """Wraps a pre-joined list of CTRateRecord dataclasses.
+
+        Args:
+            records: Flat list of records from `load_records()`.
+        """
         self.records = records
 
     def __len__(self) -> int:
+        """Returns the number of records in the dataset."""
         return len(self.records)
 
     def __getitem__(self, idx: int) -> CTRateRecord:
+        """Returns the CTRateRecord at position `idx` (no NIfTI load; metadata only).
+
+        Args:
+            idx: Integer index into `self.records`.
+
+        Returns:
+            A `CTRateRecord` dataclass with volume_name, nifti_path, findings,
+            impression, spacing_xy/z, and a dict of 18 binary abnormality labels
+            (or None when labels are unavailable). No tensor — metadata mode only.
+        """
         return self.records[idx]
 
 
@@ -164,6 +180,17 @@ class CTRateDataModule(LightningDataModule):
         num_workers: int = 8,
         pin_memory: bool = True,
     ) -> None:
+        """Configures the CT-RATE data module.
+
+        Args:
+            root: Dataset root; defaults to the collaborator read-only mount at
+                ``/workspace/datasets/datasets/CT-RATE/dataset``.
+            mode: ``'metadata'`` returns ``CTRateRecord`` dataclasses (EDA / retrieval);
+                ``'volume'`` (not yet implemented) will also load NIfTI volumes.
+            batch_size: Samples per batch passed to ``DataLoader``.
+            num_workers: Parallel workers for ``DataLoader``.
+            pin_memory: Whether to pin host memory for faster GPU transfer.
+        """
         super().__init__()
         self.save_hyperparameters()
         self.root = Path(root)
@@ -176,12 +203,26 @@ class CTRateDataModule(LightningDataModule):
         self._valid_records: list[CTRateRecord] | None = None
 
     def setup(self, stage: str | None = None) -> None:
+        """Loads and joins train/valid CT-RATE records (idempotent; CSV-only, no NIfTI I/O)."""
         if self._train_records is None:
             self._train_records = load_records("train", self.root)
         if self._valid_records is None:
             self._valid_records = load_records("valid", self.root)
 
     def _make_loader(self, records: list[CTRateRecord], shuffle: bool) -> DataLoader:
+        """Builds a ``DataLoader`` over ``CTRateMetadataDataset`` for the given records.
+
+        Uses a pass-through ``collate_fn`` so each batch is a plain Python list of
+        ``CTRateRecord`` dataclasses (no tensor collation in metadata mode).
+
+        Args:
+            records: Pre-joined record list for one split.
+            shuffle: Whether to shuffle the dataset order each epoch.
+
+        Returns:
+            A ``DataLoader`` yielding lists of ``CTRateRecord`` objects.
+            ``mode='volume'`` raises ``NotImplementedError``.
+        """
         if self.mode != "metadata":
             raise NotImplementedError(
                 "mode='volume' loader lands in Day 4 EDA or Phase C; use mode='metadata' for now."
@@ -198,9 +239,11 @@ class CTRateDataModule(LightningDataModule):
         )
 
     def train_dataloader(self) -> DataLoader:
+        """Returns a shuffled ``DataLoader`` over the training split."""
         assert self._train_records is not None, "Call setup() first"
         return self._make_loader(self._train_records, shuffle=True)
 
     def val_dataloader(self) -> DataLoader:
+        """Returns an unshuffled ``DataLoader`` over the validation split."""
         assert self._valid_records is not None, "Call setup() first"
         return self._make_loader(self._valid_records, shuffle=False)

@@ -1,0 +1,11 @@
+# CT-CLIP (global encoder) — saliency 가 퍼질 것으로 기대 (global 한계).
+exp_name: ctclip
+model: ctclip
+device: cuda
+cam: layercam
+native_map: true            # CT-CLIP native 맵은 탐색용(토큰 text-aligned 아님)
+prompt_scheme: ctclip       # 18 pathology "is present./not present."
+abnormalities: [Emphysema, Lung nodule]
+n_cases: 5
+positive_only: true         # 해당 abnormality 양성 케이스만
+seed: 42

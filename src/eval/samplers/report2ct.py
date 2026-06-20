@@ -42,11 +42,26 @@ class _ReconModel(torch.nn.Module):
     """Decode latent with scale_factor — mirrors upstream sample.py:ReconModel."""
 
     def __init__(self, autoencoder, scale_factor: float):
+        """Wrap the frozen MAISI autoencoder with its learned latent scale factor.
+
+        Args:
+            autoencoder: frozen MAISI VAE (from ``load_frozen``).
+            scale_factor: scalar by which latents were divided before encoding
+                during training; divides ``z`` before decoding to undo that scaling.
+        """
         super().__init__()
         self.autoencoder = autoencoder
         self.scale_factor = scale_factor
 
     def forward(self, z: torch.Tensor) -> torch.Tensor:
+        """Decode a scaled latent to a reconstructed CT volume.
+
+        Args:
+            z: MAISI latent tensor ``(1, 4, 120, 120, 64)``.
+
+        Returns:
+            Reconstructed volume ``(1, 1, 480, 480, 256)`` in approximately ``[0, 1]``.
+        """
         return self.autoencoder.decode_stage_2_outputs(z / self.scale_factor)
 
 
@@ -63,8 +78,12 @@ def _dynamic_infer(
     return out
 
 
-def _build_unet() -> DiffusionModelUNetMaisi:
-    """Instantiate UNet with kwargs from configs/model/report2ct.yaml."""
+def _build_unet(cross_attention_dim: int = 2560) -> DiffusionModelUNetMaisi:
+    """Instantiate UNet with kwargs from configs/model/report2ct.yaml.
+
+    cross_attention_dim defaults to Report2CT's 2560; the fVLM-conditioned variant
+    (src/eval/samplers/report2ct_fvlm.py) passes 256.
+    """
     return DiffusionModelUNetMaisi(
         spatial_dims=3,
         in_channels=4,
@@ -73,7 +92,7 @@ def _build_unet() -> DiffusionModelUNetMaisi:
         num_res_blocks=2,
         attention_levels=[False, False, True, True],
         num_head_channels=[0, 0, 32, 32],
-        cross_attention_dim=2560,
+        cross_attention_dim=cross_attention_dim,
         num_class_embeds=128,
         include_fc=True,
         include_spacing_input=True,
@@ -85,7 +104,9 @@ def _build_unet() -> DiffusionModelUNetMaisi:
     )
 
 
-def _load_checkpoint(ckpt_path: str | Path, device: torch.device):
+def _load_checkpoint(
+    ckpt_path: str | Path, device: torch.device, cross_attention_dim: int = 2560
+):
     """Load UNet weights and scale_factor from a Lightning .ckpt file.
 
     Returns (unet, scale_factor).
@@ -96,7 +117,7 @@ def _load_checkpoint(ckpt_path: str | Path, device: torch.device):
     scale_factor: float = sd["scale_factor"].item()
     log.info("scale_factor from checkpoint: %.4f", scale_factor)
 
-    unet = _build_unet()
+    unet = _build_unet(cross_attention_dim=cross_attention_dim)
     unet_sd = {k[len("unet.") :]: v for k, v in sd.items() if k.startswith("unet.")}
     missing, unexpected = unet.load_state_dict(unet_sd, strict=True)
     if missing or unexpected:
@@ -131,6 +152,20 @@ class Report2CTSampler(AbstractSampler):
         cfg_scale: float = 1.0,
         name: str | None = None,  # absorbed from Hydra model config; not used
     ) -> None:
+        """Store inference configuration; model weights are loaded lazily on first ``generate``.
+
+        Args:
+            ckpt_path: path to a Lightning ``.ckpt`` file containing ``unet.*`` weights
+                and a ``scale_factor`` scalar in ``state_dict``.
+            n_steps: number of RFlow denoising steps.
+            modality_class_label: class-conditioning label fed to the UNet (CT=1,
+                matching the training config).
+            spacing_mm: voxel spacing (mm) used both as UNet spatial conditioning and
+                as the affine stamped on the saved ``.mha``.  Defaults to
+                ``[1.0, 1.0, 1.5]`` (upstream diff_model_infer_vlm3D.py:95, 320).
+            cfg_scale: classifier-free guidance scale; ``1.0`` disables CFG.  Values
+                above ``1.0`` improve CLIPScore but raise FID per the paper ablation.
+        """
         self.ckpt_path = Path(ckpt_path)
         self.n_steps = n_steps
         self.modality_class_label = modality_class_label
@@ -161,6 +196,14 @@ class Report2CTSampler(AbstractSampler):
     # ------------------------------------------------------------------ #
 
     def _init(self, device: torch.device) -> None:
+        """Lazily load UNet, text encoders, and frozen MAISI VAE onto ``device``.
+
+        No-ops if already initialised.  Disables Flash-Attention 3 on Blackwell
+        (sm_120) to avoid the FA3 backward crash, matching ``Report2CTModule.setup()``.
+
+        Args:
+            device: target device for all model weights and inference tensors.
+        """
         if self._unet is not None:
             return
         self._device = device
@@ -182,6 +225,14 @@ class Report2CTSampler(AbstractSampler):
     # ------------------------------------------------------------------ #
     #  Internal helpers                                                    #
     # ------------------------------------------------------------------ #
+
+    def _case_to_context(self, case: EvalCase) -> torch.Tensor:
+        """Build the cross-attention context for one case.
+
+        Overridable: the fVLM-conditioned subclass loads a precomputed per-organ
+        embedding instead of encoding findings/impression text.
+        """
+        return self._encode_text(case.findings, case.impression)
 
     def _encode_text(self, findings: str, impression: str) -> torch.Tensor:
         """Encode findings + impression → context tensor (1, 2, 2560)."""
@@ -343,7 +394,7 @@ class Report2CTSampler(AbstractSampler):
                 written.append(out_path)
                 continue
 
-            context = self._encode_text(case.findings, case.impression)
+            context = self._case_to_context(case)
             # Condition AND stamp the same configured spacing (upstream (1.0,1.0,1.5)); a
             # spacing-conditional model generates at the spacing it is told, so the saved
             # affine must match the conditioning. (Not case.spacing_mm — see __init__.)

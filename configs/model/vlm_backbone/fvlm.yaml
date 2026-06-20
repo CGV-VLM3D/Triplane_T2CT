@@ -1,0 +1,8 @@
+# fVLM backbone — uniform encode_image / encode_text / tokenize contract.
+# Loaded weights: fVLM CT-RATE pretrained checkpoint (gdrive folder
+# 15BnMo1lIAlOH_8KLdB2NugiHnmj9AWSD). See docs/vlm_baselines_runbook.md.
+_target_: src.baselines.fvlm_adapter.FVLMBackbone
+
+ckpt_path: /workspace/data/checkpoints/fvlm/pretrained_ct_rate.pt
+device_str: "cpu"     # lazy build; task module overrides at train/eval time
+load_weights: true

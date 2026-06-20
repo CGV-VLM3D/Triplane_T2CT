@@ -1,0 +1,13 @@
+# fVLM −mask (A) — 전체 볼륨 + 전체 토큰 (마스크 완전 제거). 붕괴 기대.
+exp_name: fvlm_nomask
+model: fvlm
+device: cuda
+cam: layercam
+native_map: true
+prompt_scheme: fvlm
+abnormalities: [Emphysema, Lung nodule]
+n_cases: 5
+positive_only: true
+seed: 42
+fvlm_crop: whole            # crop 안 함 (마스크로 위치 모름)
+fvlm_mask: false            # 전체 토큰 주입 (organ query 자력 국소화)

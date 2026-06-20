@@ -1,0 +1,26 @@
+# @package _global_.model
+name: report2ct_fvlm
+
+_target_: src.eval.samplers.report2ct_fvlm.Report2CTFVLMSampler
+
+# Must be provided on the CLI:
+#   model.ckpt_path=/workspace/outputs/report2ct_fvlm/<timestamp>/checkpoints/epoch_*_valloss_*.ckpt
+ckpt_path: ???
+
+# Directory of precomputed fVLM per-organ cond embeddings (<scan_id>.pt, each (4, 256)).
+# For valid_v2/valid_v2 eval this is the valid split produced by
+# scripts/precompute_fvlm_cond_embeddings.py.
+cond_dir: /workspace/data/fVLM/cond_embeddings/valid
+
+# RFlow denoising steps (100 ≈ 2 min/sample on A6000; 50 for quick eval)
+n_steps: 100
+
+modality_class_label: 1   # CT class (matches training config)
+
+# Voxel spacing (mm) — UNet conditioning AND saved .mha affine (must match; scaled × 100
+# internally). Same convention as report2ct.yaml so the comparison stays apples-to-apples.
+spacing_mm: [1.0, 1.0, 1.5]
+
+# Classifier-free guidance scale. 1.0 = no guidance (faithful). cfg uncond branch uses
+# zeros_like(context) — works unchanged for the (1, 4, 256) fVLM context.
+cfg_scale: 1.0

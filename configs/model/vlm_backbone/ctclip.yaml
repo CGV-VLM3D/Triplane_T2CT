@@ -1,0 +1,8 @@
+# CT-CLIP backbone — uniform encode_image / encode_text / tokenize contract.
+# Loaded weights: CT-CLIP_v2.pt (released by ibrahimethemhamamci/CT-CLIP).
+# See docs/vlm_baselines_runbook.md for the download recipe.
+_target_: src.baselines.ctclip_adapter.CTCLIPBackbone
+
+ckpt_path: /workspace/data/checkpoints/ctclip/CT-CLIP_v2.pt
+device_str: "cpu"     # lazy build; task module overrides at train/eval time
+load_weights: true

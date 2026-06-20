@@ -20,7 +20,7 @@ from tests.saliency_map.cam import (
     build_cam,
     make_reshape_transform,
 )
-from tests.saliency_map.data import SaliencyCase
+from tests.saliency_map.data import SaliencyCase, display_axcodes
 from tests.saliency_map.prompts import PromptItem
 from tests.saliency_map.runners.base import BaseRunner, ModelInput, SaliencyResult
 
@@ -139,6 +139,7 @@ class CTCLIPRunner(BaseRunner):
         disp = vol[0, 0].detach().cpu().numpy()  # (240, 480, 480)
         mi = ModelInput(scan_id=case.scan_id, display_volume=disp)
         mi.vol = vol  # (1, 1, 240, 480, 480) — saliency 입력 (서브클래스 확장 필드)
+        mi.orient = display_axcodes(case.ct_path, (2, 0, 1))  # (D,H,W)=(Z,X,Y)
         return mi
 
     def _encode_text(self, text: str) -> torch.Tensor:
@@ -208,4 +209,5 @@ class CTCLIPRunner(BaseRunner):
             pred_prob=pred_prob,
             native_map=native,
             grid_shape=(T, 24, 24),
+            orient=model_input.orient,
         )

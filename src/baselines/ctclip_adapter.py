@@ -219,7 +219,15 @@ class CTCLIPBackbone(nn.Module):
     # --- uniform contract ---------------------------------------------------
     # 실질적으로 아래의 코드만 보면
     def tokenize(self, text: str | list[str]) -> dict:
-        """Return a dict with `input_ids` and `attention_mask` tensors on CPU."""
+        """Tokenize text for the CT-CLIP text encoder.
+
+        Args:
+            text: a single report string, or a batch list of strings.
+
+        Returns:
+            Dict with ``input_ids`` and ``attention_mask`` tensors, each
+            ``(B, 512)`` (max_length padding), on CPU.
+        """
         self._ensure_built()
         out = self._tokenizer(
             text,
@@ -232,14 +240,18 @@ class CTCLIPBackbone(nn.Module):
 
     @torch.no_grad()
     def encode_image(self, vol: torch.Tensor) -> torch.Tensor:
-        """Encode a (B, 1, D, H, W) volume to (B, image_dim), L2-normalized.
+        """Encode a CT volume to the contrastive image latent, L2-normalized.
 
-        D / H / W must satisfy CTViT's patch divisibility (image_size=480,
-        patch_size=20, temporal_patch_size=10 → D % 10 == 0, H == W == 480).
-        Intensity convention: HU/1000 in [-1, 1], same as
-        third_party/ct_clip/scripts/data_inference_nii.py:115-128. Caller is
-        responsible for the preprocessing; we only check shape here so an
-        experimental normalization can still be passed through.
+        Args:
+            vol: CT volume, ``(B, 1, D, H, W)``. Must satisfy CTViT patch
+                divisibility (image_size=480, patch_size=20, temporal_patch_size=10
+                → ``D % 10 == 0``, ``H == W == 480``). Intensity convention HU/1000
+                in ``[-1, 1]`` (same as data_inference_nii.py:115-128). Caller owns
+                preprocessing; only the shape is checked here so an experimental
+                normalization can still be passed through.
+
+        Returns:
+            Image latent, ``(B, image_dim)`` (image_dim = 512), L2-normalized.
 
         Mirrors third_party/ct_clip/CT_CLIP/ct_clip/ct_clip.py:715-740 — encoded
         tokens are temporally averaged then flattened to (B, 294912) before the
@@ -267,7 +279,14 @@ class CTCLIPBackbone(nn.Module):
     def encode_text(
         self, input_ids: torch.Tensor, attention_mask: torch.Tensor
     ) -> torch.Tensor:
-        """Encode tokenized text to (B, text_dim), L2-normalized.
+        """Encode tokenized text to the contrastive text latent, L2-normalized.
+
+        Args:
+            input_ids: token ids, ``(B, L)`` (L = 512).
+            attention_mask: padding mask, ``(B, L)``.
+
+        Returns:
+            Text latent, ``(B, text_dim)`` (text_dim = 512), L2-normalized.
 
         Mirrors third_party/ct_clip/CT_CLIP/ct_clip/ct_clip.py:762-765 — take
         the CLS hidden state from `last_hidden_state[:, 0]` (NOT pooler_output)

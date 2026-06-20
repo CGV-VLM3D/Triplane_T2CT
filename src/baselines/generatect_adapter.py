@@ -61,7 +61,7 @@ SUPERRES_YAML: Final[Path] = _GENERATECT_DIR / "superres_inference.yaml"
 # DUPLICATION INTENTIONAL — GenerateCT submodule encodes its model spec as Python literals
 # inside `inference_ctvit.py` / `inference_transformer.py` (no YAML/JSON config file). We copy
 # the literals here verbatim. If the submodule ever ships a config file, switch to ConfigParser
-# like src/baselines/maisi.py and src/baselines/report2ct_adapter.py.
+# like src/baselines/maisi.py (or the YAML-driven instantiate in configs/model/report2ct.yaml).
 # Source: third_party/generatect/inference_ctvit.py:5-15, inference_transformer.py:44-54
 _CTVIT_KWARGS: Final[dict] = {
     "dim": 512,

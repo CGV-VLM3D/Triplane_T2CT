@@ -11,12 +11,20 @@ import torch
 
 @dataclass
 class EvalCase:
-    """One evaluation case: an ID, its radiology report, and optional voxel spacing."""
+    """One evaluation case: an ID, its radiology report, and optional voxel spacing.
+
+    ``age`` / ``sex`` are the raw CT-RATE metadata strings (e.g. ``"036Y"`` / ``"M"``);
+    they are populated for the GenerateCT prompt template (which was trained on
+    ``"{age} years old {sex}: {impression}"`` — see GenerateCTSampler) and left empty
+    by callers that don't need them.
+    """
 
     scan_id: str
     findings: str
     impression: str
     spacing_mm: list[float] = field(default_factory=lambda: [1.0, 1.0, 1.0])
+    age: str = ""
+    sex: str = ""
 
 
 class AbstractSampler(ABC):

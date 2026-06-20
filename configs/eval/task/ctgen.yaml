@@ -4,17 +4,20 @@ name: ctgen
 # Number of CT-RATE validation cases to evaluate (null = all ~1304)
 n_samples: 100
 
-# GT mode: proxy = CT-RATE valid_fixed as ground-truth; official = pre-extracted docker GT
-gt_mode: proxy   # choices: proxy | official
+# GT mode: valid = CT-RATE valid_fixed as ground-truth; official = pre-extracted docker GT
+gt_mode: valid   # choices: valid | official
 
-# Shared proxy-GT cache. Used in BOTH modes by run_eval.py (gt_dir or out_dir/proxy_gt).
-# In proxy mode, prepare_proxy_gt() is idempotent: existing .mha are reused (no re-convert),
+# Shared valid-GT cache. Used in BOTH modes by run_eval.py (gt_dir or out_dir/gt).
+# In valid mode, prepare_valid_gt() is idempotent: existing .mha are reused (no re-convert),
 # so all models share one byte-identical GT set for a fair win_condition comparison.
-# Built once on the valid_1000 split (2026-06-03); also serves any n_samples<=1000 head subset.
-gt_dir: /workspace/data/vlm3d_eval/_shared_gt_1000
+# Set = frozen representative valid_v2: valid_fixed one-scan-per-patient = 1304
+# (ctrate_toy_v2/valid_v2/ids.json). load_eval_cases() restricts to it; any n_samples<1304
+# is a seeded-shuffle NESTED subset (representative, identical across models).
+# (Legacy _shared_gt_1000 was the head-1000 / 425-patient set — superseded.)
+gt_dir: /workspace/data/vlm3d_eval/_valid_v2_1304
 
 # XLSX with text prompts (for CLIPScore text-image alignment).
-# When null in proxy mode, CLIPScore I2T is skipped; only I2I is computed.
+# When null in valid mode, CLIPScore I2T is skipped; only I2I is computed.
 prompt_xlsx: null
 
 metrics:
@@ -22,6 +25,8 @@ metrics:
   clip_score: true      # requires CT-CLIP_v2.pt
   fid_2p5d: true
 
-# Paths to evaluation scripts and model weights
-vlm3d_eval_dir: /workspace/third_party/vlm3d_dockers/ctgen_evaluation
+# Paths to evaluation scripts and model weights.
+# NOTE: vlm3d_eval_dir is documentary only — CTGenEvaluator resolves the eval dir
+# itself via src/eval/_vlm3d_paths.py (ct_challenges/ layout, a945900+).
+vlm3d_eval_dir: /workspace/third_party/vlm3d_dockers/ct_challenges/ctgen_evaluation
 ctclip_ckpt: /workspace/data/vlm3d_eval/models/CT-CLIP_v2.pt

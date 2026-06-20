@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1779758312695,
+  "lastScanned": 1781945949097,
   "projectRoot": "/workspace",
   "techStack": {
     "languages": [
@@ -9,7 +9,16 @@
         "version": null,
         "confidence": "high",
         "markers": [
+          "pyproject.toml",
           "requirements.txt"
+        ]
+      },
+      {
+        "name": "C/C++",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "Makefile"
         ]
       }
     ],
@@ -18,9 +27,9 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": null,
-    "testCommand": "pytest tests/ --ignore=tests/test_configs.py --ignore=tests/test_datamodules.py --ignore=tests/test_eval.py --ignore=tests/test_sweeps.py --ignore=tests/test_train.py --ignore=tests/helpers 2>&1 | tail -5",
-    "lintCommand": null,
+    "buildCommand": "make build",
+    "testCommand": "cd /workspace\necho \"=== tests/ 에서 옛 이름 참조? ===\"\ngrep -rn \"prepare_proxy_gt\\|gt_mode.*proxy\\|backfill_proxy\\|no_proxy\\|proxy_ids\" tests/ 2>/dev/null || echo \"  (참조 없음 — OK)\"\necho\necho \"=== 관련 테스트 실행 ===\"\npython -m pytest tests/ -q -k \"hydra or datalist or data_module or report2ct or ct_rate or eval\" 2>&1 | tail -20",
+    "lintCommand": "ruff check",
     "devCommand": null,
     "scripts": {}
   },
@@ -34,6 +43,7 @@
     "isMonorepo": false,
     "workspaces": [],
     "mainDirectories": [
+      "docs",
       "scripts",
       "src",
       "tests"
@@ -42,38 +52,30 @@
   },
   "customNotes": [],
   "directoryMap": {
-    "analysis": {
-      "path": "analysis",
-      "purpose": null,
-      "fileCount": 0,
-      "lastAccessed": 1779758312689,
-      "keyFiles": []
-    },
     "configs": {
       "path": "configs",
       "purpose": null,
-      "fileCount": 16,
-      "lastAccessed": 1779758312690,
+      "fileCount": 4,
+      "lastAccessed": 1781945949091,
       "keyFiles": [
-        "example.yaml",
-        "trial2.yaml",
-        "trial_d3t.yaml",
-        "trial_mid.yaml",
-        "trial_mid_baseline.yaml"
+        "__init__.py",
+        "eval.yaml",
+        "inference.yaml",
+        "train.yaml"
       ]
     },
     "data": {
       "path": "data",
       "purpose": "Data files",
       "fileCount": 0,
-      "lastAccessed": 1779758312690,
+      "lastAccessed": 1781945949091,
       "keyFiles": []
     },
     "datasets": {
       "path": "datasets",
       "purpose": null,
       "fileCount": 6,
-      "lastAccessed": 1779758312690,
+      "lastAccessed": 1781945949092,
       "keyFiles": [
         "Dockerfile",
         "conc_info.json",
@@ -82,201 +84,166 @@
         "make_split.py"
       ]
     },
-    "maisi_bundle": {
-      "path": "maisi_bundle",
+    "deprecated": {
+      "path": "deprecated",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1779758312691,
+      "lastAccessed": 1781945949092,
+      "keyFiles": []
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 11,
+      "lastAccessed": 1781945949093,
+      "keyFiles": [
+        "baseline_reading_order.md",
+        "ctgen_challenge_submission.md",
+        "ctgen_local_eval.md",
+        "dataset_reference.md",
+        "fvlm_report2ct_guidebook.md"
+      ]
+    },
+    "figs": {
+      "path": "figs",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1781945949093,
+      "keyFiles": []
+    },
+    "logs": {
+      "path": "logs",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1781945949094,
+      "keyFiles": []
+    },
+    "notebooks": {
+      "path": "notebooks",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1781945949094,
+      "keyFiles": [
+        "3D_viewer.ipynb",
+        "eda.ipynb",
+        "test_generateCT.ipynb"
+      ]
+    },
+    "outputs": {
+      "path": "outputs",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1781945949094,
       "keyFiles": []
     },
     "paper_pdf": {
       "path": "paper_pdf",
       "purpose": null,
-      "fileCount": 24,
-      "lastAccessed": 1779758312691,
+      "fileCount": 9,
+      "lastAccessed": 1781945949094,
       "keyFiles": [
-        "Blaze3DM.pdf",
         "CT-Rate.pdf",
-        "Compress3D.pdf",
-        "D3T_Dual-Domain_Diffusion_Transformer_in_Triplanar.pdf",
-        "Direct3D.pdf"
-      ]
-    },
-    "reference": {
-      "path": "reference",
-      "purpose": null,
-      "fileCount": 0,
-      "lastAccessed": 1779758312692,
-      "keyFiles": []
-    },
-    "research_summary": {
-      "path": "research_summary",
-      "purpose": null,
-      "fileCount": 1,
-      "lastAccessed": 1779758312692,
-      "keyFiles": [
-        "summary.md"
+        "GenerateCT.pdf",
+        "MedVista3D.pdf",
+        "Report2CT.pdf",
+        "TRACE (미카이 버전).pdf"
       ]
     },
     "results": {
       "path": "results",
       "purpose": null,
-      "fileCount": 8,
-      "lastAccessed": 1779758312692,
+      "fileCount": 2,
+      "lastAccessed": 1781945949095,
       "keyFiles": [
-        "cache_recon.log",
-        "measure_upper_bound_2mm.log",
-        "tier1_d3t.log",
-        "tier1_runs.log",
+        "report2ct_envelope.json",
         "upper_bound.json"
       ]
-    },
-    "runs": {
-      "path": "runs",
-      "purpose": null,
-      "fileCount": 0,
-      "lastAccessed": 1779758312692,
-      "keyFiles": []
     },
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
-      "fileCount": 10,
-      "lastAccessed": 1779758312692,
+      "fileCount": 14,
+      "lastAccessed": 1781945949095,
       "keyFiles": [
-        "analyze_maisi_latent_distribution.py",
-        "build_latent_shard.py",
-        "check_sdpa.py",
-        "extend_2mm_precompute.py",
-        "extend_analysis_c6_c7.py"
+        "apply_no_chest_correction.py",
+        "build_fvlm_cond_datalist.py",
+        "build_report2ct_datalist.py",
+        "calibrate_decompose_fvlm.py",
+        "decompose_reports_fvlm.py"
       ]
     },
     "src": {
       "path": "src",
       "purpose": "Source code",
-      "fileCount": 1,
-      "lastAccessed": 1779758312692,
+      "fileCount": 5,
+      "lastAccessed": 1781945949095,
       "keyFiles": [
-        "__init__.py"
+        "__init__.py",
+        "eval.py",
+        "inference.py",
+        "train.py",
+        "vlm3d_runner.py"
       ]
     },
     "tests": {
       "path": "tests",
       "purpose": "Test files",
-      "fileCount": 14,
-      "lastAccessed": 1779758312692,
+      "fileCount": 15,
+      "lastAccessed": 1781945949095,
       "keyFiles": [
         "__init__.py",
-        "conftest.py",
-        "test_cross_attn_3d.py",
-        "test_d3t.py",
-        "test_dataset.py"
+        "test_ctclip_adapter.py",
+        "test_data_module.py",
+        "test_fvlm_adapter.py",
+        "test_fvlm_organ_report.py"
       ]
     },
-    "wandb": {
-      "path": "wandb",
+    "third_party": {
+      "path": "third_party",
       "purpose": null,
-      "fileCount": 1,
-      "lastAccessed": 1779758312693,
-      "keyFiles": [
-        "debug-cli.root.log"
-      ]
+      "fileCount": 0,
+      "lastAccessed": 1781945949095,
+      "keyFiles": []
     },
     "configs/data": {
       "path": "configs/data",
       "purpose": "Data files",
       "fileCount": 2,
-      "lastAccessed": 1779758312693,
+      "lastAccessed": 1781945949095,
       "keyFiles": [
-        "latents_1mm.yaml",
-        "latents_2mm.yaml"
-      ]
-    },
-    "maisi_bundle/docs": {
-      "path": "maisi_bundle/docs",
-      "purpose": "Documentation",
-      "fileCount": 2,
-      "lastAccessed": 1779758312693,
-      "keyFiles": [
-        "README.md",
-        "data_license.txt"
-      ]
-    },
-    "maisi_bundle/models": {
-      "path": "maisi_bundle/models",
-      "purpose": "Data models",
-      "fileCount": 1,
-      "lastAccessed": 1779758312693,
-      "keyFiles": [
-        "autoencoder.pt"
-      ]
-    },
-    "maisi_bundle/scripts": {
-      "path": "maisi_bundle/scripts",
-      "purpose": "Build/utility scripts",
-      "fileCount": 8,
-      "lastAccessed": 1779758312694,
-      "keyFiles": [
-        "__init__.py",
-        "augmentation.py",
-        "find_masks.py"
-      ]
-    },
-    "reference/models": {
-      "path": "reference/models",
-      "purpose": "Data models",
-      "fileCount": 7,
-      "lastAccessed": 1779758312694,
-      "keyFiles": [
-        "__init__.py",
-        "dataloader.py",
-        "latent_dataset.py"
-      ]
-    },
-    "reference/scripts": {
-      "path": "reference/scripts",
-      "purpose": "Build/utility scripts",
-      "fileCount": 6,
-      "lastAccessed": 1779758312694,
-      "keyFiles": [
-        "compute_latent_stats.py",
-        "extract_maisi_latent.py",
-        "recon_test.py"
+        "fvlm_cond.yaml",
+        "report2ct.yaml"
       ]
     },
     "src/data": {
       "path": "src/data",
       "purpose": "Data files",
-      "fileCount": 2,
-      "lastAccessed": 1779758312694,
+      "fileCount": 6,
+      "lastAccessed": 1781945949096,
       "keyFiles": [
         "__init__.py",
-        "maisi_latent_dataset.py"
+        "ct_rate_datamodule.py",
+        "ct_rate_eda.py"
       ]
     },
     "src/models": {
       "path": "src/models",
       "purpose": "Data models",
-      "fileCount": 13,
-      "lastAccessed": 1779758312694,
-      "keyFiles": [
-        "__init__.py",
-        "cross_attention_3d.py",
-        "tri_conv.py"
-      ]
-    },
-    "src/utils": {
-      "path": "src/utils",
-      "purpose": "Utility functions",
       "fileCount": 2,
-      "lastAccessed": 1779758312694,
+      "lastAccessed": 1781945949097,
       "keyFiles": [
         "__init__.py",
-        "discord_notifier.py"
+        "report2ct_module.py"
       ]
     }
   },
   "hotPaths": [
+    {
+      "path": "CLAUDE.md",
+      "accessCount": 113,
+      "lastAccessed": 1781967241958,
+      "type": "file"
+    },
     {
       "path": "tests\\test_tier0_overfit.py",
       "accessCount": 9,
@@ -293,12 +260,6 @@
       "path": "src/models/triplane_ae.py",
       "accessCount": 7,
       "lastAccessed": 1779388317009,
-      "type": "file"
-    },
-    {
-      "path": "CLAUDE.md",
-      "accessCount": 7,
-      "lastAccessed": 1779781136246,
       "type": "file"
     },
     {

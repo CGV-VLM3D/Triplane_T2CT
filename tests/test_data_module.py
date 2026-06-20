@@ -1,7 +1,7 @@
-"""CT-RATE LightningDataModule smoke (metadata mode).
+"""CT-RATE LightningDataModule 스모크 테스트(metadata 모드).
 
-Phase A Day 2 acceptance: this file passes EOD.
-Heavy volume-loading transforms are deferred to Day 4 EDA / Phase C.
+spacing 파싱(float·문자열 리스트), NIfTI 경로 조립 규칙, 그리고 데이터셋이 마운트돼
+있으면 valid 레코드 로드와 metadata 모드 배치 생성을 확인한다.
 """
 
 from __future__ import annotations

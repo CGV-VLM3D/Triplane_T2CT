@@ -26,7 +26,17 @@ MAX_SEQ_LEN: Final[int] = 512  # notebook cell 0
 
 
 def _mean_pooling(output, mask: torch.Tensor) -> torch.Tensor:
-    """Mean-pool token embeddings ignoring padded positions. Source: notebook cell 0."""
+    """Mean-pool token embeddings ignoring padded positions.
+
+    Args:
+        output: HF model output exposing ``last_hidden_state`` ``(B, seq_len, hidden)``.
+        mask: attention mask, ``(B, seq_len)``.
+
+    Returns:
+        Pooled embedding, ``(B, hidden)``.
+
+    Source: notebook cell 0.
+    """
     embeddings = output.last_hidden_state  # [B, seq_len, hidden]
     mask_f = mask.unsqueeze(-1).float()
     summed = torch.sum(embeddings * mask_f, dim=1)
@@ -70,7 +80,14 @@ class Report2CTTextEncoder(nn.Module):
 
     @torch.no_grad()
     def encode(self, text: str) -> torch.Tensor:
-        """Encode a single text → 1D tensor of shape (total_dim,).
+        """Encode a single text to the concatenated pooled embedding.
+
+        Args:
+            text: one findings or impression string.
+
+        Returns:
+            1D pooled embedding, ``(total_dim,)`` (total_dim = 2560 for the 3
+            default models), on CPU float32.
 
         Mirrors `encode_batch_multi` from the notebook for batch=1 input, returning
         only the pooled (c_vec) component (the c_ctx token-level is discarded — upstream
@@ -95,7 +112,15 @@ class Report2CTTextEncoder(nn.Module):
     def encode_pair(
         self, findings: str, impression: str
     ) -> tuple[torch.Tensor, torch.Tensor]:
-        """Convenience: encode both findings and impression in one call."""
+        """Encode both findings and impression in one call.
+
+        Args:
+            findings: findings section text.
+            impression: impression section text.
+
+        Returns:
+            Tuple ``(findings_emb, impression_emb)``, each ``(total_dim,)``.
+        """
         return self.encode(findings), self.encode(impression)
 
 

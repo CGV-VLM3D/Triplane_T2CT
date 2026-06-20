@@ -1,0 +1,23 @@
+_target_: lightning.pytorch.trainer.Trainer
+
+default_root_dir: ${paths.output_dir}
+
+min_epochs: 1
+max_epochs: 100      # upstream config_maisi_diff_model_vlm3D.json:33
+
+accelerator: gpu
+devices: 1           # 단일 GPU로 하시오
+strategy: auto       # 2-GPU option: CUDA_VISIBLE_DEVICES=1,2 + strategy=ddp_find_unused_parameters_true (gloo fallback available)
+
+precision: bf16-mixed   # upstream :29, L300
+
+check_val_every_n_epoch: 5
+log_every_n_steps: 50
+limit_train_batches: 1.0   # override to int (e.g. 50) for smoke runs
+
+# smoke test
+#CUDA_VISIBLE_DEVICES=0 python src/train.py experiment=report2ct_repro \
+#  trainer.max_epochs=1 trainer.limit_train_batches=50
+
+# train
+# CUDA_VISIBLE_DEVICES=0 python src/train.py experiment=report2ct_repro

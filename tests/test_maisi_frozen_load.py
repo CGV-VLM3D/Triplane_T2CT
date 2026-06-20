@@ -1,7 +1,8 @@
-"""R6 mitigation: verify MAISI VAE checkpoint loads and stays frozen.
+"""MAISI VAE 체크포인트가 로드되고 frozen 상태로 유지되는지 검증.
 
-Acceptance per Phase A: this file passes Day 2 EOD.
-Loader under test: src.baselines.maisi
+load_frozen 이후 모든 파라미터가 requires_grad=False인지(인코더·디코더 포함),
+eval 모드로 로드되는지를 확인한다. Report2CT/ours 파이프라인의 frozen-VAE 가정 보호.
+체크포인트가 없으면 skip.
 """
 
 from __future__ import annotations

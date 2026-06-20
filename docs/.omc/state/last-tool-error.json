@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd /workspace/docs\\nf=fvlm_report2ct_guidebook.md\\necho \\\"=== 코드펜스(```) 개수 (짝수여야 함) ===\\\"\\ngrep -c '^```' \\\"$f\\\"\\necho\\necho \\\"=== 테이블 헤더-구분선 정합성 (각 | 행의 컬럼 수) ===\\\"\\nawk -F'|' '/^\\\\|/{pri...",
+  "error": "Exit code 2\n/bin/bash: eval: line 15: syntax error near unexpected token `('\n/bin/bash: eval: line 15: `echo \"=== 테이블 헤더-구분선 정합성 (각 | 행의 컬럼 수) ===\"'",
+  "timestamp": "2026-06-02T17:35:18.996Z",
+  "retry_count": 1
+}

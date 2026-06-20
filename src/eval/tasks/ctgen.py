@@ -19,9 +19,12 @@ import subprocess
 import sys
 from pathlib import Path
 
+from src.eval._vlm3d_paths import ctclip_pkg_parents, ctgen_eval_dir
+
 log = logging.getLogger(__name__)
 
-_EVAL_DIR = Path("/workspace/third_party/vlm3d_dockers/ctgen_evaluation")
+# Resolved once at import: ct_challenges/ layout (a945900+) with old-path fallback.
+_EVAL_DIR = ctgen_eval_dir()
 _FVD_SCRIPT = _EVAL_DIR / "evaluate_fvd.py"
 _CLIP_SCRIPT = _EVAL_DIR / "evaluate_clip.py"
 _FID_SCRIPT = _EVAL_DIR / "compute_fid_2-5d_ct.py"
@@ -180,6 +183,7 @@ class CTGenEvaluator:
         ctclip_ckpt: str | Path | None = None,
         prompt_xlsx: str | Path | None = None,
     ) -> None:
+        """Store GT dir, metric flags, and weight paths; see class docstring for parameter details."""
         self.gt_dir = Path(gt_dir)
         self.metrics = metrics or {"fvd": True, "clip_score": True, "fid_2p5d": True}
         self.ctclip_ckpt = Path(ctclip_ckpt) if ctclip_ckpt else _CTCLIP_DEFAULT
@@ -217,16 +221,31 @@ class CTGenEvaluator:
     # ------------------------------------------------------------------ #
 
     def _setup_fvd_paths(self) -> None:
-        """FVD/fvd_pytorch.py hardcodes /opt/app/FVD/ctnet/... — symlink it."""
+        """FVD/fvd_pytorch.py hardcodes /opt/app/FVD/ctnet/... — symlink it.
+
+        Re-points a stale symlink: after the a945900 reorg an existing
+        /opt/app/FVD/ctnet may dangle at the old (pre-ct_challenges) path, where
+        ``link.exists()`` is False but ``symlink_to`` still raises FileExistsError.
+        """
         opt_fvd_dir = Path("/opt/app/FVD")
         opt_fvd_dir.mkdir(parents=True, exist_ok=True)
-        target = _EVAL_DIR / "FVD" / "ctnet"
+        target = (_EVAL_DIR / "FVD" / "ctnet").resolve()
         link = opt_fvd_dir / "ctnet"
-        if not link.exists() and target.exists():
-            link.symlink_to(target.resolve())
-            log.info("Symlinked %s → %s", link, target)
+        if not target.exists():
+            return
+        if link.is_symlink() or link.exists():
+            if link.is_symlink() and link.resolve() == target:
+                return  # already correct
+            link.unlink()  # stale/wrong → replace
+        link.symlink_to(target)
+        log.info("Symlinked %s → %s", link, target)
 
     def _run_fvd(self, pred_dir: Path, out_dir: Path) -> dict[str, float]:
+        """Run evaluate_fvd.py and return a dict with the ``FVD_CTNet`` key.
+
+        Returns NaN for ``FVD_CTNet`` if the subprocess exits non-zero or the
+        output JSON is not produced.
+        """
         self._setup_fvd_paths()
         out_json = out_dir / "fvd.json"
         cmd = [
@@ -239,7 +258,17 @@ class CTGenEvaluator:
             "--out_json",
             str(out_json),
         ]
-        rc = self._run(cmd, cwd=_EVAL_DIR)
+        # `fvd_pytorch.py` imports top-level `ctnet`, a namespace package living in FVD/.
+        # The upstream Dockerfile `pip install -e`s it; locally that editable mapping breaks
+        # whenever the submodule dir moves (e.g. the a945900 ct_challenges reorg). Putting
+        # FVD/ on PYTHONPATH resolves `ctnet` by namespace discovery, independent of any
+        # stale editable install.
+        env = os.environ.copy()
+        fvd_pkg_dir = str((_EVAL_DIR / "FVD").resolve())
+        env["PYTHONPATH"] = os.pathsep.join(
+            p for p in (fvd_pkg_dir, env.get("PYTHONPATH", "")) if p
+        )
+        rc = self._run(cmd, cwd=_EVAL_DIR, env=env)
         if rc != 0 or not out_json.is_file():
             log.error("FVD evaluation failed (rc=%d).", rc)
             return {"FVD_CTNet": float("nan")}
@@ -251,6 +280,12 @@ class CTGenEvaluator:
     # ------------------------------------------------------------------ #
 
     def _maybe_run_clip(self, pred_dir: Path, out_dir: Path) -> dict[str, float]:
+        """Guard-check prerequisites then delegate to ``_run_clip``; return NaN dict on skip.
+
+        Returns NaN values for ``CLIPScore``, ``CLIPScore_I2I``, and ``CLIPScore_mean``
+        when the CT-CLIP_v2.pt checkpoint is missing or ``/opt/app/models/`` cannot be
+        set up; otherwise returns whatever ``_run_clip`` produces.
+        """
         _nan = {
             "CLIPScore": float("nan"),
             "CLIPScore_I2I": float("nan"),
@@ -322,6 +357,13 @@ class CTGenEvaluator:
             )
 
     def _run_clip(self, pred_dir: Path, out_dir: Path) -> dict[str, float]:
+        """Run evaluate_clip.py and return a dict with ``CLIPScore``, ``CLIPScore_I2I``, and ``CLIPScore_mean``.
+
+        Appends ``--prompt_xlsx`` to the command when ``self.prompt_xlsx`` is set and
+        the file exists; otherwise the upstream script uses its own default path.
+        Returns NaN for all three keys if the subprocess exits non-zero or the output
+        JSON is not produced.
+        """
         out_json = out_dir / "clip.json"
         cmd = [
             sys.executable,
@@ -358,13 +400,22 @@ class CTGenEvaluator:
     def _clip_env() -> dict:
         """Env for CLIPScore subprocess.
 
-        ct_clip and transformer_maskgit must be pip-installed in the active env.
-        We DON'T add their internal directories to PYTHONPATH — doing so puts the
-        sub-package contents at top level and breaks `import ct_clip.mlm`.
+        evaluate_clip.py imports top-level `transformer_maskgit` and `ct_clip`.
+        Upstream `pip install -e`s them; locally that editable mapping breaks when
+        the submodule moves (the a945900 reorg). We add each package's *parent*
+        dir (not the package dir itself — that would put sub-packages at top level
+        and break `import ct_clip.mlm`) to PYTHONPATH so the imports resolve
+        regardless of any stale editable install.
         """
         import os
 
-        return os.environ.copy()
+        env = os.environ.copy()
+        parents = [str(p) for p in ctclip_pkg_parents()]
+        if parents:
+            env["PYTHONPATH"] = os.pathsep.join(
+                [*parents, env.get("PYTHONPATH", "")]
+            ).rstrip(os.pathsep)
+        return env
 
     # ------------------------------------------------------------------ #
     #  FID-2.5D                                                            #
@@ -432,10 +483,10 @@ class CTGenEvaluator:
             str(fid_runner),
             f"--real_dataset_root={self.gt_dir}",
             f"--real_filelist={real_filelist}",
-            f"--real_features_dir=gt",
+            "--real_features_dir=gt",
             f"--synth_dataset_root={pred_dir}",
             f"--synth_filelist={synth_filelist}",
-            f"--synth_features_dir=pred",
+            "--synth_features_dir=pred",
             f"--model_name={_FID_MODEL}",
             f"--num_images={n}",
             f"--output_root={features_dir}",
@@ -488,9 +539,19 @@ class CTGenEvaluator:
     # ------------------------------------------------------------------ #
 
     @staticmethod
-    def _run(cmd: list[str], cwd: Path) -> int:
+    def _run(cmd: list[str], cwd: Path, env: dict | None = None) -> int:
+        """Run a subprocess command and return its exit code.
+
+        Args:
+            cmd: command and arguments list passed to ``subprocess.run``.
+            cwd: working directory for the subprocess.
+            env: environment mapping; inherits the current process environment when None.
+
+        Returns:
+            The subprocess return code (0 on success).
+        """
         log.info("Running: %s", " ".join(cmd))
-        result = subprocess.run(cmd, cwd=cwd, check=False)
+        result = subprocess.run(cmd, cwd=cwd, env=env, check=False)
         if result.returncode != 0:
             log.error("Command failed (rc=%d)", result.returncode)
         return result.returncode

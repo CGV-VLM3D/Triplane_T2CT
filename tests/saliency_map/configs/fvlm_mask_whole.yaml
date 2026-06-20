@@ -1,0 +1,13 @@
+# fVLM +mask whole (옵션) — 전체 볼륨 + organ 토큰. crop 효과 격리용.
+exp_name: fvlm_mask_whole
+model: fvlm
+device: cuda
+cam: layercam
+native_map: true
+prompt_scheme: fvlm
+abnormalities: [Emphysema, Lung nodule]
+n_cases: 5
+positive_only: true
+seed: 42
+fvlm_crop: whole            # crop 안 함
+fvlm_mask: true             # 단, organ 토큰만 선택

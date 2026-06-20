@@ -1,9 +1,8 @@
-"""Roundtrip tests for src/inference.py's per-model truthful NIfTI affine (WI-1).
+"""src/inference.py의 모델별 truthful NIfTI affine roundtrip 테스트.
 
-inference.py builds a diagonal affine from each adapter's ``output_spacing`` (expressed in
-the squeezed-array axis order) so the saved ``.nii.gz`` carries the model's real voxel
-geometry instead of ``eye(4)``. These tests pin that mapping (catches axis / diag mistakes)
-and confirm the adapters expose exactly the spacings inference.py will stamp. No GPU/weights.
+각 어댑터의 output_spacing(squeezed-array 축 순서)으로 만든 대각 affine이
+저장된 .nii.gz 헤더 zoom에 위치 그대로 반영되는지(축·대각 실수 방지), 그리고
+어댑터들이 실제로 그 spacing을 노출하는지 확인한다. GPU·가중치 불필요.
 """
 
 from __future__ import annotations

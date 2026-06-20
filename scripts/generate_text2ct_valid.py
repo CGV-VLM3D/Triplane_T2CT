@@ -5,7 +5,7 @@ fully resumable (existing .mha files are skipped). After this finishes, score wi
 
     python scripts/run_eval.py model=text2ct task.n_samples=1000
 
-which reuses these predictions (same out_dir layout) and runs proxy-GT prep + VLM3D-Dockers.
+which reuses these predictions (same out_dir layout) and runs valid-GT prep + VLM3D-Dockers.
 
 Usage:
     CUDA_VISIBLE_DEVICES=2 HF_HOME=/workspace/data/checkpoints/hf_cache \

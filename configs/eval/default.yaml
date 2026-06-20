@@ -3,8 +3,9 @@ defaults:
   - model: report2ct
   - _self_
 
-# Output root: each run lands under out_dir/task_name/model_name/
-out_dir: /workspace/data/vlm3d_eval/${task.name}/${model.name}
+# Output root: each eval run lands under outputs/<model>/eval_<timestamp>/ (mirrors training's
+# outputs/<model>/<timestamp>/). Shared GT / FID-feature caches stay under data/vlm3d_eval/ (see ctgen task).
+out_dir: /workspace/outputs/${model.name}/eval_${now:%Y-%m-%d}_${now:%H-%M-%S}
 
 # Set via CUDA_VISIBLE_DEVICES externally; this selects the logical device index.
 device: cuda

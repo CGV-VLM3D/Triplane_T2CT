@@ -9,7 +9,7 @@ fVLM(`FVLMBackbone.forward_test_win` / `prepare_text_feat`)이 기대하는
 - 보고서 조회: `load_ctrate_report`.
 - 텍스트 조건:
     - `build_decomposed_test_items_as_local` — 장기별 분해 보고서(올바른 경로,
-      `src.data.fvlm_report.build_organ_text` 출력과 짝).
+      `src.data.fvlm_organ_report.build_organ_text` 출력과 짝).
     - `build_local_test_items` — 수동 dict 입력.
     - `DEFAULT_FVLM_TEST_ITEMS` — 표준 zero-shot 이상치 프롬프트 16종.
 
@@ -32,7 +32,7 @@ CT_RATE_ROOT: Final[Path] = Path("/workspace/datasets/datasets/CT-RATE/dataset")
 # 장기 ID 규약: {lung:1, heart:2, esophagus:3, aorta:4}.
 # third_party/fvlm/eval.py:135-138 의 장기 순서와 일치.
 # 리포트 라이브러리에서 단일 소스로 관리하여 목록 불일치를 방지.
-from src.data.fvlm_report import ORGANS  # noqa: E402
+from src.data.fvlm_organ_report import ORGANS  # noqa: E402
 
 ORGAN_TO_ID: Final[dict[str, int]] = {o: i + 1 for i, o in enumerate(ORGANS)}
 
@@ -491,7 +491,7 @@ def build_decomposed_test_items_as_local(
 
     anatomy-aware model에 환자 보고서를 입력하는 올바른 방법:
     각 장기에 보고서 전체가 아니라 그 장기의 분해 텍스트를 pos_prompt로 부여.
-    `organ_text`는 `src.data.fvlm_report.build_organ_text` 출력
+    `organ_text`는 `src.data.fvlm_organ_report.build_organ_text` 출력
     (train/split-valid용 저자 JSON, 또는 valid_fixed용 Qwen 생성 JSON — 호환 가능).
 
     `organ_text`에 없는 장기는 건너뜀. neg_prompt 기본값은 빈 문자열

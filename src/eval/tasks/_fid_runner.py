@@ -16,11 +16,15 @@ import numpy as np
 if not hasattr(np, "float_"):
     np.float_ = np.float64
 
+# This file runs as a standalone torchrun script (no package context), so bootstrap
+# the project root onto sys.path to share the single path resolver.
+if "/workspace" not in sys.path:
+    sys.path.insert(0, "/workspace")
+from src.eval._vlm3d_paths import ctgen_eval_dir  # noqa: E402
+
 # Re-execute the upstream FID script in the current namespace so fire.Fire(main)
 # parses our argv (already trimmed to drop the wrapper path).
-SCRIPT_PATH = (
-    "/workspace/third_party/vlm3d_dockers/ctgen_evaluation/compute_fid_2-5d_ct.py"
-)
+SCRIPT_PATH = str(ctgen_eval_dir() / "compute_fid_2-5d_ct.py")
 
 # Pop our own path from argv so fire sees only the FID script's args
 sys.argv[0] = SCRIPT_PATH

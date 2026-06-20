@@ -53,6 +53,7 @@ class SaliencyResult:
     pred_prob: float  # zero-shot 양성 확률 softmax([cos_neg, cos_pos])[1]
     native_map: np.ndarray | None  # (D, H, W) native token-text sim 맵, 없으면 None
     grid_shape: tuple[int, int, int]  # 토큰 그리드 (d, h, w) — 로깅/디버그용
+    orient: tuple[str, str, str]  # display (D,H,W) 축 방향코드 (viz canonical 정렬용)
 
 
 class BaseRunner(ABC):

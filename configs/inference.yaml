@@ -1,0 +1,35 @@
+# @package _global_
+
+# Root config for src/inference.py. Mirrors configs/train.yaml + configs/eval.yaml.
+# Select which model to inference via `model=<name>` (configs/model/<name>.yaml).
+
+defaults:
+  - _self_
+  - model: generatect       # swap to report2ct / ours_v1 later
+  - paths: default
+  - extras: default
+  - hydra: default
+  - optional local: default
+
+task_name: "inference"
+tags: ["inference"]
+
+# Each prompt becomes one .nii.gz (+ optional .txt companion) under output_dir.
+prompts:
+  - {name: "viral_pneumonia",       text: "Findings consistent with viral pneumonia in both lungs. Ground-glass opacities."}
+  - {name: "cardiomegaly_effusion", text: "Enlarged cardiac silhouette with bilateral pleural effusions and pulmonary vascular congestion."}
+  - {name: "normal_chest",          text: "Lungs are clear bilaterally. No focal consolidation, effusion, or pneumothorax. Heart size is normal."}
+
+# Generic sampler kwargs passed verbatim to `model.inference(prompt, **cfg.sampler)`.
+# Each model's `.inference()` accepts `**_` so unrelated keys are ignored.
+sampler:
+  num_frames: 201
+  cond_scale: 5.0
+  starting_temperature: 0.9
+  cond_scale_sr: 1.0
+
+save_text_companion: true
+
+# Resolves to logs/inference/runs/<date>_<time>/ via configs/paths/default.yaml +
+# configs/hydra/default.yaml. Each invocation gets its own dir; nothing is overwritten.
+output_dir: ${paths.output_dir}

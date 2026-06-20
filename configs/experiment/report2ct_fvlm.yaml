@@ -1,0 +1,37 @@
+# @package _global_
+# fVLM-conditioned ctgen experiment — SAME Report2CT backbone, conditioner swapped
+# from 3 text encoders (B,2,2560) to frozen fVLM per-organ embeddings (B,4,256).
+# Launch: CUDA_VISIBLE_DEVICES=0 python src/train.py experiment=report2ct_fvlm
+# Smoke:  CUDA_VISIBLE_DEVICES=0 python src/train.py experiment=report2ct_fvlm trainer.max_epochs=1 trainer.limit_train_batches=50
+
+defaults:
+  - override /data: fvlm_cond
+  - override /model: report2ct_fvlm
+  - override /trainer: report2ct
+  - override /callbacks: default
+  - override /logger: wandb
+  - _self_
+
+task_name: report2ct_fvlm   # → outputs/report2ct_fvlm/<timestamp>/
+tags: ["fvlm_cond", "ctgen"]
+seed: 42
+
+logger:
+  wandb:
+    group: "fvlm-cond"   # cf. report2ct_repro group "baseline-repro"
+test: false   # no test_step() in Report2CTModule
+
+# Validation = valid_v2 1304 (valid_v2) — the canonical validation set; Report2CT is
+# re-measured on the same set, so this stays a true apples-to-apples comparison.
+# Needs the datalist validation split: valid_v2 image latents (backfill via frozen
+# MAISI) + valid fVLM cond embeddings (decompose + precompute) — Unit 8. Mirrors report2ct_repro.
+callbacks:
+  early_stopping: null   # disabled: diffusion trains to fixed n_epochs
+  model_checkpoint:
+    monitor: null              # no metric-based "best" selection
+    every_n_epochs: 5          # ← periodic snapshot interval (tune here)
+    save_top_k: -1             # keep every snapshot (post-hoc FID select / future post-hoc EMA)
+    save_last: true            # keep last.ckpt for resume
+    filename: "epoch_{epoch:03d}"
+    auto_insert_metric_name: false
+  rich_progress_bar: null   # disabled: conflicts with wandb's Rich console

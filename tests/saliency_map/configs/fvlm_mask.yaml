@@ -1,0 +1,13 @@
+# fVLM +mask (default A) — 장기 center_crop + organ 토큰. eval 충실, organ 집중 기대.
+exp_name: fvlm_mask
+model: fvlm
+device: cuda
+cam: layercam
+native_map: true            # fVLM native 맵 적합 (논문 token-text 방식)
+prompt_scheme: fvlm         # 16 anatomy-tagged
+abnormalities: [Emphysema, Lung nodule]
+n_cases: 5
+positive_only: true
+seed: 42
+fvlm_crop: organ            # 장기 중심 center_crop (eval 충실)
+fvlm_mask: true             # organ 커버 토큰만

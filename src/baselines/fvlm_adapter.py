@@ -46,7 +46,7 @@ from src.baselines.fvlm_preprocess import (
     center_crop_organ,
     divisible_pad_end,
 )
-from src.data.fvlm_report import ORGANS, default_template
+from src.data.fvlm_organ_report import ORGANS, normal_organ_template
 
 _FVLM_REPO: Final[Path] = Path("/workspace/third_party/fvlm")
 
@@ -281,7 +281,7 @@ class FVLMBackbone:
 
         `prepare_text_feat`(neg/pos 분류 전용)와 달리, 장기당 자유텍스트 한 문장을
         fVLM의 ITC 텍스트 경로로 인코딩해 ctgen conditioning용 임베딩을 만든다.
-        입력 `organ_text`는 `src.data.fvlm_report.build_organ_text` 출력
+        입력 `organ_text`는 `src.data.fvlm_organ_report.build_organ_text` 출력
         (모든 장기 키가 항상 존재; 누락 장기는 정상 템플릿으로 채워짐).
 
         각 organ에 대해 `blip_pretrain.py`의 학습-시 텍스트 경로를 그대로 미러한다.
@@ -292,7 +292,7 @@ class FVLMBackbone:
         feats = []
         for organ in organs:
             text = organ_text[organ]
-            tmpl = default_template(
+            tmpl = normal_organ_template(
                 organ
             )  # "{organ} shows no significant abnormalities."
             # blip_pretrain.py:212-214 — 정상 템플릿 접두 제거(정확히 템플릿이면 유지).

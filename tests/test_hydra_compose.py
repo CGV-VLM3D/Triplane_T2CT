@@ -1,7 +1,7 @@
-"""Verify the root Hydra configs compose and resolve without error.
+"""루트 Hydra config가 에러 없이 compose·resolve되는지 확인.
 
-Phase A acceptance criterion: `python src/train.py --cfg job --resolve` exits 0.
-This test reproduces that via subprocess so we capture the exit code.
+`python src/train.py --cfg job --resolve`(및 eval.py)가 exit 0인지를
+subprocess로 재현해 종료 코드를 검사한다.
 """
 
 from __future__ import annotations

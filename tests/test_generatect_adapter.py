@@ -1,12 +1,8 @@
-"""GenerateCT adapter smoke tests (Day 3).
+"""GenerateCT 어댑터 스모크 테스트.
 
-We only verify:
-  1. The submodule imports OK via sys.path (no setup.py exec).
-  2. CTViT class constructs with paper kwargs (no weights load).
-  3. With ckpt present, CTViT.load() runs and the model exposes encoder/decoder.
-
-Full text->volume sampling is heavy (transformer + CTViT decode) and is exercised
-on GPU in Day 5 + Phase B. Day 3 test stays CPU-friendly to keep CI under ~30s.
+sys.path 방식으로 submodule이 import되는지, CTViT가 논문 kwargs로 생성되는지,
+출력 spacing이 super-res 여부에 따라 맞게 나오는지, 체크포인트 경로가 우리 디렉토리
+아래인지 확인한다. 가중치가 있으면 CTViT.load()까지 검증(없으면 CPU-safe).
 """
 
 from __future__ import annotations
@@ -24,10 +20,19 @@ from src.baselines.generatect_adapter import (
 
 
 def test_transformer_maskgit_importable_via_sys_path() -> None:
-    """sys.path approach (no pip install -e) lets us import the third_party package."""
-    # Trigger lazy import.
-    from transformer_maskgit import CTViT, MaskGit, MaskGITTransformer  # noqa: F401, PLC0415
+    """The adapter's lazy helper puts the third_party package on sys.path and imports it.
 
+    A bare ``from transformer_maskgit import ...`` is order-dependent: nothing is on
+    sys.path until a build runs, and ct_clip ships a colliding top-level
+    ``transformer_maskgit`` with an incompatible CTViT. Go through
+    ``_import_transformer_maskgit`` (the scrub + path-prioritize entry point) so the test
+    is self-contained and actually exercises the collision-safe import.
+    """
+    from src.baselines.generatect_adapter import (  # noqa: PLC0415
+        _import_transformer_maskgit,
+    )
+
+    CTViT, _MaskGit, _MaskGITTransformer = _import_transformer_maskgit()
     assert CTViT.__module__.startswith("transformer_maskgit")
 
 

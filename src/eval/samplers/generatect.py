@@ -42,7 +42,7 @@ _VALUE_RANGE = (-1000, 1000)
 # output is trained on CT-RATE resampled to (0.75, 0.75, 1.5) mm
 # (third_party/vlm3d_dockers/reportgen_example_docker/CT-CLIP/data_preprocess/preprocess_ctrate_train.py:93-95).
 # Stamping this truthful native (not the docker's distorting (1, 1, 1)) lets the FID runner
-# resample generatect to 1 mm like the proxy-GT / report2ct / text2ct volumes.
+# resample generatect to 1 mm like the valid-GT / report2ct / text2ct volumes.
 _NATIVE_SPACING = (0.75, 0.75, 1.5)
 _DOCKER_SPACING = (
     1.0,
@@ -72,7 +72,36 @@ class GenerateCTSampler(AbstractSampler):
         use_super_resolution: bool = True,
         n_samples_per_case: int = 1,
         final_spacing_mm: tuple[float, float, float] | list[float] | None = None,
+        use_metadata_template: bool = True,
     ) -> None:
+        """Store sampling knobs; model weights are loaded lazily on first ``generate`` call.
+
+        Args:
+            num_frames: number of frames for the MaskGITTransformer sampler
+                (upstream process.py:58 hardcodes 201).
+            transformer_cond_scale: classifier-free-guidance scale for the low-res
+                CTViT+Transformer stage (upstream default 5.0).
+            superres_cond_scale: guidance scale for the super-resolution stage
+                (upstream default 1.0).
+            cond_scale: deprecated alias for ``transformer_cond_scale``; takes
+                precedence when set (backwards-compat with older Hydra configs).
+            use_super_resolution: must be True for VLM3D Task 4 (512×512 output);
+                passing False raises immediately.
+            final_spacing_mm: ITK (x, y, z) spacing written to the saved .mha.
+                Defaults to the truthful native spacing ``(0.75, 0.75, 1.5)`` so the
+                FID runner resamples correctly; pass ``[1, 1, 1]`` to reproduce the
+                published docker number.
+            use_metadata_template: if True, prompt is formatted as the training
+                distribution (``"{age} years old {sex}: {impression}"``); if False,
+                feeds raw findings+impression to reproduce the docker's behaviour.
+        """
+        # Build the conditioning prompt the way GenerateCT was TRAINED:
+        #   f'{age} years old {sex}: {impression}'   (impression only, NO findings)
+        # (third_party/generatect/transformer_maskgit/transformer_maskgit/videotextdataset.py:84).
+        # The official docker feeds item["report"] verbatim (process.py:188), but the released
+        # weights never saw findings or a raw-report format, so the templated prompt is the
+        # in-distribution input. Set False to reproduce the docker's raw findings+impression.
+        self.use_metadata_template = use_metadata_template
         self.num_frames = num_frames
         self.transformer_cond_scale = (
             cond_scale if cond_scale is not None else transformer_cond_scale
@@ -98,6 +127,13 @@ class GenerateCTSampler(AbstractSampler):
     # ------------------------------------------------------------------ #
 
     def _init(self, device: torch.device) -> None:
+        """Lazily build the ``GenerateCTAdapter`` (CTViT + Transformer + super-res).
+
+        No-ops if already initialised. Called automatically by ``generate``.
+
+        Args:
+            device: target device for all model weights and sampling tensors.
+        """
         if self._adapter is not None:
             return
         self._device = device
@@ -108,6 +144,56 @@ class GenerateCTSampler(AbstractSampler):
             load_super_resolution=True,
         )
         self._adapter._ensure_built()
+
+    # ------------------------------------------------------------------ #
+    #  Prompt construction (mirrors training, videotextdataset.py)         #
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def _format_age(patient_age: str) -> str:
+        """Mirror videotextdataset.py:71-72 byte-for-byte (incl. the >99 hundreds quirk).
+
+        '036Y' -> '036'[:-1].zfill(3)='036' -> [1:]='36'. Empty/garbage -> 'None'.
+        """
+        try:
+            if not patient_age:
+                return "None"
+            age = str(patient_age)[:-1].zfill(3)
+            return age[1:]
+        except Exception:
+            return "None"
+
+    @staticmethod
+    def _format_sex(patient_sex: str) -> str:
+        """Mirror videotextdataset.py:75-82 — M->male, F->female, else raw/'None'."""
+        sex = str(patient_sex) if patient_sex else "None"
+        if sex.lower() == "m":
+            sex = "male"
+        if sex.lower() == "f":
+            sex = "female"
+        return sex
+
+    def _build_prompt(self, case: EvalCase) -> str:
+        """Construct the text prompt; templated to match training by default.
+
+        Templated path reproduces videotextdataset.py:84 +130-133 (impression only,
+        age/sex prefix, then strip quotes/parens). Missing metadata yields the same
+        'None years old None: ...' the model saw at train time (videotextdataset.py:74,78),
+        NOT a findings fallback — that would reintroduce the off-distribution format we are
+        fixing. use_metadata_template=False reproduces the docker's raw findings+impression.
+        """
+        if self.use_metadata_template:
+            age = self._format_age(case.age)
+            sex = self._format_sex(case.sex)
+            text = f"{age} years old {sex}: {case.impression}"
+        else:
+            text = ((case.findings or "") + " " + (case.impression or "")).strip()
+            if not text:
+                text = case.findings or case.impression or ""
+        # Upstream __getitem__ cleaning (videotextdataset.py:130-133).
+        for ch in ('"', "'", "(", ")"):
+            text = text.replace(ch, "")
+        return text
 
     # ------------------------------------------------------------------ #
     #  Per-case inference (mirrors process.py:196-235)                     #
@@ -196,6 +282,21 @@ class GenerateCTSampler(AbstractSampler):
         out_dir: Path,
         device: torch.device,
     ) -> list[Path]:
+        """Run the two-stage GenerateCT pipeline for each case and save as .mha.
+
+        For each case, builds the conditioning prompt (templated or raw), runs
+        CTViT+MaskGITTransformer (low-res ``(1, D, 128, 128)``) then per-slice
+        super-resolution (high-res ``(1, D, 512, 512)``), converts to HU, and
+        writes a ``<scan_id>.mha``. Existing files are skipped (resumable).
+
+        Args:
+            cases: evaluation cases supplying report text and patient metadata.
+            out_dir: directory where ``.mha`` files are written.
+            device: device for model inference.
+
+        Returns:
+            Ordered list of paths to written (or already-existing) ``.mha`` files.
+        """
         self._init(device)
         out_dir = Path(out_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -208,9 +309,7 @@ class GenerateCTSampler(AbstractSampler):
                 written.append(out_path)
                 continue
 
-            prompt = ((case.findings or "") + " " + (case.impression or "")).strip()
-            if not prompt:
-                prompt = case.findings or case.impression or ""
+            prompt = self._build_prompt(case)
 
             high_res = self._generate_one(prompt)
             mn, mx = self._save_mha(high_res, out_path)

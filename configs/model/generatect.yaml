@@ -1,0 +1,7 @@
+_target_: src.baselines.generatect_adapter.GenerateCTAdapter
+
+device_str: "cuda:0"
+
+# Set true via CLI override (e.g. `model.load_super_resolution=true`) for the
+# 512x512 super-res run; loads the third 1.5GB checkpoint and runs SR per frame.
+load_super_resolution: false

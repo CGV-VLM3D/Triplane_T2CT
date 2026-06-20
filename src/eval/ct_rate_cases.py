@@ -1,4 +1,4 @@
-"""Load EvalCase list from CT-RATE validation set for proxy evaluation.
+"""Load EvalCase list from CT-RATE validation set for evaluation.
 
 Joins validation_reports.csv + validation_metadata.csv to build a list of
 EvalCase objects and, optionally, converts the corresponding CT volumes to .mha
@@ -12,7 +12,9 @@ CT-RATE path convention:
 
 from __future__ import annotations
 
+import json
 import logging
+import random
 from pathlib import Path
 
 import nibabel as nib
@@ -29,6 +31,12 @@ _REPORTS_CSV = _CT_RATE_ROOT / "radiology_text_reports" / "validation_reports.cs
 _METADATA_CSV = _CT_RATE_ROOT / "metadata" / "validation_metadata.csv"
 _VALID_FIXED = _CT_RATE_ROOT / "valid_fixed"
 
+# Frozen representative valid_v2 set (valid_fixed, one scan per patient = 1304),
+# built by scripts/make_toy_dataset.py. When present, load_eval_cases restricts to these
+# scan_ids instead of the legacy CSV-order head selection (which covered only ~425 patients).
+# See plan: /root/.claude/plans/inherited-seeking-pike.md
+_DEFAULT_VALID_V2_IDS = Path("/workspace/data/ctrate_toy_v2/valid_v2/ids.json")
+
 
 def _volume_name_to_nifti(volume_name: str) -> Path:
     """Convert VolumeName 'valid_1_a_1.nii.gz' → absolute NIfTI path."""
@@ -44,11 +52,25 @@ def _volume_name_to_id(volume_name: str) -> str:
     return volume_name.replace(".nii.gz", "")
 
 
-def load_eval_cases(n_samples: int | None = None) -> list[EvalCase]:
+def load_eval_cases(
+    n_samples: int | None = None,
+    ids_json: str | Path | None = None,
+) -> list[EvalCase]:
     """Load CT-RATE validation cases as EvalCase objects.
 
+    Selection (representative valid_v2; replaces the old CSV-order head):
+      * If ``ids_json`` resolves to an existing file (default: the frozen
+        ``ctrate_toy_v2/valid_v2/ids.json`` = valid_fixed one-scan-per-patient = 1304),
+        cases are restricted to those scan_ids. Otherwise it falls back to CSV order
+        (legacy behaviour) so the function still works before the toy set is built.
+      * ``n_samples`` caps the set via a SEEDED shuffle + head: the subset is representative
+        (uniform over the frozen set), nested across sizes, and identical for every model
+        (fair comparison). ``None`` = full set.
+
     Args:
-        n_samples: if given, cap at this many cases (deterministic head selection).
+        n_samples: cap on number of cases (None = all ~1304).
+        ids_json: path to a frozen scan-id list (a dict with key "ids", or a bare list).
+            None → the default frozen valid_v2 ids.
 
     Returns:
         list of EvalCase. NOTE: EvalCase.spacing_mm is NOT used for the saved affine — each
@@ -60,12 +82,43 @@ def load_eval_cases(n_samples: int | None = None) -> list[EvalCase]:
     reports = pd.read_csv(_REPORTS_CSV)
     meta = pd.read_csv(_METADATA_CSV)
 
-    # Merge on VolumeName; keep only rows where NIfTI actually exists
-    df = reports.merge(meta[["VolumeName"]], on="VolumeName", how="left")
+    # Merge on VolumeName; carry PatientAge/PatientSex through for the GenerateCT prompt
+    # template. Keep only rows where the NIfTI actually exists.
+    meta_cols = ["VolumeName"] + [
+        c for c in ("PatientAge", "PatientSex") if c in meta.columns
+    ]
+    df = reports.merge(meta[meta_cols], on="VolumeName", how="left")
     df = df[df["VolumeName"].apply(lambda v: _volume_name_to_nifti(v).is_file())]
 
-    if n_samples is not None:
-        df = df.head(n_samples)
+    # Restrict to the frozen representative valid_v2 set when available.
+    ids_path = Path(ids_json) if ids_json is not None else _DEFAULT_VALID_V2_IDS
+    if ids_path.is_file():
+        frozen = json.loads(ids_path.read_text())
+        frozen_ids = set(frozen["ids"] if isinstance(frozen, dict) else frozen)
+        df = df[df["VolumeName"].apply(lambda v: _volume_name_to_id(v) in frozen_ids)]
+        log.info(
+            "Eval cases restricted to %d frozen valid_v2 ids (%s).",
+            len(frozen_ids),
+            ids_path,
+        )
+    else:
+        log.warning(
+            "Frozen valid_v2 ids not found at %s — falling back to CSV-order selection.",
+            ids_path,
+        )
+
+    # Deterministic, representative subsample (seeded shuffle + head; nested across sizes).
+    if n_samples is not None and n_samples < len(df):
+        order = df["VolumeName"].tolist()
+        random.Random(42).shuffle(order)
+        keep = set(order[:n_samples])
+        df = df[df["VolumeName"].isin(keep)]
+
+    def _clean_meta(value) -> str:
+        """CT-RATE metadata cell → str, mapping NaN/None to '' (upstream uses 'None')."""
+        if value is None or (isinstance(value, float) and pd.isna(value)):
+            return ""
+        return str(value)
 
     cases = []
     for _, row in df.iterrows():
@@ -74,15 +127,21 @@ def load_eval_cases(n_samples: int | None = None) -> list[EvalCase]:
                 scan_id=_volume_name_to_id(row["VolumeName"]),
                 findings=str(row.get("Findings_EN", "") or ""),
                 impression=str(row.get("Impressions_EN", "") or ""),
-                spacing_mm=[1.0, 1.0, 1.0],
+                spacing_mm=[
+                    1.0,
+                    1.0,
+                    1.0,
+                ],  #  unused placeholder — samplers stamp their own spacing (see docstring/WI-3)
+                age=_clean_meta(row.get("PatientAge")),
+                sex=_clean_meta(row.get("PatientSex")),
             )
         )
     log.info("Loaded %d eval cases from CT-RATE validation.", len(cases))
     return cases
 
 
-def prepare_proxy_gt(cases: list[EvalCase], gt_dir: Path) -> list[Path]:
-    """Convert CT-RATE NIfTI volumes to .mha for use as proxy ground-truth.
+def prepare_valid_gt(cases: list[EvalCase], gt_dir: Path) -> list[Path]:
+    """Convert CT-RATE NIfTI volumes to .mha for use as valid-set ground-truth.
 
     For each EvalCase, reads the corresponding NIfTI, clips HU to [-1000, 1000],
     casts to int16, and writes ``gt_dir/{case.scan_id}.mha``.
@@ -121,7 +180,7 @@ def prepare_proxy_gt(cases: list[EvalCase], gt_dir: Path) -> list[Path]:
         written.append(out_path)
         log.debug("GT written: %s", out_path.name)
 
-    log.info("Proxy GT: %d files ready in %s", len(written), gt_dir)
+    log.info("valid_v2 GT: %d files ready in %s", len(written), gt_dir)
     return written
 
 
@@ -145,4 +204,4 @@ def write_prompt_xlsx(cases: list[EvalCase], out_path: Path) -> Path:
     return out_path
 
 
-__all__ = ["load_eval_cases", "prepare_proxy_gt", "write_prompt_xlsx"]
+__all__ = ["load_eval_cases", "prepare_valid_gt", "write_prompt_xlsx"]

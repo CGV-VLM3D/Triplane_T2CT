@@ -19,10 +19,6 @@ MAISI_BUNDLE_DIR: Final[Path] = Path("/workspace/third_party/maisi_bundle")
 MAISI_INFERENCE_CONFIG: Final[Path] = MAISI_BUNDLE_DIR / "configs" / "inference.json"
 MAISI_CKPT_PATH: Final[Path] = MAISI_BUNDLE_DIR / "models" / "autoencoder.pt"
 
-# Sliding-window inference defaults (matches the bundle's autoencoder_sliding_window_infer_size).
-SW_ROI_SIZE: Final[tuple[int, int, int]] = (80, 80, 80)
-SW_OVERLAP: Final[float] = 0.4
-
 
 def load_frozen(
     ckpt_path: Path | str = MAISI_CKPT_PATH,
@@ -52,7 +48,7 @@ def load_frozen(
 
     parser = ConfigParser()
     parser.read_config(str(bundle_config))
-    autoencoder = parser.get_parsed_content("autoencoder_def")
+    autoencoder = parser.get_parsed_content("autoencoder_def") # third_party/maisi_bundle/configs/inference.json의 autoencoder_def를 인스턴스화
 
     state_dict = torch.load(ckpt_path, map_location="cpu", weights_only=True)
     if isinstance(state_dict, dict) and "state_dict" in state_dict:

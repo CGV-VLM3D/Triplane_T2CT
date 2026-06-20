@@ -33,7 +33,7 @@ from tests.saliency_map.cam import (
     build_cam,
     make_reshape_transform,
 )
-from tests.saliency_map.data import SaliencyCase
+from tests.saliency_map.data import SaliencyCase, display_axcodes
 from tests.saliency_map.prompts import PromptItem
 from tests.saliency_map.runners.base import BaseRunner, ModelInput, SaliencyResult
 
@@ -116,6 +116,7 @@ class FVLMRunner(BaseRunner):
         )
         mi.image = image.to(self.device)  # (1, 1, D, H, W) base
         mi.mask = mask.to(self.device)  # (1, 1, D, H, W) base organ id
+        mi.orient = display_axcodes(case.ct_path, (2, 1, 0))  # (D,H,W)=(Z,Y,X)
         return mi
 
     def _crop(
@@ -203,4 +204,5 @@ class FVLMRunner(BaseRunner):
             pred_prob=pred_prob,
             native_map=native,
             grid_shape=grid,
+            orient=model_input.orient,
         )

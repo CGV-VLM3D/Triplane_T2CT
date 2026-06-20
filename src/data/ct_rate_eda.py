@@ -154,8 +154,7 @@ def plot_hu_histogram_sample(
         except Exception as e:  # noqa: BLE001
             logger.warning("Failed to load %s: %s", r.nifti_path, e)
             continue
-        # Apply rescale slope/intercept if available; assume default 1/-1024 for HRCT-style.
-        # Default fallback below produces approximately correct HU regardless.
+        # `_fixed` volumes already have HU baked in — no slope/intercept rescale; plot raw HU.
         flat = arr.reshape(-1)
         sub = flat[:: max(1, len(flat) // 50000)]  # subsample voxels to keep RAM small
         all_values.append(sub)
