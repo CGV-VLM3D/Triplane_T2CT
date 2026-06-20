@@ -37,6 +37,10 @@ wandb/
 logs/
 outputs/
 
+# wandb run logs (binary; deprecated triplane-era logs purged from history)
+*.wandb
+deprecated/wandb_old/
+
 # Data artifacts (latents, work dirs, eval) — artifacts only, never committed
 data/
 
