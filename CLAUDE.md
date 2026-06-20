@@ -42,7 +42,7 @@ configs/                  # Hydra hierarchy (data/model/trainer/logger/callbacks
 third_party/              # READ-ONLY external code (P2)
   report2ct/              # submodule SHA 7b483a8 — paper code + train.sh + JSON configs (weights NOT released)
   generatect/             # submodule SHA 2a81135 — 3 pretrained .pt ckpts on HF
-  vlm3d_dockers/          # submodule SHA c73fe07 — official VLM3D-Dockers eval containers (ctgen/reportgen/abnclass active; abnloc_* dirs are last-year artifacts)
+  vlm3d_dockers/          # submodule SHA a945900 — official VLM3D-Dockers eval containers (ct_challenges/ reorg; ctgen/reportgen/abnclass active; abnloc_* dirs are last-year artifacts)
   maisi_bundle/           # vendored MONAI MAISI bundle (FROZEN VAE: autoencoder.pt + configs/inference.json)
   ct_clip/                # submodule — ibrahimhamamci/CT-CLIP, train-side canonical (eval-side copies live inside vlm3d_dockers/*/CT-CLIP/)
   fvlm/                   # submodule — alibaba-damo-academy/fvlm (ViT + BiomedVLP-CXR-BERT-specialized, CT-RATE-trained)
@@ -61,10 +61,10 @@ deprecated/               # all triplane-era work (do not import from here)
 **Doubled-path trap**: data root is `/workspace/datasets/datasets/` (not `/workspace/datasets/`, which only holds download scripts + `split.json`). Full detail (sizes, dtypes, `split.json` provenance, dev-valid deprecation) in [docs/dataset_reference.md](docs/dataset_reference.md).
 
 - **Raw CT (CT-RATE)**: `/workspace/datasets/datasets/CT-RATE/dataset/` — `train_fixed/` (47,148 scans), `valid_fixed/` (3,038); plus `metadata/`, `multi_abnormality_labels/`, `radiology_text_reports/`, `ts_seg/` (TotalSegmentator masks for fVLM).
-- **MAISI VAE latents** (shape `[4,120,120,64]`): small `.pt` set under `…/latents/{train,valid}/`; **canonical toy v2** at `/workspace/data/ctrate_toy_v2/` (`train/` = 5000 symlinked, `proxy_test/` = `valid_fixed` 1304 one-per-patient = **the eval proxy AND the canonical validation set "valid_v2"** — used for both training val/loss and headline FID/CLIP; the older 1000 `valid_*` split in `datalist_5k.json` is **deprecated**; the real test set is held by the challenge organizers); full 48k `.nii.gz` set under `report2ct_work_dir/` (Report2CT training). Image latents for the 1304 are backfilling via frozen MAISI (`scripts/precompute_report2ct_image_embeddings.py`, **no `--metadata-csv`** — `_fixed` HU already baked).
+- **MAISI VAE latents** (shape `[4,120,120,64]`): small `.pt` set under `…/latents/{train,valid}/`; **canonical toy v2** at `/workspace/data/ctrate_toy_v2/` (`train/` = 5000 symlinked, `valid_v2/` = `valid_fixed` 1304 one-per-patient = **the eval proxy AND the canonical validation set "valid_v2"** — used for both training val/loss and headline FID/CLIP; the older 1000 `valid_*` split is **deprecated** (its `datalist_5k.json` deleted 2026-06-20; canonical training datalist is now `datalist_v2.json` (5k) / `datalist_full_v2.json` (47k), both no_chest+unencodable-corrected — see [[no-chest-correction-report2ct]]); the real test set is held by the challenge organizers); full 48k `.nii.gz` set under `report2ct_work_dir/` (Report2CT training). Image latents + text sidecar (`*_emb.nii.gzmulti_2560.json`) for all 1304 valid_v2 scans are **complete** (images via frozen MAISI `scripts/precompute_report2ct_image_embeddings.py`, **no `--metadata-csv`** — `_fixed` HU already baked; text via `scripts/precompute_report2ct_text_embeddings.py` → merged by `build_report2ct_datalist.py`). **⚠ Canonical train latent = `report2ct_work_dir/image_embeddings/*_emb.nii.gz`** (fp32, std≈0.98, same space as valid_v2 `_emb.nii.gz`). As of **2026-06-18** the toy_v2 `train/` symlinks point at these `_emb.nii.gz` (previously raw VAE **`mu.pt`**, std≈0.67 — never use `mu.pt`, mismatched scale corrupts cross-split work); `train/stats.json` recomputed on `_emb` (std≈0.93–0.99). See [[maisi-latent-source-scale-mismatch]].
 
 ## Win condition (frozen)
-On the **CT-RATE `valid_fixed` 1304 one-scan-per-patient proxy-test** (frozen `ctrate_toy_v2/proxy_test/ids.json`; `load_eval_cases()` restricts to it, any `n_samples<1304` is a seeded-shuffle nested subset), via VLM3D-Dockers: `ours_final` beats `report2ct_our_repro` in ≥2 of {2.5D-FID, CLIPScore-T2I, FVD}. Metric priority for headline: **2.5D-FID > CLIPScore-T2I > FVD**. *(Self-measured baseline numbers are pending re-measurement by the user against this 1304 set; the paper envelope below is unaffected.)*
+On the **CT-RATE `valid_fixed` 1304 one-scan-per-patient valid_v2** (frozen `ctrate_toy_v2/valid_v2/ids.json`; `load_eval_cases()` restricts to it, any `n_samples<1304` is a seeded-shuffle nested subset), via VLM3D-Dockers: `ours_final` beats `report2ct_our_repro` in ≥2 of {2.5D-FID, CLIPScore-T2I, FVD}. Metric priority for headline: **2.5D-FID > CLIPScore-T2I > FVD**. *(Self-measured baseline numbers are pending re-measurement by the user against this 1304 set; the paper envelope below is unaffected.)*
 
 ## Envelope (Report2CT 3-TE-cfg5 anchor)
 - 2.5D-FID anchor = 4.04 (Fig 6 FID Avg) ⇒ ±15%
@@ -72,7 +72,7 @@ On the **CT-RATE `valid_fixed` 1304 one-scan-per-patient proxy-test** (frozen `c
 - FVD anchor = self-measured (paper does NOT report FVD) ⇒ ±25%
 
 ## Upper bound
-MAISI VAE encode→decode round-trip on an earlier **1000-volume CT-RATE valid sample** (pre-v2 — not directly comparable to the 1304 proxy-test): **PSNR 30.94 ± 2.97 dB, SSIM 0.7195 ± 0.1084**. Intensity: HU clipped to `[-1000, 1000]`, scaled to `[0, 1]`; spatial 480×480×256. Full: `results/upper_bound.json`.
+MAISI VAE encode→decode round-trip on an earlier **1000-volume CT-RATE valid sample** (pre-v2 — not directly comparable to the 1304 valid_v2): **PSNR 30.94 ± 2.97 dB, SSIM 0.7195 ± 0.1084**. Intensity: HU clipped to `[-1000, 1000]`, scaled to `[0, 1]`; spatial 480×480×256. Full: `results/upper_bound.json`.
 
 ## Compute / I/O notes
 3D MAISI latent streaming (`mu.pt`, 7.2 MB/sample × 6,000 ≈ 43 GB) **dominates runtime** for any per-sample sweep. Defaults: `--device cpu --num-workers 16` for cheap arithmetic; GPU only when inner ops justify it. See [[3d-latent-i-o-bottleneck]] memory.
@@ -138,6 +138,7 @@ CUDA_VISIBLE_DEVICES=0 pytest tests/test_ctclip_adapter.py -k requires_weights -
 - **`deprecated/` is import-forbidden** — it preserves the triplane-era work for history only.
 - **GPU prefix**: `CUDA_VISIBLE_DEVICES=0 python ...` for single-GPU; explicit `CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node=2 ...` for multi-GPU.
 - **Artifacts go under `/workspace/data/`**, never under `/workspace/datasets/` (collaborator's read-only area).
+- **Run logs go under `/workspace/logs/`, never under `data/`.** When auto-launching train/eval as a background/detached process, redirect stdout+stderr to `logs/<model>_<timestamp>.log` (gitignored; `make clean-logs`). The python `logging` output is already saved by Hydra to `outputs/<model>/<timestamp>/<task>.log` — `data/` stays log-free (artifacts only).
 - **Decision trail**: design decisions live in `.omc/specs/` (deep-interview transcripts) and `.omc/plans/` (consensus plans). Quote them when justifying non-obvious choices.
 - **Cloning a baseline?** Run the 8-point silent-bug audit in [.claude/rules/baseline-clone.md](.claude/rules/baseline-clone.md) (auto-loads when editing `src/baselines/**` or `src/eval/**`).
 
@@ -146,6 +147,7 @@ CUDA_VISIBLE_DEVICES=0 pytest tests/test_ctclip_adapter.py -k requires_weights -
 - **Simplicity first (load-bearing).** Minimum code that solves the *stated* problem — nothing speculative. No unrequested features, no abstractions for single-use code, no configurability or error handling for impossible cases. If 200 lines could be 50, rewrite it. Senior-engineer test: if it reads as overcomplicated, simplify.
 - **Surgical changes.** Touch only what the request requires. Don't improve/refactor/reformat adjacent working code; match existing style. Remove only the orphans your own change creates; flag pre-existing dead code, don't delete it.
 - **Goal-driven execution.** Turn the task into a verifiable success criterion (e.g. "write a failing test that reproduces the bug, then make it pass") and loop until it's met.
+- **Docstrings: Google style + shapes.** Every public function/method gets a one-line summary; add `Args:` / `Returns:` only when they add information (trivial lifecycle/dunder methods can be a single line). For any tensor/array arg or return, put the shape in the relevant `Args:`/`Returns:` entry as `` ``(B, 4, 120, 120, 64)`` `` — but only a shape you can read from the code (an inline comment or op); describe in prose rather than invent one. Keep step-by-step `# upstream :NNN` / `# (B, ...)` inline comments in the body — docstring states the I/O contract, inline comments trace the steps.
 
 ### Implementation workflow (incremental + review-gated)
 - **Plan the split first.** Before writing any code, present how the feature will be broken into small units and in what order.
