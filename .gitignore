@@ -33,6 +33,12 @@ wandb/
 logs/
 outputs/
 
+# Data artifacts (latents, work dirs, eval) — artifacts only, never committed
+data/
+
+# fvlm: de-vendored from submodule, kept local-only (runtime dep, not tracked)
+third_party/fvlm/
+
 paper_pdf/
 
 # Saliency experiment outputs (Experiment 3)
