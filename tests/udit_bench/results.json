@@ -1,0 +1,130 @@
+{
+  "args": {
+    "batch_sizes": "4,8,16",
+    "checkpoint": "both",
+    "dims": [
+      384,
+      768,
+      1152
+    ],
+    "depths": [
+      2,
+      4,
+      12
+    ],
+    "num_heads": [
+      6,
+      12,
+      18
+    ],
+    "window": 8,
+    "n_warmup": 5,
+    "n_timed": 10,
+    "device": "cuda:0",
+    "out": "/workspace/tests/udit_bench/results.json"
+  },
+  "results": [
+    {
+      "batch_size": 4,
+      "use_checkpoint": true,
+      "n_params": 403974272,
+      "steady_state_mem_gb": 6.196382999420166,
+      "peak_mem_gb": 9.215276718139648,
+      "activation_mem_per_sample_gb": 0.7547234296798706,
+      "sec_per_step": 0.24934113189810886,
+      "samples_per_sec": 16.042278983615773,
+      "analytical_fwd_tflop_per_sample": 1.653293973504,
+      "achieved_tflops": 79.5678094946455,
+      "per_level_fwd_gflop": {
+        "L0": 566.935683072,
+        "L1": 876.173328384,
+        "L2": 210.184962048
+      }
+    },
+    {
+      "batch_size": 8,
+      "use_checkpoint": true,
+      "n_params": 403974272,
+      "steady_state_mem_gb": 6.314913272857666,
+      "peak_mem_gb": 12.533824920654297,
+      "activation_mem_per_sample_gb": 0.7773639559745789,
+      "sec_per_step": 0.47029284390155224,
+      "samples_per_sec": 17.01067771653073,
+      "analytical_fwd_tflop_per_sample": 1.653293973504,
+      "achieved_tflops": 84.37095286187711,
+      "per_level_fwd_gflop": {
+        "L0": 566.935683072,
+        "L1": 876.173328384,
+        "L2": 210.184962048
+      }
+    },
+    {
+      "batch_size": 16,
+      "use_checkpoint": true,
+      "n_params": 403974272,
+      "steady_state_mem_gb": 6.561068058013916,
+      "peak_mem_gb": 20.466854095458984,
+      "activation_mem_per_sample_gb": 0.8691116273403168,
+      "sec_per_step": 0.9014138508005999,
+      "samples_per_sec": 17.749893665145525,
+      "analytical_fwd_tflop_per_sample": 1.653293973504,
+      "achieved_tflops": 88.03737668076576,
+      "per_level_fwd_gflop": {
+        "L0": 566.935683072,
+        "L1": 876.173328384,
+        "L2": 210.184962048
+      }
+    },
+    {
+      "batch_size": 4,
+      "use_checkpoint": false,
+      "n_params": 403974272,
+      "steady_state_mem_gb": 6.199129581451416,
+      "peak_mem_gb": 21.38612937927246,
+      "activation_mem_per_sample_gb": 3.7967499494552612,
+      "sec_per_step": 0.19807017010170966,
+      "samples_per_sec": 20.194863254502117,
+      "analytical_fwd_tflop_per_sample": 1.653293973504,
+      "achieved_tflops": 100.16413714321718,
+      "per_level_fwd_gflop": {
+        "L0": 566.935683072,
+        "L1": 876.173328384,
+        "L2": 210.184962048
+      }
+    },
+    {
+      "batch_size": 8,
+      "use_checkpoint": false,
+      "n_params": 403974272,
+      "steady_state_mem_gb": 6.337099552154541,
+      "peak_mem_gb": 37.427024841308594,
+      "activation_mem_per_sample_gb": 3.8862406611442566,
+      "sec_per_step": 0.3722280678106472,
+      "samples_per_sec": 21.492199787764548,
+      "analytical_fwd_tflop_per_sample": 1.653293973504,
+      "achieved_tflops": 106.59877315936522,
+      "per_level_fwd_gflop": {
+        "L0": 566.935683072,
+        "L1": 876.173328384,
+        "L2": 210.184962048
+      }
+    },
+    {
+      "batch_size": 16,
+      "use_checkpoint": false,
+      "n_params": 403974272,
+      "steady_state_mem_gb": 6.586519718170166,
+      "peak_mem_gb": 69.50606918334961,
+      "activation_mem_per_sample_gb": 3.932471841573715,
+      "sec_per_step": 0.7085284934029914,
+      "samples_per_sec": 22.58201349553862,
+      "analytical_fwd_tflop_per_sample": 1.653293973504,
+      "achieved_tflops": 112.00412046528,
+      "per_level_fwd_gflop": {
+        "L0": 566.935683072,
+        "L1": 876.173328384,
+        "L2": 210.184962048
+      }
+    }
+  ]
+}
