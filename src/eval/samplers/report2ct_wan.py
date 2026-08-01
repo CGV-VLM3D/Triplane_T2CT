@@ -34,8 +34,18 @@ from tqdm import tqdm
 
 from src.baselines.report2ct_text_encoder import Report2CTTextEncoder
 from src.baselines.rflow import RFlowScheduler
+from src.data.report2ct_wan_seq_datamodule import (
+    ENCODER_HIDDEN_DIMS,
+    SEQ_LEN_FINDINGS,
+    SEQ_LEN_IMPRESSION,
+    _pad_or_truncate,
+)
 from src.eval.samplers.base import AbstractSampler, EvalCase
 from src.eval.samplers.report2ct import Report2CTSampler
+from src.models.components.maisi_unet_text_pooled import (
+    DiffusionModelUNetMaisiTextPooled,
+)
+from src.models.components.text_sequence_projector import TextSequenceProjector
 
 log = logging.getLogger(__name__)
 
@@ -61,7 +71,9 @@ def _noise_seed(case: EvalCase) -> int:
 
 
 def _build_wan_unet(
-    cross_attention_dim: int = 2560, in_channels: int = 16
+    cross_attention_dim: int = 2560,
+    in_channels: int = 16,
+    text_pooled: bool = False,
 ) -> DiffusionModelUNetMaisi:
     """UNet with configs/model/report2ct_wan.yaml kwargs (out=16, cross_attention_dim=2560).
 
@@ -69,8 +81,16 @@ def _build_wan_unet(
     impression context (NOT CLIP3D 768), so cross_attention_dim defaults to 2560. in_channels
     defaults to 16 (plain image latent); the mask-conditioned variant passes 32 (16 image + 16
     Wan mask latent, concat) — out_channels stays 16 (the UNet predicts only the image latent).
+
+    Args:
+        text_pooled: build ``DiffusionModelUNetMaisiTextPooled`` (adds the pooled-text ``emb``
+            path + masked cross-attention, see
+            ``src/models/components/maisi_unet_text_pooled.py``) instead of the stock class.
+            ``report2ct_wan_seq`` (arm B/C) checkpoints need this; every other checkpoint in
+            this file does not.
     """
-    return DiffusionModelUNetMaisi(
+    cls = DiffusionModelUNetMaisiTextPooled if text_pooled else DiffusionModelUNetMaisi
+    return cls(
         spatial_dims=3,
         in_channels=in_channels,
         out_channels=16,
@@ -91,22 +111,31 @@ def _build_wan_unet(
 
 
 def _load_wan_checkpoint(
-    ckpt_path: str | Path, device: torch.device, in_channels: int = 16
+    ckpt_path: str | Path,
+    device: torch.device,
+    in_channels: int = 16,
+    text_pooled: bool = False,
 ):
-    """Load UNet weights + scale_factor (+ optional learned null mask) from a Lightning .ckpt.
+    """Load UNet weights + scale_factor (+ optional learned null mask / text projector) from a
+    Lightning .ckpt.
 
-    Returns ``(unet, scale_factor, no_mask_embed)`` where ``no_mask_embed`` is the learned null mask
-    tensor ``(16,)`` for dual-CFG checkpoints (report2ct_wan_mask_v2, trained with mask_cfg=true) or
-    ``None`` when the checkpoint has no such parameter.
+    Returns ``(unet, scale_factor, no_mask_embed, text_projector)``. ``no_mask_embed`` is the
+    learned null mask tensor ``(16,)`` for dual-CFG checkpoints (report2ct_wan_mask_v2, trained
+    with mask_cfg=true) or ``None``. ``text_projector`` is a ``TextSequenceProjector`` loaded from
+    the checkpoint's ``text_projector.*`` keys (report2ct_wan_seq, arm B/C) or ``None`` — both are
+    ``None`` for every checkpoint that predates these features, so this signature change is safe
+    for the mask / mask_v2 subclasses that inherit ``_init`` unchanged.
 
-    ``in_channels`` = 16 (plain report2ct_wan) or 32 (report2ct_wan_mask[_v2], image+mask concat).
+    Args:
+        in_channels: 16 (plain report2ct_wan) or 32 (report2ct_wan_mask[_v2], image+mask concat).
+        text_pooled: see ``_build_wan_unet``.
     """
     ckpt = torch.load(str(ckpt_path), map_location="cpu", weights_only=False)
     sd = ckpt["state_dict"]
     scale_factor: float = sd["scale_factor"].item()
     log.info("scale_factor from checkpoint: %.4f", scale_factor)
 
-    unet = _build_wan_unet(in_channels=in_channels)
+    unet = _build_wan_unet(in_channels=in_channels, text_pooled=text_pooled)
     unet_sd = {k[len("unet.") :]: v for k, v in sd.items() if k.startswith("unet.")}
     missing, unexpected = unet.load_state_dict(unet_sd, strict=True)
     if missing or unexpected:
@@ -124,7 +153,24 @@ def _load_wan_checkpoint(
             "Loaded learned null mask embedding no_mask_embed %s",
             tuple(no_mask_embed.shape),
         )
-    return unet, scale_factor, no_mask_embed
+
+    text_projector = None
+    proj_sd = {
+        k[len("text_projector.") :]: v
+        for k, v in sd.items()
+        if k.startswith("text_projector.")
+    }
+    if proj_sd:
+        text_projector = TextSequenceProjector(
+            encoder_dims=ENCODER_HIDDEN_DIMS, out_dim=2560
+        )
+        text_projector.load_state_dict(proj_sd, strict=True)
+        text_projector = text_projector.to(device).eval()
+        for p in text_projector.parameters():
+            p.requires_grad_(False)
+        log.info("Loaded text_projector (%d tensors)", len(proj_sd))
+
+    return unet, scale_factor, no_mask_embed, text_projector
 
 
 class Report2CTWanLatentSampler(Report2CTSampler):
@@ -155,7 +201,7 @@ class Report2CTWanLatentSampler(Report2CTSampler):
             torch.backends.cuda.enable_flash_sdp(False)
             torch.backends.cuda.enable_mem_efficient_sdp(True)
         log.info("Loading Wan-latent UNet from %s …", self.ckpt_path)
-        self._unet, self._scale_factor, self._null_mask = _load_wan_checkpoint(
+        self._unet, self._scale_factor, self._null_mask, _ = _load_wan_checkpoint(
             self.ckpt_path, device, in_channels=self.unet_in_channels
         )
         log.info("Loading Report2CT text encoders …")
@@ -447,6 +493,162 @@ class Report2CTWanMaskV2LatentSampler(Report2CTWanMaskLatentSampler):
         )
 
 
+class Report2CTWanSeqLatentSampler(Report2CTWanLatentSampler):
+    """report2ct_wan_seq (arms B/C, docs/vlm3d_research_roadmap.md Phase 1e): per-encoder token
+    SEQUENCES instead of the pooled 2-token context, with the padding-aware UNet + optional
+    pooled-text AdaLN path from Unit 3a/3b.
+
+    Must reproduce ``Report2CTSeqDataModule``'s (training-side) padding *exactly* — same lengths,
+    same encoder order, same mask convention — or the model sees a context distribution shifted
+    from what it trained on. Both sides now share ``_pad_or_truncate`` /
+    ``SEQ_LEN_FINDINGS`` / ``SEQ_LEN_IMPRESSION`` / ``ENCODER_HIDDEN_DIMS``
+    (``src/data/report2ct_wan_seq_datamodule.py``) rather than each re-deriving them, so this
+    cannot drift from training by editing only one side.
+
+    Args:
+        text_pooled_adaln: whether the checkpoint was trained with the pooled findings/impression
+            -> ``emb`` path active (arm C). ``False`` (default, arm B) leaves that path idle —
+            the UNet is always ``DiffusionModelUNetMaisiTextPooled`` either way (its pooled path
+            is a zero-init no-op when unused, verified in Unit 3a), only whether this sampler
+            *feeds* it differs.
+    """
+
+    def __init__(self, *args, text_pooled_adaln: bool = False, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.text_pooled_adaln = text_pooled_adaln
+        self._text_projector: TextSequenceProjector | None = None
+        # Per-case state set by _case_to_context, read by _predict — same pattern as the mask
+        # subclasses' _mask_latent (an instance-attribute side channel is required here because
+        # the base generate()/generate_wan_latents.py call chain threads only `context` through
+        # _denoise -> _predict, and overriding _case_to_context's return type would break that
+        # contract for every other subclass that inherits it unchanged).
+        self._context_mask: torch.Tensor | None = None
+        self._text_pooled_f: torch.Tensor | None = None
+        self._text_pooled_i: torch.Tensor | None = None
+
+    def _init(self, device: torch.device) -> None:
+        """Load the TextPooled UNet + text_projector. No MAISI VAE (decode is a separate env)."""
+        if self._unet is not None:
+            return
+        self._device = device
+        if torch.cuda.is_available():
+            torch.backends.cuda.enable_flash_sdp(False)
+            torch.backends.cuda.enable_mem_efficient_sdp(True)
+        log.info("Loading Wan-latent TextPooled UNet from %s …", self.ckpt_path)
+        self._unet, self._scale_factor, self._null_mask, self._text_projector = (
+            _load_wan_checkpoint(
+                self.ckpt_path,
+                device,
+                in_channels=self.unet_in_channels,
+                text_pooled=True,
+            )
+        )
+        if self._text_projector is None:
+            raise RuntimeError(
+                f"{self.ckpt_path} has no text_projector.* weights — was it trained with "
+                "experiment=report2ct_wan_seq (or report2ct_wan_seq_adaln)? "
+                "Report2CTWanSeqLatentSampler needs a checkpoint trained with text_projector set."
+            )
+        log.info("Loading Report2CT text encoders …")
+        self._text_encoder = Report2CTTextEncoder(device=device)
+
+    def _case_to_context(self, case: EvalCase) -> torch.Tensor:
+        """Encode findings+impression to token sequences, pad+mask+project, cache mask/pooled.
+
+        Mirrors ``Report2CTModule._prepare_seq_context`` + ``_shared_forward``'s pooled-text
+        read, but for one live-encoded case instead of a batch loaded from precomputed sidecars.
+
+        Returns:
+            Cross-attention context, ``(1, n_encoders*(SEQ_LEN_FINDINGS+SEQ_LEN_IMPRESSION),
+            2560)`` — same return type as the base class, so ``generate()`` needs no override.
+            The mask (and, if ``text_pooled_adaln``, the pooled vectors) are stashed on
+            ``self`` for ``_predict`` to read.
+        """
+        f_seqs, i_seqs = self._text_encoder.encode_tokens_pair(
+            case.findings, case.impression
+        )  # each: list of (n_tokens_k, encoder_dims[k]) CPU float32
+        f_pad, f_mask, i_pad, i_mask = [], [], [], []
+        for f_seq, i_seq in zip(f_seqs, i_seqs):
+            fs, fm = _pad_or_truncate(f_seq, SEQ_LEN_FINDINGS)
+            is_, im = _pad_or_truncate(i_seq, SEQ_LEN_IMPRESSION)
+            f_pad.append(
+                fs.unsqueeze(0).to(self._device)
+            )  # (1, SEQ_LEN_FINDINGS, dim_k)
+            f_mask.append(fm.unsqueeze(0).to(self._device))
+            i_pad.append(is_.unsqueeze(0).to(self._device))
+            i_mask.append(im.unsqueeze(0).to(self._device))
+
+        with torch.no_grad():
+            context, context_mask = self._text_projector(f_pad, f_mask, i_pad, i_mask)
+        self._context_mask = context_mask  # (1, T)
+
+        if self.text_pooled_adaln:
+            # Same encoder_pair + mean-pool identity Phase 1a verified exactly
+            # (encode_tokens' mean == encode()'s pooled output): reuse encode_pair directly
+            # rather than re-deriving the pooled vector from the just-computed sequences.
+            ctx_f, ctx_i = self._text_encoder.encode_pair(
+                case.findings, case.impression
+            )
+            self._text_pooled_f = ctx_f.unsqueeze(0).to(self._device)  # (1, 2560)
+            self._text_pooled_i = ctx_i.unsqueeze(0).to(self._device)
+
+        return context
+
+    def _predict(
+        self,
+        z: torch.Tensor,
+        t_tensor: torch.Tensor,
+        context: torch.Tensor,
+        class_labels: torch.Tensor,
+        spacing_tensor: torch.Tensor,
+    ) -> torch.Tensor:
+        """Text-only CFG, extended with the context mask and (if enabled) pooled-text AdaLN.
+
+        The CFG-dropped branch mirrors ``Report2CTModule``'s training-time joint drop: the
+        cross-attention context AND the pooled vectors are zeroed together, never independently
+        — see ``src/models/report2ct_module.py::_shared_forward``.
+        """
+        x_single = (
+            z if self._mask_latent is None else torch.cat([z, self._mask_latent], dim=1)
+        )
+        extra: dict[str, torch.Tensor] = {}
+        if self.text_pooled_adaln:
+            extra["text_pooled_f"] = self._text_pooled_f
+            extra["text_pooled_i"] = self._text_pooled_i
+
+        if self.cfg_scale != 1.0:
+            uncond = torch.zeros_like(context)
+            mask_b = self._context_mask.repeat(2, 1)
+            extra_b = (
+                {
+                    k: torch.cat([torch.zeros_like(v), v], dim=0)
+                    for k, v in extra.items()
+                }
+                if extra
+                else {}
+            )
+            pred_b = self._unet(
+                x=torch.cat([x_single, x_single], dim=0),
+                timesteps=t_tensor.repeat(2),
+                context=torch.cat([uncond, context], dim=0),
+                class_labels=class_labels.repeat(2),
+                spacing_tensor=spacing_tensor.repeat(2, 1),
+                context_mask=mask_b,
+                **extra_b,
+            )
+            pred_uncond, pred_cond = pred_b.chunk(2, dim=0)
+            return pred_uncond + self.cfg_scale * (pred_cond - pred_uncond)
+        return self._unet(
+            x=x_single,
+            timesteps=t_tensor,
+            context=context,
+            class_labels=class_labels,
+            spacing_tensor=spacing_tensor,
+            context_mask=self._context_mask,
+            **extra,
+        )
+
+
 class Report2CTWanEvalSampler(AbstractSampler):
     """Pass-through sampler for ``run_eval.py``: expects Wan ``.mha`` predictions already decoded.
 
@@ -492,5 +694,6 @@ __all__ = [
     "Report2CTWanLatentSampler",
     "Report2CTWanMaskLatentSampler",
     "Report2CTWanMaskV2LatentSampler",
+    "Report2CTWanSeqLatentSampler",
     "Report2CTWanEvalSampler",
 ]

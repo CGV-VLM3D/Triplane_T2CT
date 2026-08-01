@@ -47,13 +47,18 @@ SEQ_LEN_IMPRESSION: Final[int] = 128
 
 
 def _pad_or_truncate(
-    arr: np.ndarray, max_len: int
+    arr: np.ndarray | torch.Tensor, max_len: int
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Pads/truncates one encoder's token sequence to a fixed length, with a real-vs-pad mask.
 
+    Shared by the training-time datamodule (loading a precomputed npz sidecar) and the eval
+    sampler (``Report2CTWanSeqLatentSampler``, padding ``Report2CTTextEncoder.encode_tokens``'s
+    live output) — accepting either input type keeps both call sites byte-for-byte identical
+    instead of maintaining two paddings that could quietly drift apart.
+
     Args:
-        arr: token embeddings for one encoder, ``(n_tokens, hidden)`` (from the npz sidecar,
-            float16).
+        arr: token embeddings for one encoder, ``(n_tokens, hidden)`` — a numpy array (from the
+            npz sidecar, float16) or a torch tensor (from a live ``encode_tokens`` call).
         max_len: target sequence length.
 
     Returns:
@@ -62,7 +67,11 @@ def _pad_or_truncate(
         bool, ``True`` for real tokens and ``False`` for padding.
     """
     n_tokens, hidden = arr.shape
-    t = torch.from_numpy(arr.astype(np.float32))
+    t = (
+        arr.float()
+        if torch.is_tensor(arr)
+        else torch.from_numpy(arr.astype(np.float32))
+    )
     if n_tokens >= max_len:
         return t[:max_len], torch.ones(max_len, dtype=torch.bool)
     seq = torch.cat([t, torch.zeros(max_len - n_tokens, hidden)], dim=0)
