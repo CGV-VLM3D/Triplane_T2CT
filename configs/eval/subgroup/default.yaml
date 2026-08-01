@@ -1,0 +1,43 @@
+# Subgroup definitions for the per-sample evaluation extension.
+# Label names below must match the 18-label CSV columns exactly (src/eval/analysis/labels.py
+# LABEL_NAMES) — subgroup_config.py validates this at load time and raises on any typo.
+#
+# mask_explainability (explained/unexplained) is DEFERRED (2026-07-27 decision): the user wants
+# to inspect segmentation maps directly before defining which findings a 4-organ geometry mask
+# can plausibly explain, rather than committing to an AUC-derived split now. No key for it here.
+
+label_burden_bands:
+  all_zero: [0, 0]
+  "1_3": [1, 3]
+  "4_7": [4, 7]
+  "8_plus": [8, 18]
+
+# Overlapping membership (a sample may belong to several clusters at once) — user-confirmed
+# policy. Coarser view alongside (not instead of) the always-computed per-label (18) axis.
+organ_clusters:
+  lung_parenchyma_airway:
+    - Emphysema
+    - Atelectasis
+    - Lung nodule
+    - Lung opacity
+    - Pulmonary fibrotic sequela
+    - Mosaic attenuation pattern
+    - Peribronchial thickening
+    - Consolidation
+    - Bronchiectasis
+    - Interlobular septal thickening
+  pleural_pericardial:
+    - Pericardial effusion
+    - Pleural effusion
+  cardiac_vascular_calcification:
+    - Arterial wall calcification
+    - Cardiomegaly
+    - Coronary artery wall calcification
+  other:
+    - Medical material
+    - Hiatal hernia
+    - Lymphadenopathy
+
+# Subgroup FID/FVD below this n get a below_threshold=true flag in the output (a "sample size is
+# small" marker only — NOT a claim that n >= this value makes the estimate valid; user-confirmed).
+subgroup_fid_small_n: 100
