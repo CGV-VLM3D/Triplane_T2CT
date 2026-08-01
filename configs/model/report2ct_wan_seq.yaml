@@ -1,0 +1,21 @@
+# Arm B of the text-conditioning A/B (docs/vlm3d_research_roadmap.md Phase 1e): identical to
+# configs/model/report2ct_wan.yaml except the cross-attention context is the per-encoder text
+# TOKEN SEQUENCES (projected to cross_attention_dim and concatenated, with a key-padding mask)
+# instead of the mean-pooled 2-token vector. The UNet swaps to the TextPooled subclass so the
+# padding mask can reach cross-attention; its pooled->emb path stays idle here (arm C enables it).
+# Requires configs/data/report2ct_wan_seq.yaml, which supplies the sequence keys.
+defaults:
+  - report2ct_wan
+
+unet:
+  _target_: src.models.components.maisi_unet_text_pooled.DiffusionModelUNetMaisiTextPooled
+  text_pooled_dim: 2560
+
+text_projector:
+  _target_: src.models.components.text_sequence_projector.TextSequenceProjector
+  # Order must match Report2CTTextEncoder.MODEL_IDS:
+  # MedEmbed-large-v0.1 (1024) / ClinicalBERT (768) / BiomedVLP-CXR-BERT-specialized (768)
+  encoder_dims: [1024, 768, 768]
+  out_dim: 2560            # == unet.cross_attention_dim, so a wan checkpoint's K/V weights transfer
+
+text_pooled_adaln: false   # arm B: cross-attention only
