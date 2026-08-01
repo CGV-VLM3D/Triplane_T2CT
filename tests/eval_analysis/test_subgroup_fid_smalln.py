@@ -67,8 +67,12 @@ def test_below_threshold_no_reliable_field(tmp_path: Path):
 
     run_out_dir = tmp_path / "run"
     for sid in _SCAN_IDS:
-        _write_fake_feature(run_out_dir / "fid_features" / "gt" / f"{sid}.pt")
-        _write_fake_feature(run_out_dir / "fid_features" / "pred" / f"{sid}.pt")
+        _write_fake_feature(
+            run_out_dir / "fid_research" / "fid_features" / "gt" / f"{sid}.pt"
+        )
+        _write_fake_feature(
+            run_out_dir / "fid_research" / "fid_features" / "pred" / f"{sid}.pt"
+        )
 
     small_n_cfg = replace(
         _CFG, subgroup_fid_small_n=100
@@ -78,6 +82,7 @@ def test_below_threshold_no_reliable_field(tmp_path: Path):
         per_sample_csv=per_sample_csv,
         subgroup_cfg=small_n_cfg,
         analysis_out_dir=tmp_path / "setlevel",
+        fid_profile="research",
     )
 
     assert "reliable" not in result_df.columns  # no validity-implying field
@@ -94,6 +99,7 @@ def test_below_threshold_no_reliable_field(tmp_path: Path):
         per_sample_csv=per_sample_csv,
         subgroup_cfg=large_n_cfg,
         analysis_out_dir=tmp_path / "setlevel2",
+        fid_profile="research",
     )
     overall_row2 = result_df2[result_df2["axis"] == "overall"].iloc[0]
     assert overall_row2["below_threshold"] == False  # noqa: E712
@@ -111,6 +117,9 @@ def test_build_axes_overall_restricted_to_gt_index(tmp_path: Path):
     }  # only 3 of 5 cached
     df = pd.DataFrame(
         {
+            # sample_id is the pred-side key (= the generated file's stem); equal to target_id in
+            # a plain run, and always present in a real per_sample.csv.
+            "sample_id": ["scan0", "scan1"],
             "target_id": ["scan0", "scan1"],
             "label_class": ["normal", "normal"],
             "burden_band": ["all_zero", "all_zero"],
@@ -160,3 +169,68 @@ def test_fid_subset_uses_ref_stats_fast_path_when_counts_match(
     assert called["fast_path"] is True
     assert result["real_n"] == len(_SCAN_IDS)
     assert result["FID_2p5D_Avg"] == 1.0
+
+
+def test_run_reads_stem_hash_suffixed_npz_for_truncating_profile(
+    monkeypatch, tmp_path: Path
+):
+    """docker/docker_n300 write a stem-hash-suffixed refstats npz (ctgen.py:1041-1045), not the
+    plain research-style path — run() must read scored_stems_sha1 back from this run's own
+    fid_<profile>/fid.json to find it, instead of always probing the plain path (Unit 2 fix)."""
+    import json
+
+    import src.eval.analysis.subgroup_setlevel as sl
+
+    run_out_dir = tmp_path / "run"
+    features_dir = run_out_dir / "fid_docker" / "fid_features_squeezenet1_1"
+    for sid in _SCAN_IDS:
+        _write_fake_feature(features_dir / "gt" / f"{sid}.pt")
+        _write_fake_feature(features_dir / "pred" / f"{sid}.pt")
+
+    fid_json = run_out_dir / "fid_docker" / "fid.json"
+    fid_json.write_text(json.dumps({"scored_stems_sha1": "abc123def456" + "0" * 28}))
+
+    shared_gt = tmp_path / "shared_gt"
+    monkeypatch.setattr(
+        "src.eval.tasks.ctgen._shared_gt_feat_dir", lambda gt_dir, model: shared_gt
+    )
+    expected_npz = shared_gt.parent / f"{shared_gt.name}__refstats_abc123def456.npz"
+    expected_npz.parent.mkdir(parents=True, exist_ok=True)
+    expected_npz.touch()
+
+    seen = {}
+
+    def _fake_load_ref_stats(path):
+        seen["path"] = path
+        return {"n_volumes": len(_SCAN_IDS)}
+
+    monkeypatch.setattr(
+        "src.eval.tasks._fid_refstats.load_ref_stats", _fake_load_ref_stats
+    )
+
+    pred_dir = tmp_path / "predictions"
+    gt_dir = tmp_path / "gt"
+    tiny = np.zeros((4, 4, 4), dtype=np.int16)
+    for sid in _SCAN_IDS:
+        write_mha(pred_dir / f"{sid}.mha", tiny)
+        write_mha(gt_dir / f"{sid}.mha", tiny)
+    per_sample_df = build_per_sample(
+        scan_ids=_SCAN_IDS,
+        pred_dir=pred_dir,
+        gt_dir=gt_dir,
+        subgroup_cfg=_CFG,
+        seg_backend=None,
+    )
+    per_sample_csv = tmp_path / "per_sample.csv"
+    per_sample_df.to_csv(per_sample_csv, index=False)
+
+    sl.run(
+        run_out_dir=run_out_dir,
+        per_sample_csv=per_sample_csv,
+        subgroup_cfg=_CFG,
+        analysis_out_dir=tmp_path / "setlevel",
+        gt_dir=gt_dir,
+        fid_profile="docker",
+    )
+
+    assert seen["path"] == expected_npz

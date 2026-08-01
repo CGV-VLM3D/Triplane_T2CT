@@ -17,6 +17,12 @@ class EvalCase:
     they are populated for the GenerateCT prompt template (which was trained on
     ``"{age} years old {sex}: {impression}"`` — see GenerateCTSampler) and left empty
     by callers that don't need them.
+
+    The last four fields carry one row of a mask-intervention manifest
+    (docs/mask_intervention_manifest.md) and are ``None`` in every plain run, where one scan is
+    generated exactly once. They exist because a manifest run generates the SAME scan several
+    times under different conditioning masks, so the output filename, the mask source and the
+    noise seed can no longer be derived from ``scan_id`` alone.
     """
 
     scan_id: str
@@ -25,6 +31,19 @@ class EvalCase:
     spacing_mm: list[float] = field(default_factory=lambda: [1.0, 1.0, 1.0])
     age: str = ""
     sex: str = ""
+    sample_id: str | None = None
+    condition: str | None = None
+    cond_mask_source_id: str | None = None
+    seed: int | None = None
+
+    @property
+    def out_stem(self) -> str:
+        """Filename stem of this case's generated volume.
+
+        The manifest ``sample_id`` when this case came from one, else ``scan_id`` — i.e. a plain
+        run keeps the existing "1 scan = 1 prediction named after the scan" convention.
+        """
+        return self.sample_id or self.scan_id
 
 
 class AbstractSampler(ABC):

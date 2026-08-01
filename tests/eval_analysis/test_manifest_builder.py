@@ -82,7 +82,7 @@ def built(tmp_path_factory) -> SimpleNamespace:
         out_b=out_b,
         out_seed1=out_seed1,
         rows=rows,
-        labels=load_label_csv("valid"),
+        labels={**load_label_csv("valid"), **load_label_csv("train")},
     )
 
 
@@ -96,7 +96,12 @@ def test_no_self_pairs(built):
         r for r in _swaps(built.rows) if r["cond_mask_source_id"] == r["target_id"]
     ]
     assert offenders == [], offenders
-    assert len(_swaps(built.rows)) == 2 * N_TARGETS  # the check actually saw rows
+    # the check actually saw rows: mismatched covers every target, matched only the twinned ones
+    assert (
+        sum(1 for r in built.rows if r["condition"] == "label_mismatched_swap")
+        == N_TARGETS
+    )
+    assert _swaps(built.rows)
 
 
 def test_no_patient_leakage(built):
@@ -127,15 +132,26 @@ def test_deterministic_bytes(built):
 
 
 def test_coverage_and_uniqueness(built):
-    """(4) rows == len(conditions) x n, and every sample_id is unique."""
-    assert len(built.rows) == len(CONDITIONS) * N_TARGETS
+    """(4) every sample_id is unique; every condition covers all targets EXCEPT
+    label_matched_swap, which covers only the targets that have an exact label twin (the rest are
+    omitted, never near-matched, and are listed in the .uncovered_targets.json sidecar)."""
     sample_ids = [r["sample_id"] for r in built.rows]
     assert len(set(sample_ids)) == len(sample_ids)
     assert {r["target_id"] for r in built.rows} == set(
         r["target_id"] for r in built.rows if r["condition"] == "gt"
     )
-    for condition in CONDITIONS:
+    for condition in ("gt", "label_mismatched_swap", "null"):
         assert sum(1 for r in built.rows if r["condition"] == condition) == N_TARGETS
+
+    n_matched = sum(1 for r in built.rows if r["condition"] == "label_matched_swap")
+    uncovered_path = Path(str(built.out_a) + ".uncovered_targets.json")
+    n_uncovered = (
+        len(json.loads(uncovered_path.read_text())["ids"])
+        if uncovered_path.exists()
+        else 0
+    )
+    assert n_matched + n_uncovered == N_TARGETS
+    assert len(built.rows) == len(CONDITIONS) * N_TARGETS - n_uncovered
 
 
 def test_roundtrip_through_read_manifest(built, caplog):
@@ -171,10 +187,10 @@ def test_matched_and_mismatched_label_bookkeeping(built):
 
     for r in matched:
         t_vec, s_vec = labels[r["target_id"]], labels[r["cond_mask_source_id"]]
-        assert r["label_exact_match"] == bool((t_vec == s_vec).all())
-        if not r["label_exact_match"]:
-            assert r["label_hamming"] > 0
-            assert "NO donor with the same label vector" in r["report_note"]
+        # exact-only: every matched row is a true twin, no near-match fallback exists
+        assert bool((t_vec == s_vec).all()), r["sample_id"]
+        assert r["label_exact_match"] is True
+        assert r["label_hamming"] == 0
 
     for r in mismatched:
         t_vec, s_vec = labels[r["target_id"]], labels[r["cond_mask_source_id"]]
@@ -242,13 +258,30 @@ def test_sample_id_is_path_safe_and_encodes_provenance(built):
         assert sid.endswith("__sm-1.0__seed-0")
 
 
-def test_donor_pool_is_restricted_to_available_mask_latents(built):
-    """Every donor a row names must have a precomputed Wan mask latent — the generation side
-    cannot condition on a mask that does not exist."""
+def test_donor_masks_exist_or_are_listed_for_precompute(built):
+    """Generation cannot condition on a mask that does not exist, so every donor either already
+    has its Wan mask latent or is named in a ``.needs_mask_latent.<split>.json`` sidecar.
+
+    The mismatched arm draws only from donors that already have one (it has no scarcity problem);
+    the matched arm searches the whole census for an exact twin, so it may name a donor whose
+    mask still has to be precomputed.
+    """
     latent_dir = Path(builder.DEFAULT_MASK_LATENT_DIR)
+    todo = set()
+    for split in ("valid", "train"):
+        path = Path(str(built.out_a) + f".needs_mask_latent.{split}.json")
+        if path.exists():
+            todo |= set(json.loads(path.read_text())["ids"])
+
     for r in _swaps(built.rows):
-        path = latent_dir / f"{r['cond_mask_source_id']}_mask_emb.nii.gz"
-        assert path.is_file(), path
+        donor = r["cond_mask_source_id"]
+        has_latent = (latent_dir / f"{donor}_mask_emb.nii.gz").is_file()
+        assert has_latent or donor in todo, donor
+        if r["condition"] == "label_mismatched_swap":
+            assert has_latent, f"mismatched donor {donor} should need no precompute"
+    assert not (
+        todo & {d for d in todo if (latent_dir / f"{d}_mask_emb.nii.gz").is_file()}
+    ), "sidecar must list only donors whose latent is genuinely missing"
 
 
 def test_report_numbers(built, capsys):

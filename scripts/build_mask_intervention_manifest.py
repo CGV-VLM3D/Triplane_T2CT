@@ -3,24 +3,32 @@
 
 One row per ``(target, condition)`` pair, in the schema of
 [docs/mask_intervention_manifest.md](../docs/mask_intervention_manifest.md). Targets come from
-``load_eval_cases(n)`` (the frozen valid_v2 set); donors come from the full clean valid census,
-restricted to scans whose Wan mask latent has already been precomputed (the generation side can
-only condition on a mask that exists — see ``--mask-latent-dir``).
+``load_eval_cases(n)`` (the frozen valid_v2 set); donors come from the clean CT-RATE censuses —
+valid 3001 AND train 46,393 (``--donor-ids``).
 
 Donor rules, enforced here rather than trusted:
   * ``gt``                    — ``cond_mask_source_id = target_id`` (no donor).
-  * ``label_matched_swap``    — a cross-patient donor with the SAME 18-label vector (same
-                                abnormalities, including "none at all" for a normal target). If no
-                                such donor exists, the least-different one is used instead and the
-                                row records ``label_exact_match=false`` plus how far off it was
-                                (``label_hamming``) — never a silent substitution.
-  * ``label_mismatched_swap`` — a uniformly random cross-patient donor, excluding same-vector
-                                donors (~3 % of random draws are same-vector, measured on this
-                                census — they would otherwise turn part of the "mismatched" arm
-                                into a second matched arm). No overlap cap: the realized overlap
-                                distribution is reported instead.
+  * ``label_matched_swap``    — a cross-patient donor with EXACTLY the same 18-label vector (same
+                                abnormalities, including "none at all" for a normal target).
+                                No near-match fallback: a target with no exact twin gets NO
+                                matched row at all, and is listed in the
+                                ``.uncovered_targets.json`` sidecar. Among twins, one whose mask
+                                latent already exists is preferred so the arm needs as little
+                                extra precompute as possible.
+  * ``label_mismatched_swap`` — a uniformly random cross-patient donor drawn from the scans that
+                                ALREADY have a mask latent (this arm has no scarcity problem, so
+                                it costs no precompute), excluding same-vector donors (~3 % of
+                                uniform draws are same-vector, measured on this census — they
+                                would otherwise turn part of the "mismatched" arm into a second
+                                matched arm). No overlap cap: the realized overlap distribution
+                                is reported instead.
   * ``null``                  — no mask at all; allowed ONLY for a checkpoint that actually
                                 carries the learned ``no_mask_embed`` (report2ct_wan_mask_v2).
+
+Why train is in the donor pool: only 770 distinct label combinations occur among the 3001 valid
+scans, and a high-burden combination is usually unique — searching valid alone finds an exact twin
+for just 193 of the 300 evaluated targets (measured 2026-08-02); adding train raises it to 249.
+The remaining 51 have no twin anywhere in CT-RATE's 49,394 scans.
 
 Self-pairing and patient leakage are impossible by construction: donor candidates are filtered by
 ``patient_id`` (NOT ``scan_id``) — this census holds 3001 scans from only 1304 patients
@@ -78,8 +86,13 @@ CONDITIONS: tuple[str, ...] = (
 )
 SWAP_CONDITIONS: tuple[str, ...] = ("label_matched_swap", "label_mismatched_swap")
 
-# Full clean valid census (3001 = valid_fixed 3038 − no_chest 37 − unencodable 1).
-DEFAULT_DONOR_IDS = "/workspace/data/ctrate_full/valid/ids.json"
+# Clean censuses (quarantined no_chest/unencodable scans already excluded): valid 3001 and train
+# 46,393. Both are donor sources for the matched arm — see build_donor_pool for why train is
+# needed at all.
+DEFAULT_DONOR_IDS = (
+    "/workspace/data/ctrate_full/valid/ids.json",
+    "/workspace/data/ctrate_full/train/ids.json",
+)
 # Wan mask latents (scripts/precompute_wan_mask_latents.py --out-dir); a donor without one
 # cannot be conditioned on, so the pool is filtered by what exists here.
 DEFAULT_MASK_LATENT_DIR = "/workspace/data/report2ct_wan/mask_latents_512x512x253"
@@ -87,11 +100,6 @@ DEFAULT_MASK_LATENT_DIR = "/workspace/data/report2ct_wan/mask_latents_512x512x25
 _NOTE_MATCHED_EXACT = (
     "label vector identical to target, but the source patient's report findings are not — "
     "matched label vector is not the same as matched findings."
-)
-_NOTE_MATCHED_FALLBACK = (
-    "NO donor with the same label vector exists in the pool — least-different donor used "
-    "(label_exact_match=false). Read label_exact_match/label_hamming before pooling this row "
-    "with the exact-matched ones."
 )
 _NOTE_MISMATCHED = (
     "uniformly random cross-patient donor; same-vector donors excluded. label_overlap records "
@@ -142,34 +150,48 @@ def n_shared_positives(a: LabelVec, b: LabelVec) -> int:
 
 
 def build_donor_pool(
-    donor_ids_file: str | Path,
+    donor_ids_files: list[str | Path],
     mask_latent_dir: str | Path,
     label_map: dict[str, np.ndarray],
-) -> tuple[list[str], dict]:
-    """Sorted donor pool = census ∩ has-mask-latent ∩ has-labels, plus its exclusion counts.
+) -> tuple[list[str], set[str], dict]:
+    """Donor pool = the given censuses ∩ has-labels, plus the subset that already has a mask latent.
 
-    Sorting is load-bearing: donors are drawn from lists derived from this one, so its order is
-    part of the determinism guarantee.
+    Two pools, because the two swap arms have opposite problems:
+
+    * ``label_matched_swap`` needs an EXACT label twin, which is scarce (only 770 distinct label
+      combinations exist among the 3001 valid scans, and a high-burden combination is often
+      unique), so it searches the WHOLE census — train included — and accepts that a few donors
+      still need their mask latent computed.
+    * ``label_mismatched_swap`` needs any differently-labelled donor, which is abundant, so it
+      draws only from scans whose mask latent ALREADY exists and costs no extra precompute.
+
+    Returns:
+        ``(sorted full pool, subset with a mask latent, counts dict)``. Sorting is load-bearing:
+        donors are drawn by index into lists derived from these, so the order is part of the
+        determinism guarantee.
     """
-    census = set(read_ids(donor_ids_file))
+    census: set[str] = set()
+    for path in donor_ids_files:
+        census |= set(read_ids(path))
     suffix = "_mask_emb.nii.gz"
     with_latent = {
         p.name[: -len(suffix)] for p in Path(mask_latent_dir).glob(f"*{suffix}")
     }
-    pool = sorted(census & with_latent & set(label_map))
-    if not pool:
+    pool = sorted(census & set(label_map))
+    cached = census & with_latent & set(label_map)
+    if not cached:
         raise SystemExit(
-            f"Empty donor pool: no id in {donor_ids_file} has a mask latent in "
-            f"{mask_latent_dir}. Run scripts/precompute_wan_mask_latents.py (wan env) first."
+            f"No id in {donor_ids_files} has a mask latent in {mask_latent_dir}. Run "
+            "scripts/precompute_wan_mask_latents.py (wan env) first."
         )
     counts = {
         "census": len(census),
         "pool": len(pool),
         "pool_patients": len({patient_id_of(i) for i in pool}),
-        "dropped_no_mask_latent": len(census - with_latent),
-        "dropped_no_labels": len((census & with_latent) - set(label_map)),
+        "pool_with_mask_latent": len(cached),
+        "dropped_no_labels": len(census - set(label_map)),
     }
-    return pool, counts
+    return pool, cached, counts
 
 
 def require_learned_null_mask(ckpt_path: str | Path) -> None:
@@ -193,69 +215,72 @@ def require_learned_null_mask(ckpt_path: str | Path) -> None:
         )
 
 
-def pick_donor(
-    condition: str,
+def pick_matched_donor(
     target_id: str,
-    candidates: list[str],
     vecs: dict[str, LabelVec],
+    by_vector: dict[LabelVec, list[str]],
+    cached: set[str],
     rng: random.Random,
-) -> tuple[str | None, bool | None, int | None, str | None]:
-    """Choose one row's conditioning-mask source.
+) -> str | None:
+    """A donor with EXACTLY the same 18 abnormalities, from a different patient.
+
+    No near-match fallback: if no scan in the census carries this exact combination, the row is
+    skipped (the caller records the target as uncovered). Among the exact twins, one whose mask
+    latent already exists is preferred, so the arm costs as little extra precompute as possible.
 
     Args:
-        condition: one of :data:`CONDITIONS`.
         target_id: the scan this row generates for.
-        candidates: donor ids, already restricted to OTHER patients (so a self-pair and a
-            same-patient leak are both impossible here) and sorted.
-        vecs: ``{scan_id: 18 labels as a 0/1 tuple}`` for targets and donors.
-        rng: this row's private generator (seeded from seed+condition+target).
+        vecs: ``{scan_id: 18 labels as a 0/1 tuple}``.
+        by_vector: census index, label vector -> the scans carrying it (sorted).
+        cached: the subset of the census whose Wan mask latent already exists.
+        rng: this row's private generator.
 
     Returns:
-        ``(cond_mask_source_id, label_exact_match, label_hamming, report_note)``; the middle two
-        are ``None`` for the non-swap conditions, which have no donor to compare against.
+        The donor's scan id, or ``None`` when this target has no exact twin anywhere.
     """
-    if condition == "gt":
-        return target_id, None, None, None
-    if condition == "null":
-        return None, None, None, _NOTE_NULL
+    target_patient = patient_id_of(target_id)
+    twins = [
+        d
+        for d in by_vector.get(vecs[target_id], [])
+        if patient_id_of(d) != target_patient
+    ]
+    if not twins:
+        return None
+    return rng.choice([d for d in twins if d in cached] or twins)
 
-    target_vec = vecs[target_id]
-    if condition == "label_matched_swap":
-        same = [d for d in candidates if vecs[d] == target_vec]
-        if same:  # same abnormalities (all-zero target -> another normal scan)
-            return rng.choice(same), True, 0, _NOTE_MATCHED_EXACT
-        # No donor has this exact combination: fall back to the LEAST-DIFFERENT one. Ranking by
-        # shared positives instead would be blind for a normal target, whose all-zero vector
-        # shares 0 positives with every donor — including its perfect all-zero match.
-        fewest = min(n_different_labels(vecs[d], target_vec) for d in candidates)
-        nearest = [
-            d for d in candidates if n_different_labels(vecs[d], target_vec) == fewest
-        ]
-        return rng.choice(nearest), False, fewest, _NOTE_MATCHED_FALLBACK
 
-    if condition == "label_mismatched_swap":
-        different = [d for d in candidates if vecs[d] != target_vec]
-        if not different:
-            raise SystemExit(
-                f"No cross-patient donor with a DIFFERENT label vector exists for {target_id} "
-                f"among {len(candidates)} candidates — cannot build label_mismatched_swap."
-            )
-        donor = rng.choice(different)
-        return (
-            donor,
-            False,
-            n_different_labels(vecs[donor], target_vec),
-            _NOTE_MISMATCHED,
-        )
+def pick_mismatched_donor(
+    target_id: str,
+    vecs: dict[str, LabelVec],
+    donors: list[str],
+    rng: random.Random,
+) -> str:
+    """A uniformly random donor from another patient with a DIFFERENT label vector.
 
+    Drawn only from scans whose mask latent already exists: unlike the matched arm this one has
+    no scarcity problem, so it never needs extra precompute. Same-vector donors are excluded
+    because ~3 % of uniform draws land on one (mostly normal↔normal), which would quietly turn
+    part of the "mismatched" arm into a second matched arm.
+
+    Rejection sampling keeps the draw uniform over the eligible donors without materialising the
+    filtered list per target (the pool is ~7k ids and well over 90 % of it is eligible, so this
+    almost always accepts on the first try).
+    """
+    target_patient, target_vec = patient_id_of(target_id), vecs[target_id]
+    for _ in range(1000):
+        donor = donors[rng.randrange(len(donors))]
+        if patient_id_of(donor) != target_patient and vecs[donor] != target_vec:
+            return donor
     raise SystemExit(
-        f"Unknown condition {condition!r}"
-    )  # unreachable via argparse choices
+        f"No cross-patient donor with a DIFFERENT label vector found for {target_id} in "
+        f"{len(donors)} draws — cannot build label_mismatched_swap."
+    )
 
 
 def build_rows(
     target_ids: list[str],
     pool: list[str],
+    cached: set[str],
     label_map: dict[str, np.ndarray],
     conditions: list[str],
     seed: int,
@@ -263,32 +288,57 @@ def build_rows(
     cfg_mask: float,
     run_id: str,
     ckpt: str,
-) -> list[dict]:
-    """Build every manifest row (targets outer, conditions inner)."""
+) -> tuple[list[dict], list[str]]:
+    """Build every manifest row (targets outer, conditions inner).
+
+    Returns:
+        ``(rows, uncovered_targets)`` — ``uncovered_targets`` are the targets with no exact label
+        twin in the census, which therefore have NO ``label_matched_swap`` row (their other
+        conditions are still generated). They are returned rather than logged away so the caller
+        can record them: a matched arm smaller than the target set is a fact the analysis must
+        see, not a silent gap.
+    """
     missing = [t for t in target_ids if t not in label_map]
     if missing:
         raise SystemExit(f"Targets absent from the 18-label CSV: {missing[:5]}")
     vecs: dict[str, LabelVec] = {
         i: tuple(int(v) for v in label_map[i]) for i in set(pool) | set(target_ids)
     }
+    by_vector: dict[LabelVec, list[str]] = {}
+    for donor in pool:
+        by_vector.setdefault(vecs[donor], []).append(donor)
+    mismatch_donors = sorted(cached)
 
     rows: list[dict] = []
+    uncovered: list[str] = []
     for target_id in target_ids:
         target_vec = vecs[target_id]
-        # Candidates are fixed per target and shared by both swap conditions: OTHER patients only
-        # (patient_id, not scan_id — this census averages 2.30 scans per patient).
-        target_patient = patient_id_of(target_id)
-        candidates = [d for d in pool if patient_id_of(d) != target_patient]
 
         for condition in conditions:
             # Per-(condition, target) stream: adding a condition or reordering --conditions
             # leaves every other row's donor untouched. Python seeds a str via sha512, so this
             # is stable across processes and machines (unlike hash()).
             rng = random.Random(f"{seed}|{condition}|{target_id}")
-            source_id, exact_match, hamming, note = pick_donor(
-                condition, target_id, candidates, vecs, rng
-            )
+            note: str | None = None
+            if condition == "gt":
+                source_id = target_id
+            elif condition == "null":
+                source_id, note = None, _NOTE_NULL
+            elif condition == "label_matched_swap":
+                source_id = pick_matched_donor(target_id, vecs, by_vector, cached, rng)
+                if source_id is None:  # no exact twin exists — omit the row entirely
+                    uncovered.append(target_id)
+                    continue
+                note = _NOTE_MATCHED_EXACT
+            else:
+                source_id = pick_mismatched_donor(target_id, vecs, mismatch_donors, rng)
+                note = _NOTE_MISMATCHED
+
             is_swap = condition in SWAP_CONDITIONS
+            exact_match = is_swap and vecs[source_id] == target_vec
+            hamming = (
+                n_different_labels(vecs[source_id], target_vec) if is_swap else None
+            )
             rows.append(
                 {
                     "sample_id": (
@@ -319,7 +369,7 @@ def build_rows(
                     "gen_path": None,
                 }
             )
-    return rows
+    return rows, uncovered
 
 
 def write_manifest(rows: list[dict], out_path: str | Path) -> Path:
@@ -358,13 +408,18 @@ def verify(
     rows: list[dict],
     out_path: Path,
     label_map: dict[str, np.ndarray],
-    expected_rows: int,
+    n_targets: int,
+    conditions: list[str],
+    uncovered: list[str],
 ) -> dict:
     """Re-check the written manifest against the generation-side rules; print and return numbers.
 
     Covers acceptance checks 1/2/4/5/6 (3 = determinism is a two-build comparison, fixed by
     ``tests/eval_analysis/test_manifest_builder.py``). Every label field is recomputed from the
     CSV so a wrong value cannot verify itself.
+
+    The expected row count is ``len(conditions) * n_targets`` MINUS the targets with no exact
+    label twin, which get no ``label_matched_swap`` row (``uncovered``).
     """
     vecs = {i: tuple(int(v) for v in vec) for i, vec in label_map.items()}
     swaps = [r for r in rows if r["condition"] in SWAP_CONDITIONS]
@@ -373,15 +428,17 @@ def verify(
     sample_ids = [r["sample_id"] for r in rows]
     n_records, n_warnings = _reread_manifest(out_path)
 
-    exact = [r for r in matched if r["label_exact_match"]]
-    fallback_hamming = [
-        r["label_hamming"] for r in matched if not r["label_exact_match"]
-    ]
+    expected_rows = len(conditions) * n_targets - len(uncovered)
+    non_exact_matched = [r for r in matched if not r["label_exact_match"]]
     overlaps = [r["label_overlap"] for r in mismatched]
 
     report = {
         "rows": len(rows),
         "expected_rows": expected_rows,
+        "targets": n_targets,
+        "matched_covered": len(matched),
+        "matched_uncovered": len(uncovered),
+        "matched_not_exact": len(non_exact_matched),
         "duplicate_sample_ids": len(sample_ids) - len(set(sample_ids)),
         "self_pairs": sum(
             1 for r in swaps if r["cond_mask_source_id"] == r["target_id"]
@@ -399,18 +456,19 @@ def verify(
             if r["label_overlap"]
             != n_shared_positives(vecs[r["target_id"]], vecs[r["cond_mask_source_id"]])
         ),
-        "matched_total": len(matched),
-        "matched_exact": len(exact),
-        "matched_fallback": len(fallback_hamming),
         "mismatched_same_vector_draws": sum(
             1
             for r in mismatched
             if vecs[r["target_id"]] == vecs[r["cond_mask_source_id"]]
         ),
+        "donors_from_train": len(
+            {
+                r["cond_mask_source_id"]
+                for r in swaps
+                if r["cond_mask_source_id"].startswith("train_")
+            }
+        ),
     }
-    if fallback_hamming:
-        report["matched_fallback_hamming_mean"] = float(np.mean(fallback_hamming))
-        report["matched_fallback_hamming_max"] = max(fallback_hamming)
     if overlaps:
         report["mismatched_overlap_mean"] = float(np.mean(overlaps))
         report["mismatched_overlap_median"] = float(np.median(overlaps))
@@ -428,6 +486,7 @@ def verify(
             ("round-trip warning", report["roundtrip_warnings"]),
             ("label_overlap", report["label_overlap_recompute_mismatches"]),
             ("mismatched same-vector donor", report["mismatched_same_vector_draws"]),
+            ("matched donor is not an exact twin", report["matched_not_exact"]),
         )
         if bad
     ]
@@ -448,17 +507,12 @@ def verify(
         f"  label_overlap recompute       "
         f"{report['label_overlap_recompute_mismatches']} mismatches"
     )
-    if matched:
-        extra = (
-            f" (differing labels: mean {report['matched_fallback_hamming_mean']:.2f}, "
-            f"max {report['matched_fallback_hamming_max']})"
-            if fallback_hamming
-            else ""
-        )
+    if matched or uncovered:
         print(
-            f"  matched: same-vector {len(exact)}/{len(matched)}, "
-            f"fallback {len(fallback_hamming)}{extra}"
+            f"  matched (exact twin only)     {len(matched)}/{n_targets} targets covered, "
+            f"{len(uncovered)} have no twin anywhere -> no matched row"
         )
+        print(f"    donors taken from train     {report['donors_from_train']}")
     if mismatched:
         print(
             f"  mismatched overlap: mean {report['mismatched_overlap_mean']:.2f}, "
@@ -472,6 +526,48 @@ def verify(
     if problems:
         raise SystemExit(f"manifest verification FAILED: {', '.join(problems)}")
     return report
+
+
+def _write_todo_sidecars(
+    out_path: Path, rows: list[dict], uncovered: list[str], cached: set[str]
+) -> dict[str, Path]:
+    """Write the two "before you generate" lists next to the manifest.
+
+    * ``<out>.needs_mask_latent.{valid,train}.json`` — donors this manifest names whose Wan mask
+      latent does not exist yet. Generation would fail on them, so they are listed in the exact
+      shape ``precompute_wan_mask_latents.py --ids-file`` expects, split by ``--split`` since
+      that script takes one split per invocation.
+    * ``<out>.uncovered_targets.json`` — targets with no exact label twin, hence no
+      ``label_matched_swap`` row. Recorded as data so the analysis can state how many targets
+      the matched arm actually covers instead of quietly comparing unequal sets.
+
+    Returns:
+        ``{name: path}`` for the files actually written.
+    """
+    donors = {
+        r["cond_mask_source_id"] for r in rows if r["condition"] in SWAP_CONDITIONS
+    }
+    written: dict[str, Path] = {}
+    for split in ("valid", "train"):
+        todo = sorted(d for d in donors - cached if d.startswith(f"{split}_"))
+        if not todo:
+            continue
+        path = out_path.with_suffix(f"{out_path.suffix}.needs_mask_latent.{split}.json")
+        path.write_text(json.dumps({"ids": todo}, indent=2))
+        written[f"needs_mask_latent_{split}"] = path
+        print(
+            f"⚠ {len(todo)} {split} donor(s) have no Wan mask latent yet. Precompute them first:\n"
+            f"    CUDA_VISIBLE_DEVICES=3 /opt/conda/envs/wan/bin/python "
+            f"scripts/precompute_wan_mask_latents.py \\\n"
+            f"        --ids-file {path} --split {split}_fixed \\\n"
+            f"        --out-dir {DEFAULT_MASK_LATENT_DIR} --device cuda:0"
+        )
+    if uncovered:
+        path = out_path.with_suffix(f"{out_path.suffix}.uncovered_targets.json")
+        path.write_text(json.dumps({"ids": sorted(uncovered)}, indent=2))
+        written["uncovered_targets"] = path
+        print(f"  {len(uncovered)} target(s) with no exact label twin -> {path}")
+    return written
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -516,7 +612,12 @@ def build_parser() -> argparse.ArgumentParser:
         "s_m — not one manifest reinterpreted afterwards.",
     )
     p.add_argument(
-        "--donor-ids", default=DEFAULT_DONOR_IDS, help="donor census id list"
+        "--donor-ids",
+        nargs="+",
+        default=list(DEFAULT_DONOR_IDS),
+        help="donor census id list(s). Default = the clean valid (3001) AND train (46,393) "
+        "censuses: an exact label twin is scarce enough that valid alone leaves ~36%% of "
+        "targets without one.",
     )
     p.add_argument(
         "--mask-latent-dir",
@@ -537,24 +638,27 @@ def main() -> None:
     if "null" in args.conditions:
         require_learned_null_mask(args.ckpt)
 
-    label_map = load_label_csv("valid")
+    # Donors may come from either split, so both label CSVs are needed (ids are disjoint:
+    # "valid_*" vs "train_*").
+    label_map = {**load_label_csv("valid"), **load_label_csv("train")}
     targets = [c.scan_id for c in load_eval_cases(n_samples=args.n)]
     if len(targets) != args.n:
         raise SystemExit(
             f"load_eval_cases({args.n}) returned {len(targets)} cases — asked for {args.n}."
         )
-    pool, pool_counts = build_donor_pool(
+    pool, cached, pool_counts = build_donor_pool(
         args.donor_ids, args.mask_latent_dir, label_map
     )
     print(
-        f"Donor pool: {pool_counts['pool']} scans / {pool_counts['pool_patients']} patients "
-        f"(census {pool_counts['census']}; {pool_counts['dropped_no_mask_latent']} dropped for "
-        f"having no Wan mask latent in {args.mask_latent_dir})"
+        f"Donor pool: {pool_counts['pool']} scans / {pool_counts['pool_patients']} patients; "
+        f"{pool_counts['pool_with_mask_latent']} already have a Wan mask latent in "
+        f"{args.mask_latent_dir}"
     )
 
-    rows = build_rows(
+    rows, uncovered = build_rows(
         target_ids=targets,
         pool=pool,
+        cached=cached,
         label_map=label_map,
         conditions=list(args.conditions),
         seed=args.seed,
@@ -564,7 +668,10 @@ def main() -> None:
         ckpt=str(args.ckpt),
     )
     out_path = write_manifest(rows, args.out)
-    report = verify(rows, out_path, label_map, len(args.conditions) * len(targets))
+    report = verify(
+        rows, out_path, label_map, len(targets), list(args.conditions), uncovered
+    )
+    _write_todo_sidecars(out_path, rows, uncovered, cached)
 
     # Provenance sidecar — deliberately NOT inside the JSONL, whose byte-identity across two
     # same-seed builds is one of the acceptance checks.
@@ -578,6 +685,7 @@ def main() -> None:
                 "args": vars(args),
                 "donor_pool": pool_counts,
                 "verification": report,
+                "uncovered_targets": sorted(uncovered),
                 "scope": (
                     "DIAGNOSTIC ONLY (CLIPScore-T2I, dice_to_input_mask, dice_to_gt_mask). "
                     "FID/FVD are invalid on a manifest run: one target has several generated "

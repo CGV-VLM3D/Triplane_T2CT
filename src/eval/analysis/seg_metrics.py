@@ -56,8 +56,18 @@ _ORGAN_NAMES = [
 SURFACE_METRICS: tuple[str, ...] = ("hd95_mm", "hd_mm", "assd_mm")
 
 
-def _ts_seg_path(scan_id: str, split: str = "valid_fixed") -> Path:
-    """``valid_1000_a_1`` -> ``ts_total/valid_fixed/valid_1000/valid_1000_a/valid_1000_a_1.nii.gz``."""
+def _ts_seg_path(scan_id: str, split: str | None = None) -> Path:
+    """``valid_1000_a_1`` -> ``ts_total/valid_fixed/valid_1000/valid_1000_a/valid_1000_a_1.nii.gz``.
+
+    ``split=None`` derives the split from the id's own prefix. That matters for the
+    mask-intervention conditioning-mask source, which may be a TRAIN scan: an exact 18-label twin
+    of a high-burden target usually does not exist within valid, so the manifest builder draws
+    donors from the train census too (docs/mask_intervention_manifest.md). Defaulting to
+    ``valid_fixed`` there would silently find no file and leave dice/HD95/ASSD to the input mask
+    NaN — the very metrics the experiment exists to read.
+    """
+    if split is None:
+        split = "train_fixed" if scan_id.startswith("train_") else "valid_fixed"
     parts = scan_id.split("_")
     patient = "_".join(parts[:2])
     series = "_".join(parts[:3])
@@ -65,7 +75,7 @@ def _ts_seg_path(scan_id: str, split: str = "valid_fixed") -> Path:
 
 
 def load_reference_organ_mask(
-    scan_id: str, target_shape_xyz: tuple[int, int, int], split: str = "valid_fixed"
+    scan_id: str, target_shape_xyz: tuple[int, int, int], split: str | None = None
 ) -> np.ndarray | None:
     """Load ``scan_id``'s ts_seg mask, resized (NEAREST, no reorientation) to a target grid.
 
@@ -75,7 +85,8 @@ def load_reference_organ_mask(
         target_shape_xyz: the prediction's own grid shape ``(X, Y, Z)`` — mask and prediction
             must be compared voxel-index-wise on this grid (see module docstring; no physical
             registration is possible or meaningful here).
-        split: CT-RATE split subdirectory under ``ts_seg/ts_total``.
+        split: CT-RATE split subdirectory under ``ts_seg/ts_total``; ``None`` (default) derives
+            it from the scan id, so a train-split donor mask resolves correctly.
 
     Returns:
         Grouped organ mask ``(X, Y, Z)`` with values ``{0..4}`` (0=background,
@@ -157,10 +168,27 @@ def _surface_metrics_per_organ(
     Numeric equivalence to both public functions is enforced by
     ``tests/eval_analysis/test_surface_metrics.py::test_matches_monai_public_api``.
 
-    Empty-mask handling is MONAI's own except for one deliberate deviation, marked ``OUR POLICY``
-    in the body: an organ present on exactly one side yields ``+inf`` from upstream HD/ASSD (but
-    NaN from HD95), and we pin all three to NaN so a single undefined organ cannot turn every
-    downstream mean into inf.
+    Empty-mask handling MIRRORS ``_dice_per_organ``'s policy, not MONAI's raw output — MONAI
+    itself yields ``+inf`` from HD/ASSD (but NaN from HD95, self-inconsistent) when an organ is
+    present on exactly one side. Two cases:
+
+    - **both sides empty**: NaN, excluded from ``_mean`` — nothing to score, matches Dice
+      (``both_empty`` there too).
+    - **exactly one side empty** (the model failed to generate an organ the reference has, or
+      hallucinated one the reference doesn't): a PENALTY SENTINEL — the volume's own diagonal in
+      mm, i.e. the largest distance two points on this grid can be apart — is used INSTEAD of
+      NaN, and IS included in ``_mean``. This mirrors Dice's ``ignore_empty=False`` (which scores
+      the identical case 0.0, its worst value) rather than dropping the organ: dropping it would
+      have *rewarded* the worse model (removing its worst organ raises the average). Verified
+      2026-08-01: before this, a model that omitted the esophagus entirely scored a BETTER
+      (lower) mean ``hd95_mm`` than one that generated it badly — exactly inverted from Dice, and
+      the reason ``_scored`` was added in the first place (to expose the varying denominator);
+      this sentinel now fixes the ranking instead of only exposing it.
+
+    ⚠ The sentinel is deliberately large enough to dominate any aggregate it enters — one
+    penalized organ can move a small subgroup's MEAN by 10x or more. ``subgroup.py``'s
+    ``_summarize`` already reports both mean and median for every column; prefer the median for
+    the surface family when a subgroup may contain a fully-missed organ.
 
     Args:
         pred_grouped: segmentation of the generated volume, ``(X, Y, Z)`` values ``{0..4}``.
@@ -169,14 +197,14 @@ def _surface_metrics_per_organ(
 
     Returns:
         ``{metric: {organ: mm, ..., "_mean": mm}}`` for each of :data:`SURFACE_METRICS`, plus a
-        ``"_scored"`` entry ``{"n": int, "missing": str}`` recording how many organs ``_mean``
-        actually averaged and which ones it could not score. ``_mean`` averages the non-NaN
-        organs, so **its denominator varies between samples and between models**: a model that
-        fails to generate an organ has it dropped (undefined distance) where Dice would score it
-        0. Without ``_scored`` a 3-organ mean and a 4-organ mean are indistinguishable in the
-        aggregate, and omitting the hardest organ silently flatters the model. ``missing`` names
-        the side that was empty (``"esophagus:pred"``) so the common case — the model generated
-        nothing there — is visible directly in ``per_sample.csv``.
+        ``"_scored"`` entry ``{"n": int, "missing": str}``. ``n`` is the ``_mean`` denominator —
+        now 4 minus only the both-empty organs (an organ present in the reference always counts,
+        whether it was measured directly or penalized), i.e. effectively the reference's own
+        organ count, independent of what the model generated. ``missing`` still names every
+        organ that did not get a directly-measured distance and which side was empty
+        (``"esophagus:pred"`` = model generated nothing there, but it now still counts toward
+        ``n``; ``"esophagus:both"`` = neither side has it, excluded from ``n``) — so a reader can
+        tell a penalized organ from a truly-excluded one from this one field.
     """
     # Imported (not copied) so a MONAI upgrade that moves either symbol fails loudly. Kept inline,
     # like this module's other heavy imports, so that merely importing seg_metrics — which
@@ -184,6 +212,13 @@ def _surface_metrics_per_organ(
     # on a private MONAI path.
     from monai.metrics.hausdorff_distance import _compute_percentile_hausdorff_distance
     from monai.metrics.utils import get_edge_surface_distance
+
+    # Penalty sentinel for the one-empty case: the volume's own diagonal in mm — the largest
+    # distance two points on this grid can be apart, so it dominates any real (in-anatomy)
+    # distance without depending on an arbitrary constant.
+    sentinel_mm = float(
+        np.sqrt(sum((sp * n) ** 2 for sp, n in zip(spacing_xyz, pred_grouped.shape)))
+    )
 
     out: dict[str, dict] = {m: {} for m in SURFACE_METRICS}
     valid: dict[str, list[float]] = {m: [] for m in SURFACE_METRICS}
@@ -199,7 +234,27 @@ def _surface_metrics_per_organ(
         )  # (X, Y, Z)
         p_empty, r_empty = not bool(p_bin.any()), not bool(r_bin.any())
 
+        if p_empty and r_empty:
+            # Nothing to score on either side — matches Dice's both-empty NaN, excluded from n.
+            for metric in SURFACE_METRICS:
+                out[metric][name] = float("nan")
+            missing.append(f"{name}:both")
+            continue
+
+        if p_empty or r_empty:
+            # OUR POLICY (not MONAI's — upstream gives NaN from HD95 but +inf from HD/ASSD here,
+            # self-inconsistent either way): score the penalty sentinel and KEEP it in `valid`, so
+            # a model that fails to generate (or hallucinates) an organ is punished like Dice
+            # punishes it (0.0), not rewarded by having its worst organ dropped from the mean.
+            side = "pred" if p_empty else "ref"
+            for metric in SURFACE_METRICS:
+                out[metric][name] = sentinel_mm
+                valid[metric].append(sentinel_mm)
+            missing.append(f"{name}:{side}")
+            continue
+
         # --- MONAI verbatim: the identical call both public functions make (one per (b, c)) ---
+        # Reached only when both sides are non-empty, so upstream cannot return inf/NaN here.
         _, distances, _ = get_edge_surface_distance(
             p_bin,  # MODIFIED: MONAI `y_pred[b, c]` — we loop organs, not (batch, channel)
             r_bin,  # MODIFIED: MONAI `y[b, c]`
@@ -234,38 +289,21 @@ def _surface_metrics_per_organ(
             ("assd_mm", assd_value),
         ):
             value = float(tensor_value)
-            # OUR POLICY (not MONAI's): when exactly one side of an organ is empty, upstream is
-            # self-inconsistent — HD95 comes out NaN (quantile of an all-inf tensor is NaN) while
-            # HD and ASSD come out +inf (verified against the public API 2026-08-01). The distance
-            # is undefined either way, and a single inf would turn every downstream mean
-            # (`_mean` here, subgroup means, SUMMARY.md) into inf, so all three are pinned to NaN.
-            # inf can only arise from that empty-side case; genuine surface distances are finite.
+            # Defensive fallback only — both sides are non-empty here so upstream should always
+            # be finite; never expected to fire, but a stray inf must not reach `valid`/`_mean`.
             if not math.isfinite(value):
                 value = float("nan")
             out[metric][name] = value
             if not math.isnan(value):
                 valid[metric].append(value)
 
-        # All three metrics go NaN under exactly the same condition (an empty side — pinned by
-        # test_one_empty_side_is_nan_for_every_metric), so one unscored-organ record covers them.
-        if math.isnan(out["hd95_mm"][name]):
-            side = (
-                "both"
-                if (p_empty and r_empty)
-                else "pred"
-                if p_empty
-                else "ref"
-                if r_empty
-                else "unknown"  # NaN with both sides populated — record it rather than mislabel
-            )
-            missing.append(f"{name}:{side}")
-
     for metric in SURFACE_METRICS:
         out[metric]["_mean"] = (
             float(np.mean(valid[metric])) if valid[metric] else float("nan")
         )
     out["_scored"] = {
-        "n": len(_ORGAN_NAMES) - len(missing),
+        # Only both-empty organs are excluded now — one-empty organs are penalized, not dropped.
+        "n": len(_ORGAN_NAMES) - sum(1 for m in missing if m.endswith(":both")),
         "missing": ";".join(missing),
     }
     return out
@@ -296,20 +334,29 @@ def compute_seg_metrics(
         dict with keys ``dice_to_gt_mask``, ``dice_to_gt_mask_<organ>`` (x4), and the same for
         ``dice_to_input_mask`` and for every :data:`SURFACE_METRICS` entry against both
         references (all NaN if not applicable/available); ``n_organs_scored_to_<ref>`` +
-        ``organs_missing_to_<ref>``, the varying denominator behind every surface-distance mean
-        (see :func:`_surface_metrics_per_organ`); plus ``status``
+        ``organs_missing_to_<ref>``, the ``_mean`` denominator/composition
+        (see :func:`_surface_metrics_per_organ`); ``organ_generated_<organ>`` (x4, ``0``/``1``) —
+        whether the model's OWN segmentation contains that organ at all, independent of any
+        reference (NaN if segmentation failed); averaged across a subgroup this is that organ's
+        generation rate, the diagnostic the surface-distance sentinel above does not replace
+        (a penalized organ still contributes a number to the mean, but does not by itself tell
+        you HOW OFTEN a model fails to generate that organ — this column does); plus ``status``
         (``"ok"``/``"partial"``/``"failed"``) and ``failure_reason``.
     """
-    _nan_keys = [
-        f"{metric}_to_{ref}{suffix}"
-        for metric in ("dice", *SURFACE_METRICS)
-        for ref in ("gt_mask", "input_mask")
-        for suffix in ("", *(f"_{o}" for o in _ORGAN_NAMES))
-    ] + [
-        f"{key}_to_{ref}"
-        for key in ("n_organs_scored", "organs_missing")
-        for ref in ("gt_mask", "input_mask")
-    ]
+    _nan_keys = (
+        [
+            f"{metric}_to_{ref}{suffix}"
+            for metric in ("dice", *SURFACE_METRICS)
+            for ref in ("gt_mask", "input_mask")
+            for suffix in ("", *(f"_{o}" for o in _ORGAN_NAMES))
+        ]
+        + [f"organ_generated_{o}" for o in _ORGAN_NAMES]
+        + [
+            f"{key}_to_{ref}"
+            for key in ("n_organs_scored", "organs_missing")
+            for ref in ("gt_mask", "input_mask")
+        ]
+    )
     result: dict = dict.fromkeys(_nan_keys, float("nan"))
 
     try:
@@ -322,6 +369,10 @@ def compute_seg_metrics(
 
     pred_grouped = apply_grouping(pred_label)
     target_shape = pred_grouped.shape
+
+    # Reference-independent: whether the model's own segmentation has each organ at all.
+    for i, name in enumerate(_ORGAN_NAMES):
+        result[f"organ_generated_{name}"] = int((pred_grouped == i + 1).any())
 
     import SimpleITK as sitk
 

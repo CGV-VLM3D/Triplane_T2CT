@@ -52,9 +52,9 @@ entries (not packed arrays), so the format stays flat and typo-checkable.
 | `cond_mask_source_id` | the scan whose mask was actually fed to the model. `= target_id` for `gt`; a donor scan for the two swap conditions; `null` for `condition=null`. Input-mask joins (`dice_to_input_mask`) key on this. |
 | `seed` / `cfg_scale_text` / `cfg_scale_mask` / `run_id` / `ckpt` | generation provenance. |
 | `target_labels` / `source_labels` | explicit 18-entry dicts (label name → 0/1). `source_labels` is `null` for `condition in {gt, null}`. |
-| `label_overlap` | `\|target_labels ∩ source_labels\|` positive count — always recorded for swap conditions, even exact matches, so an approximate "matched" pair is distinguishable from an exact one. |
-| `label_exact_match` | whether the donor's 18-vector is *identical* to the target's. `label_matched_swap` rows are a MIX (see below), so this is the field to filter on before pooling them. `null` for `gt`/`null`. |
-| `label_hamming` | number of differing labels — what the matched-swap fallback minimizes. `0` ⟺ `label_exact_match=true`. |
+| `label_overlap` | `\|target_labels ∩ source_labels\|` positive count, recorded for both swap conditions. Informative for `label_mismatched_swap` (how much the random donor happens to share); for `label_matched_swap` it is by construction the target's own positive count. |
+| `label_exact_match` | whether the donor's 18-vector is *identical* to the target's. **Always `true` on a `label_matched_swap` row** (no near-matches are emitted) and `false` on `label_mismatched_swap`; `null` for `gt`/`null`. |
+| `label_hamming` | number of differing labels. `0` ⟺ `label_exact_match=true`, so it is `0` on every matched row and `>0` on every mismatched one. |
 | `report_note` | free-text limitation flag — label-vector equality is not report equality; kept as data, not just documentation. |
 | `gen_path` | the generated `.mha` (stem = `sample_id`). Written as `null` by the builder: the consumer derives it as `pred_dir / f"{sample_id}.mha"` ([persample.py](../src/eval/analysis/persample.py)), so the manifest never carries a path that can go stale relative to the run that used it. |
 
@@ -81,8 +81,8 @@ One manifest per `s_m` value (see the orthogonality note above), targets from
 
 ```bash
 python scripts/build_mask_intervention_manifest.py \
-    --n 50 --seed 0 --conditions gt label_matched_swap label_mismatched_swap null \
-    --out /workspace/data/mask_intervention/manifest_n50_sm1.0_seed0.jsonl \
+    --n 300 --seed 0 --conditions gt label_matched_swap label_mismatched_swap null \
+    --out /workspace/data/mask_intervention/manifest_n300_sm1.0_seed0.jsonl \
     --ckpt /workspace/outputs/report2ct_wan_mask_v2/2026-07-26_2/checkpoints/epoch_299.ckpt \
     --run-id wanmaskv2_ep299 --cfg-text 5.0 --cfg-mask 1.0
 ```
@@ -99,7 +99,7 @@ Same 3-step Wan flow as a plain run, with the manifest replacing "n cases":
 # 1. main env — one latent per manifest ROW, named <sample_id>.npy
 CUDA_VISIBLE_DEVICES=3 python scripts/generate_wan_mask_v2_latents.py \
     --ckpt /workspace/outputs/report2ct_wan_mask_v2/2026-07-26_2/checkpoints/epoch_299.ckpt \
-    --manifest /workspace/data/mask_intervention/manifest_n50_sm1.0_seed0.jsonl \
+    --manifest /workspace/data/mask_intervention/manifest_n300_sm1.0_seed0.jsonl \
     --out <OUT> --mask-dir /workspace/data/report2ct_wan/mask_latents_512x512x253 \
     --cfg-scale-text 5 --cfg-scale-mask 1.0 --spacing 0.75 0.75 1.3
 
@@ -133,9 +133,11 @@ python scripts/run_eval.py task=ctgen model=report2ct_wan_mask_v2 out_dir=<OUT> 
   should still be explicit rather than relied upon implicitly.
 - **Deterministic pairing**: seed the donor selection so re-running the manifest builder with
   the same seed reproduces the same pairs.
-- **No exact label match found** (mismatched-swap, or matched-swap with a rare label
-  combination): fall back to nearest-overlap donor and record the true `label_overlap` — do not
-  silently substitute a worse match without recording how much it differs.
+- **Exact match or no row** (matched-swap, superseding the earlier "nearest-overlap fallback"
+  rule, 2026-08-02): a `label_matched_swap` donor must carry *exactly* the same 18-label vector.
+  When no such scan exists anywhere in the census, the target simply gets **no matched row** and
+  is listed in `<manifest>.uncovered_targets.json` — a near-match is never substituted, so every
+  matched row in a manifest is a true twin (`label_exact_match` is always `true` there).
 - **`null` condition**: `report2ct_wan_mask_v2` supports this natively via its learned
   `no_mask_embed` (see the module docstring cited above). Older mask models
   (`report2ct_wan_mask`, `report2ct_text2ct_mask`) have no learned null — approximating with an
@@ -145,24 +147,35 @@ python scripts/run_eval.py task=ctgen model=report2ct_wan_mask_v2 out_dir=<OUT> 
 
 ### Donor pool and what the numbers actually look like
 
-The pool is the full clean valid census (3001) **intersected with the scans that already have a
-precomputed Wan mask latent** (`data/report2ct_wan/mask_latents_512x512x253`) — the generation
-side cannot condition on a mask that does not exist. Measured 2026-08-01: **1907 of 3001**
-qualify, covering **all 1304 patients**, with a mild label shift (max per-label prevalence
-difference 0.030; mean label burden 3.47 → 3.28). The builder prints the exclusion count, and the
-sidecar `<out>.meta.json` records it together with the build's git sha / argv / verification
-table (kept out of the JSONL so that two same-seed builds stay byte-identical).
+**Two pools, because the two swap arms have opposite problems** (`--donor-ids`, default = the
+clean valid 3001 **and** train 46,393 censuses):
+
+| arm | searched in | why |
+|---|---|---|
+| `label_matched_swap` | the whole census (49,394 scans) | an exact 18-label twin is scarce, so the search must be as wide as possible; among twins, one whose mask latent already exists is preferred, and any donor still missing one is listed for precompute |
+| `label_mismatched_swap` | only scans that already have a Wan mask latent (6,907) | any differently-labelled donor works, so this arm never needs extra precompute |
 
 Two properties of this dataset drive the rules above and should be read before interpreting a
 matched/mismatched contrast:
 
-- **Exact label-vector matches do not exist for every target.** Only **798 of the 1304** valid_v2
-  targets have at least one cross-patient donor with an identical 18-vector (816 even if the pool
-  were the whole 3001) — so roughly **40 % of `label_matched_swap` rows are nearest-Hamming
-  fallbacks**, not exact matches. On the shipped `n=50` manifest: 32 exact / 18 fallback (mean
-  Hamming 1.83, max 4). Always split on `label_exact_match` before averaging.
+- **An exact label twin does not exist for every target.** Only 770 distinct 18-label
+  combinations occur among the 3001 valid scans, and a high-burden combination is usually unique.
+  Measured on the shipped `n=300` manifest (2026-08-02): searching valid alone covers ~193/300;
+  adding train raises it to **253/300**, and the remaining **47 targets have no twin anywhere in
+  CT-RATE's 49,394 scans** — they are all high-burden (3+ positive labels, mostly 6–10). Those
+  targets get **no matched row** (listed in `<manifest>.uncovered_targets.json`), so the matched
+  arm covers a *subset* of the targets while `gt`/`label_mismatched_swap`/`null` cover all of
+  them. Any matched-vs-other comparison must be made on that subset, not on the full set.
 - **A uniformly random donor is an exact match ~3 % of the time** (mostly normal↔normal, where
   the vector is all-zero), which would quietly turn part of the "mismatched" arm into a second
-  matched arm. The builder therefore excludes exact matches from `label_mismatched_swap` and
-  applies **no overlap cap** — the realized overlap is reported instead (`n=50` manifest: mean
-  0.88, median 1, p90 2, max 4).
+  matched arm. The builder therefore excludes same-vector donors from `label_mismatched_swap` and
+  applies **no overlap cap** — the realized overlap is reported instead (`n=300` manifest: mean
+  0.75, median 0, p90 2, max 7).
+
+**Train-split donors** are ordinary CT-RATE chest scans and their masks are precomputed by the
+same script, but two things follow from using them: the donor's `ts_seg` lives under
+`ts_total/train_fixed/`, which `seg_metrics._ts_seg_path` resolves from the id prefix (a
+hardcoded `valid_fixed` would have left `dice_to_input_mask`/HD95/ASSD silently NaN — the very
+metrics this experiment reads); and their mask latents may not exist yet, which is what the
+`<manifest>.needs_mask_latent.{valid,train}.json` sidecars are for (the builder prints the exact
+`precompute_wan_mask_latents.py` command for each).

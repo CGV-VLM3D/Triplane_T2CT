@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 import logging
 import random
+from dataclasses import replace
 from pathlib import Path
 
 import nibabel as nib
@@ -52,6 +53,47 @@ def _volume_name_to_id(volume_name: str) -> str:
     return volume_name.replace(".nii.gz", "")
 
 
+def _clean_meta(value) -> str:
+    """CT-RATE metadata cell → str, mapping NaN/None to '' (upstream uses 'None')."""
+    if value is None or (isinstance(value, float) and pd.isna(value)):
+        return ""
+    return str(value)
+
+
+def _case_table() -> pd.DataFrame:
+    """reports ⨝ metadata on VolumeName, keeping only rows whose NIfTI exists on disk.
+
+    Shared by :func:`load_eval_cases` (plain runs) and :func:`load_manifest_cases`
+    (mask-intervention runs) so both read the reports through exactly one code path.
+    """
+    reports = pd.read_csv(_REPORTS_CSV)
+    meta = pd.read_csv(_METADATA_CSV)
+
+    # Merge on VolumeName; carry PatientAge/PatientSex through for the GenerateCT prompt
+    # template. Keep only rows where the NIfTI actually exists.
+    meta_cols = ["VolumeName"] + [
+        c for c in ("PatientAge", "PatientSex") if c in meta.columns
+    ]
+    df = reports.merge(meta[meta_cols], on="VolumeName", how="left")
+    return df[df["VolumeName"].apply(lambda v: _volume_name_to_nifti(v).is_file())]
+
+
+def _case_from_row(row) -> EvalCase:
+    """One merged table row -> EvalCase (manifest fields left at their plain-run defaults)."""
+    return EvalCase(
+        scan_id=_volume_name_to_id(row["VolumeName"]),
+        findings=str(row.get("Findings_EN", "") or ""),
+        impression=str(row.get("Impressions_EN", "") or ""),
+        spacing_mm=[
+            1.0,
+            1.0,
+            1.0,
+        ],  #  unused placeholder — samplers stamp their own spacing (see docstring/WI-3)
+        age=_clean_meta(row.get("PatientAge")),
+        sex=_clean_meta(row.get("PatientSex")),
+    )
+
+
 def load_eval_cases(
     n_samples: int | None = None,
     ids_json: str | Path | None = None,
@@ -79,16 +121,7 @@ def load_eval_cases(
         is kept only as a placeholder for a possible per-scan-conditioning contingency
         (plan silent-bug-floating-sunset.md, WI-3).
     """
-    reports = pd.read_csv(_REPORTS_CSV)
-    meta = pd.read_csv(_METADATA_CSV)
-
-    # Merge on VolumeName; carry PatientAge/PatientSex through for the GenerateCT prompt
-    # template. Keep only rows where the NIfTI actually exists.
-    meta_cols = ["VolumeName"] + [
-        c for c in ("PatientAge", "PatientSex") if c in meta.columns
-    ]
-    df = reports.merge(meta[meta_cols], on="VolumeName", how="left")
-    df = df[df["VolumeName"].apply(lambda v: _volume_name_to_nifti(v).is_file())]
+    df = _case_table()
 
     # Restrict to the frozen representative valid_v2 set when available.
     ids_path = Path(ids_json) if ids_json is not None else _DEFAULT_VALID_V2_IDS
@@ -114,29 +147,54 @@ def load_eval_cases(
         keep = set(order[:n_samples])
         df = df[df["VolumeName"].isin(keep)]
 
-    def _clean_meta(value) -> str:
-        """CT-RATE metadata cell → str, mapping NaN/None to '' (upstream uses 'None')."""
-        if value is None or (isinstance(value, float) and pd.isna(value)):
-            return ""
-        return str(value)
-
-    cases = []
-    for _, row in df.iterrows():
-        cases.append(
-            EvalCase(
-                scan_id=_volume_name_to_id(row["VolumeName"]),
-                findings=str(row.get("Findings_EN", "") or ""),
-                impression=str(row.get("Impressions_EN", "") or ""),
-                spacing_mm=[
-                    1.0,
-                    1.0,
-                    1.0,
-                ],  #  unused placeholder — samplers stamp their own spacing (see docstring/WI-3)
-                age=_clean_meta(row.get("PatientAge")),
-                sex=_clean_meta(row.get("PatientSex")),
-            )
-        )
+    cases = [_case_from_row(row) for _, row in df.iterrows()]
     log.info("Loaded %d eval cases from CT-RATE validation.", len(cases))
+    return cases
+
+
+def load_manifest_cases(manifest_path: str | Path) -> list[EvalCase]:
+    """Load one EvalCase per mask-intervention manifest ROW (not per scan).
+
+    The same target appears in several rows, so the returned list holds several cases with the
+    same ``scan_id`` — they differ in ``sample_id`` (output filename), ``cond_mask_source_id``
+    (which scan's mask conditions the model) and ``condition``. Text conditioning always comes
+    from the TARGET's report: a swapped mask is the only thing the intervention changes.
+
+    Args:
+        manifest_path: JSONL from ``scripts/build_mask_intervention_manifest.py``.
+
+    Returns:
+        list of EvalCase in manifest order, one per row.
+    """
+    from src.eval.manifest import read_manifest_rows
+
+    rows = read_manifest_rows(manifest_path)
+    wanted = {row["target_id"] for row in rows}
+    df = _case_table()
+    df = df[df["VolumeName"].apply(lambda v: _volume_name_to_id(v) in wanted)]
+    by_id = {}
+    for _, table_row in df.iterrows():
+        case = _case_from_row(table_row)
+        by_id[case.scan_id] = case
+
+    unknown = sorted(wanted - set(by_id))
+    if unknown:
+        raise ValueError(
+            f"{len(unknown)} manifest target(s) have no CT-RATE report/volume "
+            f"(e.g. {unknown[:3]})"
+        )
+
+    cases = [
+        replace(
+            by_id[row["target_id"]],
+            sample_id=row["sample_id"],
+            condition=row["condition"],
+            cond_mask_source_id=row["cond_mask_source_id"],
+            seed=row["seed"],
+        )
+        for row in rows
+    ]
+    log.info("Loaded %d manifest cases over %d target scans.", len(cases), len(by_id))
     return cases
 
 
@@ -187,14 +245,17 @@ def prepare_valid_gt(cases: list[EvalCase], gt_dir: Path) -> list[Path]:
 def write_prompt_xlsx(cases: list[EvalCase], out_path: Path) -> Path:
     """Write XLSX with (Names, Text_prompts) for evaluate_clip.py.
 
-    'Names' = "<scan_id>.mha" (matches generated/.mha filenames).
+    'Names' = "<out_stem>.mha" — the GENERATED file's stem, which upstream keys its prompt
+    lookup on (``evaluate_clip.py::VolTextDS``). In a plain run that is the scan_id; in a
+    mask-intervention run it is the sample_id, while the prompt text stays the TARGET's report
+    (every condition of one target is scored against the same text).
     'Text_prompts' = findings + impression joined by single space.
     """
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     rows = [
         {
-            "Names": f"{c.scan_id}.mha",
+            "Names": f"{c.out_stem}.mha",
             "Text_prompts": (c.findings + " " + c.impression).strip(),
         }
         for c in cases
@@ -204,4 +265,9 @@ def write_prompt_xlsx(cases: list[EvalCase], out_path: Path) -> Path:
     return out_path
 
 
-__all__ = ["load_eval_cases", "prepare_valid_gt", "write_prompt_xlsx"]
+__all__ = [
+    "load_eval_cases",
+    "load_manifest_cases",
+    "prepare_valid_gt",
+    "write_prompt_xlsx",
+]

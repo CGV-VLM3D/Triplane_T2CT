@@ -21,6 +21,7 @@ import pandas as pd
 
 from src.eval.analysis.labels import LABEL_NAMES, load_label_csv, patient_id_of
 from src.eval.analysis.subgroup_config import SubgroupConfig
+from src.eval.tasks.ctgen import _DEFAULT_SUBGROUP_FID_PROFILE
 
 log = logging.getLogger(__name__)
 
@@ -231,27 +232,36 @@ def _build_axes(
     subgroup_cfg: SubgroupConfig,
     gt_index: dict[str, Path],
 ) -> list[tuple[str, set[str], set[str]]]:
-    """(axis_name, gt_scan_ids, pred_target_ids) for overall/normal/disease/per-label/burden/cluster."""
+    """(axis_name, gt_scan_ids, pred_sample_ids) for overall/normal/disease/per-label/burden/cluster.
+
+    The pred side is keyed by ``sample_id``, NOT ``target_id``: a cached pred feature file is named
+    after the generated volume's stem, which is the sample_id. The two are equal in a plain run
+    (1 scan = 1 prediction), which is why keying on target_id worked until now; in a
+    mask-intervention run they differ for every row, so every pred lookup missed, every axis
+    reported ``gen_n=0``, and every subgroup FID came out NaN. Subgroup MEMBERSHIP still comes from
+    the target's labels — the columns read below are the target's, carried on each row by
+    ``persample.build_per_sample`` — so a plain run's axes are unchanged.
+    """
     gt_axes = _build_gt_axes(gt_label_map, subgroup_cfg, gt_index)
 
     pred_by_axis: dict[str, set[str]] = {
-        "overall": set(df["target_id"].astype(str)),
-        "normal": set(df.loc[df["label_class"] == "normal", "target_id"].astype(str)),
-        "disease": set(df.loc[df["label_class"] == "disease", "target_id"].astype(str)),
+        "overall": set(df["sample_id"].astype(str)),
+        "normal": set(df.loc[df["label_class"] == "normal", "sample_id"].astype(str)),
+        "disease": set(df.loc[df["label_class"] == "disease", "sample_id"].astype(str)),
     }
     for name in LABEL_NAMES:
         col = f"label_{name}"
         pred_by_axis[f"label:{name}"] = (
-            set(df.loc[df[col] == 1, "target_id"].astype(str)) if col in df else set()
+            set(df.loc[df[col] == 1, "sample_id"].astype(str)) if col in df else set()
         )
     for band in subgroup_cfg.label_burden_bands:
         pred_by_axis[f"burden:{band}"] = set(
-            df.loc[df["burden_band"] == band, "target_id"].astype(str)
+            df.loc[df["burden_band"] == band, "sample_id"].astype(str)
         )
     for cluster_name in subgroup_cfg.organ_clusters:
         col = f"cluster_{cluster_name}"
         pred_by_axis[f"cluster:{cluster_name}"] = (
-            set(df.loc[df[col] == True, "target_id"].astype(str))  # noqa: E712
+            set(df.loc[df[col] == True, "sample_id"].astype(str))  # noqa: E712
             if col in df
             else set()
         )
@@ -267,13 +277,14 @@ def run(
     gt_dir: str | Path | None = None,
     compute_fvd: bool = False,
     label_split: str = "valid",
-    fid_profile: str = "research",
+    fid_profile: str = _DEFAULT_SUBGROUP_FID_PROFILE,
 ) -> pd.DataFrame:
     """Compute subgroup FID (+ optional bounded-cost FVD) for all axes, from cached features.
 
     Args:
         run_out_dir: the eval run's top-level ``out_dir`` (must already contain
-            ``fid_features/{gt,pred}/`` from a completed ``task.metrics.fid_2p5d=true`` run).
+            ``fid_<fid_profile>/<feat_subdir>/{gt,pred}/`` from a completed run scored under
+            that profile).
         per_sample_csv: path to ``analysis/per_sample.csv`` (pred-side subgroup membership).
         subgroup_cfg: loaded subgroup definitions.
         analysis_out_dir: ``analysis/setlevel/`` directory to write the result CSV into.
@@ -284,10 +295,12 @@ def run(
             cost — a full CT-CLIP re-encode per axis; per-label/cluster/burden FVD is left out
             of this bound intentionally, logged below, not silently dropped).
         label_split: label CSV for the GT (real) side — ``"valid"`` (the full clean census).
-        fid_profile: which FID profile's cached features to reuse. Defaults to ``"research"``
-            (radimagenet_resnet50), the feature space every per-axis ref-stats npz on disk was
-            built with; it must match the profile the run was scored with, since the two write
-            different feature dimensionalities into different sub-directories.
+        fid_profile: which FID profile's cached features to reuse. Defaults to
+            ``"docker_n300"`` (squeezenet1_1, 300 volumes; changed from ``"research"`` on
+            2026-08-01 — the n=100 ``"docker"`` profile left most per-label axes with
+            single-digit or zero GT matches). Must match the profile the run was scored with,
+            since profiles write different feature dimensionalities into different
+            sub-directories.
 
     Returns:
         DataFrame, one row per axis, with FID_2p5D_{Avg,XY,YZ,XZ}, real_n, gen_n, real_patients,
@@ -303,7 +316,9 @@ def run(
             f"unknown fid_profile {fid_profile!r} — choose from {sorted(_FID_PROFILES)}"
         )
     fid_model = _FID_PROFILES[fid_profile]["model"]
-    features_dir = run_out_dir / _FID_PROFILES[fid_profile]["feat_subdir"]
+    features_dir = (
+        run_out_dir / f"fid_{fid_profile}" / _FID_PROFILES[fid_profile]["feat_subdir"]
+    )
     if not features_dir.is_dir():
         raise FileNotFoundError(
             f"{features_dir} not found — subgroup_setlevel reuses the cached per-volume "
@@ -318,6 +333,17 @@ def run(
     pred_index = _build_feature_index(features_dir / "pred")
 
     df = pd.read_csv(per_sample_csv)
+    if df["sample_id"].nunique() != df["target_id"].nunique():
+        # A mask-intervention run: several generated volumes per target. The FID/FVD numbers below
+        # still compute, but they are DIAGNOSTIC ONLY — a repeated target breaks the "1 volume =
+        # 1 independent sample" premise these set-level metrics rest on (that is why
+        # run_eval.py refuses the headline FID/FVD for such a run entirely).
+        log.warning(
+            "per_sample.csv holds %d samples over %d targets (mask-intervention run) — subgroup "
+            "FID/FVD here are diagnostic only, NOT comparable to plain-run or leaderboard FID.",
+            df["sample_id"].nunique(),
+            df["target_id"].nunique(),
+        )
     gt_label_map = load_label_csv(label_split)
     axes = _build_axes(df, gt_label_map, subgroup_cfg, gt_index)
 
@@ -329,10 +355,25 @@ def run(
     axis_refstats_cache_dir = None
     if gt_dir is not None:
         try:
+            import json
+
             from src.eval.tasks._fid_refstats import load_ref_stats, refstats_path_for
             from src.eval.tasks.ctgen import _shared_gt_feat_dir
 
-            npz_path = refstats_path_for(_shared_gt_feat_dir(Path(gt_dir), fid_model))
+            shared_gt = _shared_gt_feat_dir(Path(gt_dir), fid_model)
+            if _FID_PROFILES[fid_profile]["num_images"] is None:
+                npz_path = refstats_path_for(shared_gt)
+            else:
+                # Truncating profiles (docker/docker_n300) write a stem-hash-suffixed npz
+                # (ctgen.py:1041-1045), not the plain path above, since their scored stem set
+                # varies per run — read the hash back from this run's own fid.json rather
+                # than recomputing it.
+                fid_json = run_out_dir / f"fid_{fid_profile}" / "fid.json"
+                stems_sha1 = json.loads(fid_json.read_text())["scored_stems_sha1"]
+                npz_path = (
+                    shared_gt.parent
+                    / f"{shared_gt.name}__refstats_{stems_sha1[:12]}.npz"
+                )
             if npz_path.is_file():
                 ref_stats = load_ref_stats(npz_path)
         except Exception:

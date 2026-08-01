@@ -1,0 +1,14 @@
+# @package _global_.model
+name: report2ct_wan_mask_v2
+
+# Pass-through sampler: run_eval scores PRE-DECODED Wan .mha predictions (decode runs in the `wan`
+# env). Same as report2ct_wan_mask — the dual-CFG mask conditioning affects GENERATION (step 1, via
+# scripts/generate_wan_mask_v2_latents.py with --cfg-scale-text/--cfg-scale-mask), not scoring; the
+# decoded output is still a 16-channel image latent → HU. 3-step flow (docs/wan_latent_runbook.md):
+#   1. CUDA_VISIBLE_DEVICES=2 python scripts/generate_wan_mask_v2_latents.py --ckpt <ckpt> \
+#        --out <OUT> --mask-dir data/report2ct_wan/mask_latents_512x512x253 \
+#        --cfg-scale-text 5 --cfg-scale-mask 1.0 --spacing 0.73 0.73 1.34   # main env: RFlow → <OUT>/latents/*.npy
+#   2. CUDA_VISIBLE_DEVICES=2 /opt/conda/envs/wan/bin/python scripts/decode_wan_latents.py \
+#        --latent-dir <OUT>/latents --out <OUT>/predictions   # wan env: .npy → .mha
+#   3. python scripts/run_eval.py task=ctgen model=report2ct_wan_mask_v2 out_dir=<OUT> task.n_samples=1304
+_target_: src.eval.samplers.report2ct_wan.Report2CTWanEvalSampler

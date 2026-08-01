@@ -7,26 +7,103 @@ n_samples: 100
 # GT mode: valid = CT-RATE valid_fixed as ground-truth; official = pre-extracted docker GT
 gt_mode: valid   # choices: valid | official
 
-# Shared valid-GT cache. Used in BOTH modes by run_eval.py (gt_dir or out_dir/gt).
-# In valid mode, prepare_valid_gt() is idempotent: existing .mha are reused (no re-convert),
-# so all models share one byte-identical GT set for a fair win_condition comparison.
-# Set = frozen representative valid_v2: valid_fixed one-scan-per-patient = 1304
-# (ctrate_toy_v2/valid_v2/ids.json). load_eval_cases() restricts to it; any n_samples<1304
-# is a seeded-shuffle NESTED subset (representative, identical across models).
-# (Legacy _shared_gt_1000 was the head-1000 / 425-patient set — superseded.)
-gt_dir: /workspace/data/vlm3d_eval/_valid_v2_1304
+# FID reference GT set = the FULL clean valid census (3001 = valid_fixed 3038 − no_chest 37
+# − unencodable 1; data/ctrate_full/valid/ids.json). FID/FVD/CLIP are asymmetric: the GT
+# reference distribution is model-independent, so it uses ALL 3001 real volumes for the best
+# estimate of the CT-RATE distribution, while models still GENERATE only the valid_v2 1304
+# one-scan-per-patient set (load_eval_cases default). FVD/CLIP pair each generated volume to
+# its own GT by stem (extra GT ignored); FID uses the full 3001 as the reference.
+# 2.5D-FID reuses precomputed per-plane (mu, Sigma) over these 3001 (see _fid_refstats.py) —
+# built once, reused every run. prepare_valid_gt() is idempotent (existing .mha reused).
+# (Superseded refs: _valid_v2_1304 = the old 1304-only GT; _shared_gt_1000 = head-1000/425pt.)
+gt_dir: /workspace/data/vlm3d_eval/_valid_full_3001
 
 # XLSX with text prompts (for CLIPScore text-image alignment).
 # When null in valid mode, CLIPScore I2T is skipped; only I2I is computed.
 prompt_xlsx: null
 
+# --- 2.5D-FID profile(s) (affects FID ONLY — CLIP/FVD are identical either way) ------------
+# A single name or a LIST of names; the default scores both squeezenet1_1 families, each into its
+# own `<out_dir>/fid_<profile>/`. The extra profile only re-runs FID — CLIP/FVD/FVD_CTCLIP are
+# computed in the first profile's pass and copied into the others.
+# docker               : reproduces the official eval container — squeezenet1_1 features over the
+#                       first 100 volumes of each side (evaluation.py:229-230 at pin a945900).
+# docker_n300          : same squeezenet1_1 network as "docker" (container-faithful FID scale),
+#                       but scored over 300 volumes instead of 100 — needed by default (2026-08-01)
+#                       now that subgroup analysis (`subgroup_fid_profile` below) reuses it; 100
+#                       was too few (most per-label axes had single digits or zero GT matches).
+# research             : the pre-2026-07-29 setting — radimagenet_resnet50 over ALL predictions vs
+#                       the 3001-volume GT reference (+ its precomputed (mu, Sigma) fast path).
+#                       The only profile comparable to any previously recorded FID number or to
+#                       the paper envelope (CLAUDE.md) — dropped from the default 2026-08-01 (its
+#                       ~31 min/run no longer bought enough now that docker_n300 covers the
+#                       "need more than 100 volumes" case); still one override away:
+#                       `task.fid_profile=research` or `task.fid_profile=[docker,docker_n300,research]`.
+# ⚠ Profiles write the SAME FID_2p5D_* keys on incomparable scales across DIFFERENT feature
+#   networks (measured on one prediction set: docker 57.87 vs research 1.61) — "docker" and
+#   "docker_n300" share a network so their scale is comparable, but their volume count differs
+#   (100 vs 300), so still don't average/mix them in one table without checking `fid_num_images`.
+#   metrics.json records `fid_profile`, and fid.json adds model_name / num_images /
+#   scored_stems_sha1 — always check these before comparing numbers across runs. The combined
+#   `<out_dir>/summary.json` keeps them apart the same way: one block per profile under `fid`.
+fid_profile: [docker, docker_n300]
+
+# The docker profile scores the first 100 of THIS run's sorted predictions, mirroring the
+# container. Runs sharing a task.n_samples share that set (load_eval_cases' subsets are nested)
+# and stay comparable; runs at different n do not — `scored_stems_sha1` in fid.json exposes it.
+
+# Every scoring pass writes to `<out_dir>/fid_<profile>/`, so a docker run physically cannot
+# reach a research run's metrics.json (how two wan_mask_v2 research FIDs were lost on
+# 2026-07-29), and a same-folder re-run merges rather than replaces. The `allow_overwrite`
+# escape hatch that used to sit here went away with the guard it disabled (2026-07-31).
+
 metrics:
   fvd: true
+  fvd_ctclip: true      # CT-CLIP zero-shot 18-d FVD proxy (local; NOT leaderboard FVD_CTNet)
   clip_score: true      # requires CT-CLIP_v2.pt
   fid_2p5d: true
+  # --- per-sample / subgroup / segmentation extension (all default false — fully additive,
+  #     existing metrics.json/summary.json are byte-identical when all of these stay false) ---
+  per_sample: false          # per-sample CLIP-T2I/I2I -> analysis/per_sample.csv (cheap)
+  dice: false                # generated-CT segmentation + Dice (GPU, opt-in — TotalSegmentator)
+  hd95: false                # surface distances in mm — HD95 + HD + ASSD, all three from one
+                             # distance pass (reuses dice's segmentation — no extra GPU cost)
+  subgroup: false            # per-sample subgroup summaries (per-label/burden/cluster) — groupby only
+  subgroup_setlevel: false   # subgroup FID (+opt-in FVD) — reuses the fid_2p5d feature cache
 
 # Paths to evaluation scripts and model weights.
 # NOTE: vlm3d_eval_dir is documentary only — CTGenEvaluator resolves the eval dir
 # itself via src/eval/_vlm3d_paths.py (ct_challenges/ layout, a945900+).
 vlm3d_eval_dir: /workspace/third_party/vlm3d_dockers/ct_challenges/ctgen_evaluation
 ctclip_ckpt: /workspace/data/vlm3d_eval/models/CT-CLIP_v2.pt
+
+# --- per-sample / subgroup / segmentation extension — task-level fields ---
+subgroup_config: /workspace/configs/eval/subgroup/default.yaml
+seg_backend: totalseg        # totalseg (default; matches the existing GT/input-mask TS scheme) | vista3d (not implemented)
+seg_max_n: null              # null = segment all generated samples; int = cap to the first N (cost control)
+# mask-intervention JSONL manifest (see docs/mask_intervention_manifest.md); null = plain run
+# (sample_id == scan_id == target_id). When set, eval cases come from the manifest ROWS: predictions
+# are named <sample_id>.mha (one target generated once per conditioning-mask condition), prompts.xlsx
+# is keyed by sample_id with the TARGET's report, and CLIP scores against a <out_dir>/gt_view/ symlink
+# view of the GT under those sample_id names (upstream matches GT by prediction stem).
+# ⚠ DIAGNOSTIC-ONLY: fid_2p5d / fvd / fvd_ctclip are REFUSED for a manifest run
+# (run_eval._refuse_setlevel_metrics) — a repeated target breaks their "1 volume = 1 independent
+# sample" premise. Use metrics.per_sample + metrics.dice (CLIP-T2I, dice_to_input_mask/gt_mask).
+manifest: null
+is_mask_model: false          # true for report2ct_wan_mask(_v2)/report2ct_text2ct_mask — enables dice_to_input_mask in a plain (no-manifest) run
+subgroup_setlevel_compute_fvd: false  # also compute FVD_CTCLIP for the overall/normal/disease subgroup axes (bounded extra cost; see subgroup_setlevel.py)
+# Which FID profile's cached features the subgroup set-level analysis reuses (independent of
+# task.fid_profile above). Changed from `research` to `docker_n300` on 2026-08-01: `research`'s
+# n=100 sibling `docker` left most per-label axes with single-digit or zero GT matches, and now
+# that `docker_n300` is in the default `task.fid_profile` list (above), it's produced by every
+# routine run with no extra rescore pass. The per-axis 29-axis ref-stats cache for `docker_n300`
+# has not been built yet as of this change — run `scripts/precompute_subgroup_fid_refstats.py
+# --fid-profile docker_n300` once to warm it (a missing cache still works, just slower — falls
+# back to a full GT re-stack per axis). A run scored under a different profile fails loudly, not
+# silently.
+subgroup_fid_profile: docker_n300
+
+# QC figures (viz-only — never affects metrics.json/summary.json; independent of the metrics
+# above, so it renders even when every metrics.* flag is false).
+qc_figures: true
+qc_n: 5
