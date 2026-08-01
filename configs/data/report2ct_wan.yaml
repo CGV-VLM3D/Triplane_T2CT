@@ -1,0 +1,17 @@
+# Wan2.1-latent + report2ct-2560 datamodule (report2ct with only the VAE latent swapped).
+# Reuses Report2CTDataModule UNCHANGED — it loads the (16,64,64,64) Wan image latent (from
+# `_emb.nii.gz`), the 2560-d findings+impression context (context_f/context_i), and the per-scan
+# VARIED spacing, all from the datalist's merged JSON. The 2560 text context is latent-agnostic
+# (text only), so the SAME context JSONs used by report2ct(MAISI) pair with the Wan latents; only
+# the `image` path (Wan latent) and the header-read spacing differ from configs/data/report2ct.yaml.
+#
+# datalist built by scripts/build_report2ct_datalist.py pointed at the Wan latent dir
+# (data/report2ct_wan/latents_512x512x253) — see docs/wan_latent_runbook.md.
+_target_: src.data.report2ct_datamodule.Report2CTDataModule
+
+datalist_path: /workspace/data/report2ct_wan/datalist_wan_2560.json
+batch_size: 8          # Wan latent spatial grid (64×64×64) ~3.5× smaller than MAISI (120×120×64)
+                       # → memory headroom vs report2ct's batch 2 (raise if the smoke test allows)
+num_workers: 32        # upstream diff_model_train_vlm3D_2560_multi_text.py:111
+cache_rate: 0.0        # upstream config_maisi_diff_model_vlm3D.json:31
+spacing_multiplier: 100.0  # upstream :88 — spacing × 1e2

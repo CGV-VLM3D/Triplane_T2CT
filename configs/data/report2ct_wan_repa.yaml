@@ -1,0 +1,18 @@
+# Wan2.1-latent + report2ct-2560 + frozen SPECTRE teacher tokens (REPA).
+# Identical to configs/data/report2ct_wan.yaml except for the datamodule class and `spectre_dir`:
+# the same datalist is reused, and the teacher `.npy` path is DERIVED from each entry's image path
+# (same volume id), so the two can't drift apart.
+#
+# spectre_dir picks the teacher grid and must match model.repa.teacher_grid:
+#   spectre_ssl_16 → (4096, 1080)   8.85 MB/scan — 44 GB train set stays in page cache  ← default
+#   spectre_ssl_32 → (32768, 1080)  70.8 MB/scan — paper-faithful, ~845 MB/s sustained read
+#   spectre_vla_*  → the SSL+VLA (report-aligned) teacher, for the text-alignment ablation
+# Built by scripts/precompute_spectre_features.py; see tests/repa_probe/ for how the default was chosen.
+_target_: src.data.report2ct_wan_repa_datamodule.Report2CTWanRepaDataModule
+
+datalist_path: /workspace/data/report2ct_wan/datalist_wan_2560.json
+spectre_dir: /workspace/data/report2ct_wan/spectre_ssl_16
+batch_size: 8
+num_workers: 32
+cache_rate: 0.0
+spacing_multiplier: 100.0

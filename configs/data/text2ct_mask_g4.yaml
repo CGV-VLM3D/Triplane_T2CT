@@ -1,0 +1,13 @@
+# text2ct-latent + CLIP3D-cond + top-K 4-organ-group mask datamodule (g4 mask experiment).
+# Identical to configs/data/text2ct_mask.yaml EXCEPT the datalist points at the GROUPED masks
+#   mask = data/text2ct_mask_g4/train/<vol>.pt   (precompute_mask_latentgrid.py --group-organs)
+# The datamodule is scheme-agnostic (loads classes/fracs passthrough) — no code change.
+# Build the datalist (after the grouped precompute):
+#   python scripts/build_text2ct_mask_datalist.py \
+#     --mask-dir /workspace/data/text2ct_mask_g4/train \
+#     --out      /workspace/data/text2ct_mask_g4/datalist_text2ct_mask_g4.json
+defaults:
+  - text2ct_mask
+  - _self_
+
+datalist_path: /workspace/data/text2ct_mask_g4/datalist_text2ct_mask_g4.json

@@ -1,0 +1,13 @@
+# text2ct-latent + CLIP3D-cond + top-K organ-mask datamodule (mask experiment).
+# Built by scripts/build_text2ct_mask_datalist.py from:
+#   image   = third_party/text2ct/embeddings/toy_v2/<vol>.nii.gz         (text2ct VAE latent)
+#   context = third_party/text2ct/embeddings/toy_v2/<vol>_impression_xgem_3D.npy  (CLIP3D (1,768))
+#   mask    = data/text2ct_mask/train/<vol>.pt                            (M4 top-K organ mask)
+# The SAME datalist feeds both A/B arms; the mask-off baseline model just ignores the mask keys.
+_target_: src.data.text2ct_mask_datamodule.Text2CTMaskDataModule
+
+datalist_path: /workspace/data/text2ct_mask/datalist_text2ct_mask.json
+batch_size: 4          # match text2ct config_diff_model.json diffusion_unet_train.batch_size
+num_workers: 8
+cache_rate: 0.0
+spacing_multiplier: 100.0  # MAISI convention — spacing × 1e2 (text2ct trains the same, ×1e2)

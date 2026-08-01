@@ -1,0 +1,15 @@
+# Wan2.1-latent + CLIP3D-768-cond datamodule (report2ct_wan, text2ct twin with the VAE swapped).
+# Reuses FVLMCondDataModule unchanged — it loads any `_emb.nii.gz` image latent (here the Wan2.1
+# (64,64,32,16) latent instead of MAISI's (120,120,64,4)), a (1,768) FrozenCLIP3D `.pt` context,
+# and per-entry spacing from the datalist. The 16-channel latent is handled by the model config
+# (report2ct_wan sets in/out_channels=16); the datamodule is channel-agnostic.
+#
+# Built by scripts/build_wan_clip3d_datalist.py (Wan image latent + CLIP3D cond + fixed
+# [0.75,0.75,3.0] spacing). Train = 5000 toy_v2 train_*; validation = valid_v2 1304.
+_target_: src.data.fvlm_cond_datamodule.FVLMCondDataModule
+
+datalist_path: /workspace/data/wan_clip3d/datalist_wan_clip3d_5k.json
+batch_size: 4          # match text2ct config_diff_model.json diffusion_unet_train.batch_size
+num_workers: 8
+cache_rate: 0.0
+spacing_multiplier: 100.0  # MAISI/Report2CT convention — spacing × 1e2

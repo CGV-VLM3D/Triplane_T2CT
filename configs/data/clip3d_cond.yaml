@@ -1,0 +1,14 @@
+_target_: src.data.fvlm_cond_datamodule.FVLMCondDataModule
+
+# CLIP3D-conditioned variant. Reuses FVLMCondDataModule unchanged — it loads any precomputed
+# `.pt` context generically (here a (1, 768) FrozenCLIP3D vector instead of fVLM's (4, 256)),
+# the same `_emb.nii.gz` image latent, and per-scan spacing from the datalist.
+#
+# Built by scripts/build_fvlm_cond_datalist.py (reused) from CLIP3D embeddings produced by
+# scripts/precompute_clip3d_cond_embeddings.py. Train = 5000 train_*; validation = valid_v2
+# 1304 — pass --ids-valid (valid_v2 ids.json) + --cond-dir-valid so val/loss runs on valid_v2.
+datalist_path: /workspace/data/text2ct_clip3d/datalist_clip3d_cond_5k.json
+batch_size: 2       # match report2ct.yaml / fvlm_cond.yaml
+num_workers: 32
+cache_rate: 0.0
+spacing_multiplier: 100.0  # MAISI convention — spacing * 1e2

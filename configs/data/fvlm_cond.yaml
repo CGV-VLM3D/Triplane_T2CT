@@ -1,0 +1,11 @@
+_target_: src.data.fvlm_cond_datamodule.FVLMCondDataModule
+
+# Built by scripts/build_fvlm_cond_datalist.py (image=report2ct _emb.nii.gz +
+# per-scan spacing + fVLM context .pt). Train = 5000 train_*; validation = valid_v2
+# 1304 (valid_v2) — pass --ids-valid (valid_v2 ids.json) + --cond-dir-valid so
+# val/loss runs on valid_v2. valid latents + cond embeddings come from Unit 8.
+datalist_path: /workspace/data/fVLM/datalist_fvlm_cond_5k.json
+batch_size: 2       # match report2ct.yaml
+num_workers: 32
+cache_rate: 0.0
+spacing_multiplier: 100.0  # MAISI convention — spacing * 1e2
