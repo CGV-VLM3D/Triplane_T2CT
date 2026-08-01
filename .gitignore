@@ -41,8 +41,10 @@ outputs/
 *.wandb
 deprecated/wandb_old/
 
-# Data artifacts (latents, work dirs, eval) — artifacts only, never committed
-data/
+# Data artifacts (latents, work dirs, eval) — artifacts only, never committed. Root-anchored
+# (leading /) so this doesn't also swallow src/data/ and configs/data/ source code — a bare
+# "data/" matches that name at any depth, which silently untracked both directories' contents.
+/data/
 
 # fvlm: de-vendored from submodule, kept local-only (runtime dep, not tracked)
 third_party/fvlm/
