@@ -15,11 +15,14 @@ import torch
 from src.eval.tasks.ctgen import (
     _DEFAULT_FID_PROFILE,
     _DEFAULT_FID_PROFILES,
+    _DEFAULT_SUBGROUP_FID_PROFILE,
     _FID_PROFILES,
     _RESEARCH_FID_MODEL,
     _fid_from_cached_features,
-    _link_shared_gt_features,
+    _link_shared_features,
+    _missing_names,
     _shared_gt_feat_dir,
+    _shared_pred_feat_dir,
     CTGenEvaluator,
     resolve_fid_profiles,
 )
@@ -64,6 +67,55 @@ def test_shared_gt_dir_requires_an_explicit_model(tmp_path: Path):
         _shared_gt_feat_dir(tmp_path)  # type: ignore[call-arg]
 
 
+def test_shared_pred_dir_is_scoped_to_the_run_not_global(tmp_path: Path):
+    """Unlike GT (one fixed cross-run root), predictions differ per run — the cache must live
+    beside that run's own predictions, keyed on the feature model within it."""
+    run_a, run_b = (
+        tmp_path / "run_a" / "predictions",
+        tmp_path / "run_b" / "predictions",
+    )
+    a = _shared_pred_feat_dir(run_a, "squeezenet1_1")
+    b = _shared_pred_feat_dir(run_b, "squeezenet1_1")
+    assert a != b
+    assert run_a.parent in a.parents
+
+
+def test_shared_pred_dir_does_not_collide_across_pred_dirs_sharing_one_parent(
+    tmp_path: Path,
+):
+    """Regression for the harness pattern used by tests/orientation_quant/run_quant.py and
+    tests/spacing_fov/decompose_2x2.py: several DIFFERENT prediction sets (different
+    models/cells) can live under one shared parent directory and reuse the same case-id
+    filenames for genuinely different volume content. Keying only on the parent (the original
+    Part B implementation) would make one model's/cell's cached features silently answer for
+    another's — this is that exact scenario, minus the parent-only key."""
+    shared_parent = tmp_path / "preds"
+    report2ct = shared_parent / "report2ct"
+    wan = shared_parent / "wan"
+    a = _shared_pred_feat_dir(report2ct, "squeezenet1_1")
+    b = _shared_pred_feat_dir(wan, "squeezenet1_1")
+    assert a != b
+
+    # Same pred_dir, asked twice (e.g. docker then docker_n300 in one run) -> same cache dir,
+    # or the whole sharing mechanism has nothing to link against.
+    assert _shared_pred_feat_dir(report2ct, "squeezenet1_1") == a
+
+
+def test_missing_names_filters_only_what_is_locally_absent(tmp_path: Path):
+    """The partial-cache filter must key on local presence alone — it doesn't care how a file
+    got there (hardlinked from a shared cache or left over from a prior partial run)."""
+    feat_dir = tmp_path / "pred"
+    feat_dir.mkdir()
+    (feat_dir / "a.mha").touch()
+    (feat_dir / "c.mha").touch()
+    assert _missing_names(feat_dir, ["a.mha", "b.mha", "c.mha", "d.mha"]) == [
+        "b.mha",
+        "d.mha",
+    ]
+    assert _missing_names(feat_dir, ["a.mha", "c.mha"]) == []  # everything cached
+    assert _missing_names(feat_dir, ["x.mha"]) == ["x.mha"]  # nothing cached
+
+
 def test_evaluator_default_profile_and_validation(tmp_path: Path):
     assert CTGenEvaluator(gt_dir=tmp_path).fid_profile == _DEFAULT_FID_PROFILE
     assert (
@@ -94,6 +146,13 @@ def test_config_defaults_match_the_code_defaults():
     # run_eval.py must not re-declare a default of its own.
     src = Path("/workspace/scripts/run_eval.py").read_text()
     assert 'resolve_fid_profiles(cfg.task.get("fid_profile"))' in src
+
+    # The separate subgroup_fid_profile default (independent knob, own constant — see
+    # _DEFAULT_SUBGROUP_FID_PROFILE's docstring) must not drift from the yaml either. Every
+    # Python call site imports the constant directly, so this is the only place drift could
+    # still sneak in: the yaml value, which can't import Python.
+    assert cfg["subgroup_fid_profile"] == _DEFAULT_SUBGROUP_FID_PROFILE
+    assert _DEFAULT_SUBGROUP_FID_PROFILE in _FID_PROFILES
 
 
 def test_resolve_fid_profiles_normalises_and_validates():
@@ -152,7 +211,7 @@ def test_subprocess_paths_are_absolute(tmp_path: Path, monkeypatch):
     assert all(Path(p).is_absolute() for p in path_args), path_args
 
 
-def test_link_shared_gt_features_honours_the_name_filter(tmp_path: Path):
+def test_link_shared_features_honours_the_name_filter(tmp_path: Path):
     """docker links only its scored stems; research (names=None) links the whole cache."""
     shared = tmp_path / "shared"
     for i, name in enumerate(["a.mha", "b.mha", "c.mha"]):
@@ -160,12 +219,12 @@ def test_link_shared_gt_features_honours_the_name_filter(tmp_path: Path):
 
     subset = tmp_path / "run_subset" / "gt"
     subset.mkdir(parents=True)
-    assert _link_shared_gt_features(shared, subset, names={"a.mha", "c.mha"}) == 2
+    assert _link_shared_features(shared, subset, names={"a.mha", "c.mha"}) == 2
     assert {p.name for p in subset.iterdir()} == {"a.mha", "c.mha"}
 
     everything = tmp_path / "run_all" / "gt"
     everything.mkdir(parents=True)
-    assert _link_shared_gt_features(shared, everything, names=None) == 3
+    assert _link_shared_features(shared, everything, names=None) == 3
     assert {p.name for p in everything.iterdir()} == {"a.mha", "b.mha", "c.mha"}
 
 
@@ -216,6 +275,86 @@ def test_ref_stats_fast_path_also_scores_only_the_named_files(tmp_path: Path):
         assert got[key] == pytest.approx(value, abs=1e-12), key
 
 
+def test_run_fid_reuses_shared_pred_and_gt_features_across_docker_profiles(
+    tmp_path: Path, monkeypatch
+):
+    """The composed, load-bearing invariant behind the whole caching optimization: whatever
+    `_run_fid` skips loading (via the shared-cache hardlinks + the partial-cache filter) must
+    never change the reported FID. Runs "docker" then "docker_n300" against the same
+    predictions dir (docker's stems are always the first N of docker_n300's), with a fake
+    subprocess that only extracts features for whatever it's actually handed — so any name
+    silently missing from the final feature set would surface as a wrong/NaN FID, not merely a
+    speed difference the earlier, isolated-helper tests couldn't catch."""
+    import src.eval.tasks.ctgen as ctgen_mod
+
+    shared_gt_root = tmp_path / "_shared_gt_root"
+    shared_gt_root.mkdir()
+    monkeypatch.setattr(ctgen_mod, "_SHARED_GT_FEAT_ROOT", shared_gt_root)
+    monkeypatch.setitem(
+        ctgen_mod._FID_PROFILES,
+        "docker",
+        {**ctgen_mod._FID_PROFILES["docker"], "num_images": 3},
+    )
+    monkeypatch.setitem(
+        ctgen_mod._FID_PROFILES,
+        "docker_n300",
+        {**ctgen_mod._FID_PROFILES["docker_n300"], "num_images": 6},
+    )
+
+    gt_dir, pred_dir = tmp_path / "gt", tmp_path / "predictions"
+    gt_dir.mkdir()
+    pred_dir.mkdir()
+    names = [f"s{i}.mha" for i in range(6)]
+    for n in names:
+        (gt_dir / n).touch()
+        (pred_dir / n).touch()
+
+    def _fake_run(cmd, **kw):
+        args = dict(a[2:].split("=", 1) for a in cmd if a.startswith("--") and "=" in a)
+        out_root = Path(args["output_root"])
+        for filelist_arg, subdir in (
+            ("real_filelist", "gt"),
+            ("synth_filelist", "pred"),
+        ):
+            for name in Path(args[filelist_arg]).read_text().splitlines():
+                if name:
+                    seed = (100 if subdir == "gt" else 200) + names.index(name)
+                    _write_feature(out_root / subdir / name, seed=seed)
+
+        class _Result:
+            returncode, stdout, stderr = 0, "", ""
+
+        return _Result()
+
+    monkeypatch.setattr(ctgen_mod.subprocess, "run", _fake_run)
+
+    out_dir = tmp_path / "run"
+    docker_result = CTGenEvaluator(gt_dir=gt_dir, fid_profile="docker")._run_fid(
+        pred_dir, out_dir / "fid_docker"
+    )
+    n300_result = CTGenEvaluator(gt_dir=gt_dir, fid_profile="docker_n300")._run_fid(
+        pred_dir, out_dir / "fid_docker_n300"
+    )
+    assert not any(v != v for v in docker_result.values()), docker_result  # no NaN
+    assert not any(v != v for v in n300_result.values()), n300_result
+
+    # Independent reference: the same seeds written directly into a fully clean, uncached
+    # feature set (no shared cache, no filtering) — must match docker_n300 bit-for-bit.
+    clean = tmp_path / "clean"
+    for i, n in enumerate(names):
+        _write_feature(clean / "gt" / n, seed=100 + i)
+        _write_feature(clean / "pred" / n, seed=200 + i)
+    expected = _fid_from_cached_features(clean, names, names)
+    assert expected is not None
+    for key, value in expected.items():
+        assert n300_result[key] == pytest.approx(value, abs=1e-9), key
+
+    # And confirm the sharing actually happened rather than being coincidentally bypassed: the
+    # per-pred-dir shared cache must hold all 6 names after both profiles ran.
+    shared_pred = ctgen_mod._shared_pred_feat_dir(pred_dir, "squeezenet1_1")
+    assert {p.name for p in shared_pred.iterdir()} == set(names)
+
+
 def test_fid_returns_none_when_a_named_feature_is_missing(tmp_path: Path):
     names = ["a.mha", "b.mha"]
     for i, n in enumerate(names):
@@ -234,9 +373,12 @@ def test_docker_n300_shares_docker_model_but_not_its_dirs():
     assert n300["num_images"] != docker["num_images"]
 
 
-def test_docker_n300_is_not_the_default():
-    """Requested as a selectable option, not a new default — the container-faithful 100-volume
-    "docker" profile must stay the default."""
+def test_docker_n300_is_not_the_single_instance_default():
+    """`docker_n300` IS in the default run_eval.py profile LIST (_DEFAULT_FID_PROFILES, since
+    2026-08-01) — this test is about a different, single-profile constant: CTGenEvaluator's own
+    constructor default / rescore_predictions.py's bare default, which stays the
+    container-faithful "docker" so a single-profile rescore lands beside what run_eval.py's
+    first pass already wrote."""
     assert _DEFAULT_FID_PROFILE == "docker"
 
 
@@ -260,8 +402,8 @@ def test_feature_dir_is_bound_to_one_gt_set(tmp_path: Path):
 
 
 def test_gt_set_marker_stays_out_of_the_shared_cache(tmp_path: Path):
-    """The marker must NOT live in features_dir/gt/: _populate_shared_gt_features copies every
-    file there into the cross-model cache, which _link_shared_gt_features then hardlinks into
+    """The marker must NOT live in features_dir/gt/: _populate_shared_features copies every
+    file there into the cross-model cache, which _link_shared_features then hardlinks into
     other runs — the marker would travel with it."""
     feats = tmp_path / "fid_features"
     (feats / "gt").mkdir(parents=True)

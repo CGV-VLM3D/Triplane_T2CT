@@ -1,0 +1,32 @@
+{
+  "n_cases": 8,
+  "control": {
+    "passed": true,
+    "n": 4
+  },
+  "stats": {
+    "real (GT)": {
+      "lr_liver_mean": 28.108718276023865,
+      "lr_liver_positive_frac": 1.0,
+      "ap_spine_mean": 0.030109911334091626,
+      "ap_spine_positive_frac": 1.0
+    },
+    "gen@1.0": {
+      "lr_liver_mean": 10.990596294403076,
+      "lr_liver_positive_frac": 0.75,
+      "ap_spine_mean": 0.023105736825980393,
+      "ap_spine_positive_frac": 1.0
+    },
+    "gen@0.8": {
+      "lr_liver_mean": 17.889622688293457,
+      "lr_liver_positive_frac": 1.0,
+      "ap_spine_mean": 0.029436925551470587,
+      "ap_spine_positive_frac": 1.0
+    }
+  },
+  "verdict": {
+    "real (GT)": "matches GT (unanimous per case)",
+    "gen@1.0": "matches GT (mean sign; per-case liver 75%, spine 100%)",
+    "gen@0.8": "matches GT (unanimous per case)"
+  }
+}

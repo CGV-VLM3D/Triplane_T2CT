@@ -12,6 +12,55 @@ If upstream HEAD has broken in the intervening days, document and re-pin.
 | fVLM | `third_party/fvlm` | https://github.com/alibaba-damo-academy/fvlm | `723a1f978a37c4dcce52b3f0562b926c0dc1c5c1` (**converted to regular directory 2026-06-08 — no longer a submodule**) |
 | Text2CT | `third_party/text2ct` | https://github.com/danielemolino/Text2CT | `4fa286a64f128b71f1dddf24f9ad3b447241634e` |
 | pytorch-grad-cam | `third_party/pytorch_grad_cam` | https://github.com/jacobgil/pytorch-grad-cam | `4e73d451ba0562ca134f5fb4f500a315a8b884b2` (added 2026-06-09; CAM engine for saliency Experiment 3; needs `pip install ttach`) |
+| SPECTRE | `third_party/spectre` | https://github.com/cclaess/SPECTRE | `c05af47fe1d5f3d19836493508c8c9b1291671d4` (added 2026-07-28; CT 3D-ViT foundation model — REPA teacher. Code MIT, **weights CC-BY-NC-SA**. Needs `pip install loralib` + a `huggingface_hub.load_state_dict_from_file` shim, see below) |
+| Foundation-VAE | `third_party/foundation_vae` | https://github.com/qic999/Foundation-VAE | `f891011e087bd0ce8cc5603baf8d5c333b54122e` (added 2026-07-14; reference for report2ct_wan — Wan CT VAE recon. `Reconstruction/Wan/` vendors the official Wan repo + `recon_ct_window_wan2.1.py` (native `Wan2_1_VAE`). We use diffusers `AutoencoderKLWan` instead; see [wan_latent_runbook.md](wan_latent_runbook.md)) |
+
+## ⚠ Re-pinning VLM3D-Dockers: diff the *call sites*, not just the tree
+
+When bumping `third_party/vlm3d_dockers`, compare `ct_challenges/ctgen_evaluation/evaluation.py`
+(the container ENTRYPOINT) against the previous pin — **the arguments it passes to the metric
+scripts are part of the metric definition**, and a changed argument is invisible in a normal
+"did the code move?" review.
+
+```bash
+git -C third_party/vlm3d_dockers diff <old>:ctgen_evaluation/evaluation.py \
+                                      <new>:ct_challenges/ctgen_evaluation/evaluation.py
+```
+
+This is not hypothetical: the `c73fe07 → a945900` bump (2026-06-09) added
+`--model_name squeezenet1_1` to the 2.5D-FID call. We re-pinned for the path reorg and did not
+notice, so our FID silently kept using the script's *default* feature network for seven weeks.
+Found 2026-07-29; see [ctgen_local_eval.md](ctgen_local_eval.md) §2.5D-FID 프로파일.
+
+## REPA-family reference clones (read-only, never imported)
+
+`third_party/repa_refs/` holds shallow clones of the four REPA papers' code, kept locally only as
+reading material while implementing `RepaAligner` — **nothing in `src/` imports them**. Gitignored
+(`.gitignore: third_party/repa_refs/`); re-clone with `git clone --depth 1 <url> <path>`.
+
+| Repo | Path | URL | SHA (2026-07-28) |
+|---|---|---|---|
+| REPA | `third_party/repa_refs/repa` | https://github.com/sihyun-yu/REPA | `67f714503e3892f993844aab088ffc5791c92613` |
+| U-REPA | `third_party/repa_refs/u_repa` | https://github.com/YuchuanTian/U-REPA | `376c1df54255c955c9d0499edd9a36c615522a0d` |
+| iREPA | `third_party/repa_refs/irepa` | https://github.com/end2end-diffusion/irepa | `99ad4ac234efe8de52ce157120f72856e836d09f` |
+| VideoREPA | `third_party/repa_refs/videorepa` | https://github.com/aHapBean/VideoREPA | `8d581dc301e18546a1808436c724f59d259d09f9` |
+
+## SPECTRE (added 2026-07-28) — REPA teacher encoder
+
+CT-only 3D ViT foundation model (arXiv:2511.17209). Two published backbones under
+`data/checkpoints/spectre/`: `..._no_vla.pt` (SSL only) and `..._patch16_128.pt` (SSL + vision-language),
+plus `spectre_combiner_feature_vit_large.pt` (scan-level combiner). We load by **explicit path** —
+`presets.py` registers only the VLA URL, so the SSL checkpoint has no preset route.
+
+Two environment adaptations, both outside `third_party/` (P2 keeps the tree unpatched):
+- `pip install loralib` — declared dependency of `spectre-fm`; `spectre/utils/__init__.py` imports `.lora`.
+- a `huggingface_hub.load_state_dict_from_file` shim — `spectre/utils/modeling.py:14` imports it at module
+  level and our `huggingface_hub` is 0.26.3 (added in 0.30+). It is only *called* on the HF-URL branch
+  (`modeling.py:77`), which our local-path loads never take. Shim lives in `tests/repa_probe/_spectre.py`
+  (`install_hf_shim`), same spirit as the numpy-2.x shim in `src/eval/tasks/_fid_runner.py`.
+  Do **not** upgrade `huggingface_hub` — transformers 4.46 / diffusers 0.31 pin against it.
+
+Verified end-to-end in [tests/repa_probe/u0_smoke/REPORT.md](../tests/repa_probe/u0_smoke/REPORT.md).
 
 **Text2CT** (added 2026-06-03) is a report→3D-CT generator baseline on the same MAISI
 latent-diffusion stack as Report2CT. Its sampler (`RFlowScheduler`) needs MONAI ≥ 1.5; we keep
@@ -41,6 +90,7 @@ git -C third_party/vlm3d_dockers   checkout a94590095847824d664e3a86f357924207f7
 git -C third_party/ct_clip         checkout a2a155c601987820433c01db69b64d701d3d229d
 # third_party/fvlm is NOT a submodule anymore (converted 2026-06-08)
 git -C third_party/text2ct         checkout 4fa286a64f128b71f1dddf24f9ad3b447241634e
+git -C third_party/spectre         checkout c05af47fe1d5f3d19836493508c8c9b1291671d4
 ```
 
 ## fVLM modifications (regular directory, not a submodule)
@@ -114,5 +164,5 @@ Replace with a minimal cfg dict and `BlipPretrain.from_config(cfg)` call.
 
 - third_party/ is **read-only** (project Principle P2) with the exception of the fVLM patches
   documented above. Code adaptation otherwise happens in `src/baselines/*_adapter.py`
-  (LightningModule wrappers) and `src/eval/vlm3d_runner.py`, not by modifying submodule sources.
+  (LightningModule wrappers) and `src/eval/` (samplers + `tasks/ctgen.py`), not by modifying submodule sources.
 - Re-pin only after a deliberate upstream sync; update this file in the same commit.

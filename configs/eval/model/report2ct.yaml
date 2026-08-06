@@ -4,7 +4,7 @@ name: report2ct
 _target_: src.eval.samplers.report2ct.Report2CTSampler
 
 # Must be provided on the CLI:
-#   model.ckpt_path=/workspace/outputs/report2ct/<timestamp>/checkpoints/epoch_079_valloss_1.3198.ckpt
+#   model.ckpt_path=/workspace/outputs/report2ct/<KST-date>[_N]/checkpoints/epoch_079_valloss_1.3198.ckpt
 ckpt_path: ???
 
 # RFlow denoising steps (100 ≈ 2 min/sample on A6000; 50 for quick eval)
@@ -13,11 +13,20 @@ n_steps: 100
 modality_class_label: 1   # CT class (matches training config)
 
 # Voxel spacing (mm) — UNet conditioning AND saved .mha affine (must match; scaled × 100
-# internally for conditioning). Upstream diff_model_infer_vlm3D.py uses (1.0, 1.0, 1.5)
-# (:95, :320); the FID runner then resamples to 1mm like the valid-GT.
-spacing_mm: [1.0, 1.0, 1.5]
+# internally for conditioning). Superseded 2026-07-26 by a joint (in-plane, z) n=300 sweep
+# (tests/spacing_fov/RESULTS.md §9, toy 5k/epoch_099 ckpt): the pure FID-minimum is
+# (0.8,0.8,1.3) → FID 0.984, but CLIP-T2I there (58.40) was judged too low. Recommended value
+# trades a little FID for CLIP: (0.757,0.757,1.5) → FID 1.412, CLIP-T2I 60.19. 0.757 is also
+# the training in-plane median (independent prior, not curve-fit); z=1.5 is the CLIP-favoring
+# side of a real FID(low-z)/CLIP(high-z) trade (§8 of the same doc — lower z pads more,
+# diluting content and lowering CLIP-T2I; higher z truncates, which CT-CLIP prefers). The
+# earlier (0.8,0.8,1.5) recommendation and 384mm-FOV-minimum rationale are superseded — see
+# memory report2ct-clipscore-spacing-fov (0.8 vs 1.0, z never swept) and
+# spacing-optimum-final-n300 (this decision, incl. the report2ct_wan comparison).
+spacing_mm: ???  # REQUIRED on CLI, no default (model.spacing_mm=[0.757,0.757,1.5]); recommended 0.757 0.757 1.5 (see above)
 
-# Classifier-free guidance scale. 1.0 = no guidance = faithful repro (upstream infer
-# has no cfg). Override with model.cfg_scale=5 for the paper's cfg variant.
-# NOTE: cfg RAISES FID (paper ablation 3.79→4.04→4.19); it only helps CLIPScore.
-cfg_scale: 1.0
+# Classifier-free guidance scale. 5.0 matches text2ct's guidance_scale and the paper's
+# recommended 3–7 range (Fig 5: CFG is what raises CLIPScore; drop_prob=0.15 was trained in).
+# 1.0 = no guidance = faithful upstream-infer repro (leaves CLIP near the ~16 floor).
+# NOTE: cfg RAISES FID slightly (paper ablation 3.79→4.04→4.19) — the CLIP/FID trade-off.
+cfg_scale: ???  # REQUIRED on CLI, no default (model.cfg_scale=5.0); recommended 5.0 (see above)

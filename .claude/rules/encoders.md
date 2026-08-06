@@ -27,7 +27,7 @@ convention is **not** the same across encoders — **MAISI VAE wants `[0,1]`, CT
 `[-1,1]` (HU/1000)**. Feeding one encoder the other's range produces plausible-looking but
 biased features/HU with no crash. Always check the per-encoder "Input" row below.
 
-> Status: MAISI VAE ✅ · CT-CLIP ✅ · FrozenCLIP3D ✅ · fVLM ✅ · GenerateCT ✅ · Report2CT ✅ — all covered.
+> Status: MAISI VAE ✅ · CT-CLIP ✅ · FrozenCLIP3D ✅ · fVLM ✅ · GenerateCT ✅ · Report2CT ✅ · SPECTRE ✅ — all covered.
 
 ---
 
@@ -269,5 +269,48 @@ that diffuses in the MAISI latent space. (Training is user-owned; memory `report
 
 **Saliency / grad** — `Report2CTTextEncoder.encode*` is `@torch.no_grad()` + frozen; the UNet is a trainable
 denoiser (grad flows in training). No standalone image-encoder contract here.
+
+---
+
+## SPECTRE — CT 3D ViT foundation model (frozen REPA teacher) · [src/baselines/spectre_adapter.py](../../src/baselines/spectre_adapter.py)
+
+`report2ct_wan` REPA 학습의 **정렬 타깃**. 이미지 전용 인코더라 CT-CLIP/fVLM의 `encode_image`/`encode_text`
+계약을 공유하지 않는다 — 산출물은 **dense 3D token grid**다. 런북: [docs/repa_runbook.md](../../docs/repa_runbook.md)
+
+**Build**
+```python
+from src.baselines.spectre_adapter import SpectreBackbone, CKPT_VLA
+bb = SpectreBackbone(device_str="cuda")                      # SSL-only 백본 (기본)
+bb = SpectreBackbone(ckpt_path=CKPT_VLA, with_combiner=True) # SSL+VLA + scan-level combiner
+```
+- ViT-L 338M: 24 layer, dim **1080**, patch **16×16×8**, crop **128×128×64** → crop당 8³=512 patch token (+CLS).
+- 아키텍처 kwargs는 `spectre.presets`에서 읽는다 (하드코딩 안 함 → config drift 없음). `strict=True` 로드.
+- 환경: `pip install loralib` + `huggingface_hub.load_state_dict_from_file` shim(`_install_hf_shim`).
+  **`huggingface_hub`를 업그레이드하지 말 것** (transformers 4.46 / diffusers 0.31 의존).
+
+**Input** — `(1, H, W, D)` channel-first **raw HU**. SPECTRE가 내부에서 `[-1000,1000] → [0,1]`을 적용한다
+(cross-encoder trap: MAISI `[0,1]` / CT-CLIP HU÷1000 `[-1,1]` / fVLM `(-1150,350)→[0,1]` / Wan `[-1,1]`과 전부 다르다).
+⚠ **모든 축이 crop_size의 배수여야 한다.** 아니면 upstream `window_scan`이 **center-crop**해 버린다
+(253 slice → 192, 61 slice 소실). `window()`는 자르지 않고 `ValueError`를 던진다 — pad는 호출자 책임.
+
+**Output**
+- `encode_dense(vol_hu, layer=None, pool_to=None) -> (Gh, Gw, Gd, 1080)` — 512×512×256이면 `(32,32,32,1080)`.
+  내부에서 **CLS를 제거**하고(`num_prefix_tokens == 1`) crop별 token을 전역 격자로 재조립한다.
+- `encode_global(vol_hu) -> (1080,)` — combiner 경유 scan-level (VLA에서만 의미 있음; combiner가 VLA 위에서 학습됨).
+- `window(vol_hu) -> (crops, grid)` / `encode_crops(crops, grid, layer=, want_global=)` — 한 번의 backbone
+  pass로 dense와 global을 함께 얻는 저수준 경로 (precompute가 쓴다).
+
+**Preprocessing / gotchas**
+- token 순서는 crop·patch 둘 다 **C-order, depth가 가장 빨리** 변한다 (`grid_patch`: `n=(h·n_w+w)·n_d+d`;
+  rope patch_embed `output_fmt='NHWDC'`). `tests/test_spectre_adapter.py`가 **모델 없는 인덱스 왕복**으로 고정한다.
+- **TF32를 켤 것** — fp32 대비 3.7× 빠르고 token cosine 최저 0.99998 (`tests/repa_probe/u2b_io/`).
+- teacher token에는 **iREPA spatial norm**을 걸어 쓴다 (`src/models/components/repa.py:spatial_norm`).
+  raw token은 global 성분이 커서 무관한 토큰끼리도 cos 0.24가 나온다.
+- crop 경계에 **seam**이 있다: 최종 레이어에서 이웃 cosine이 22.9 % 떨어진다. token-wise cosine 손실은
+  영향 없고 **관계형 손실만** 오염된다 → `RepaAligner(rel_scope="within_crop")`으로 공짜 제거 가능.
+- 가중치 라이선스 **CC-BY-NC-SA** (코드는 MIT).
+
+**Saliency / grad** — `encode_*`는 `@torch.no_grad()`이고 파라미터는 전부 frozen. grad가 필요하면
+`SpectreBackbone.model`(property)로 하위 모듈을 직접 구동한다 (CT-CLIP `.clip`과 같은 관례).
 
 <!-- all encoders covered — keep entries in sync with the cited adapters when they change -->

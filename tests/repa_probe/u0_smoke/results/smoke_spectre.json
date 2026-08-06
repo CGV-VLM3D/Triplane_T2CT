@@ -1,0 +1,111 @@
+{
+  "scan_id": "valid_1000_a_1",
+  "device": "cuda",
+  "spectre_version": "0.2.1",
+  "S0_index_roundtrip": {
+    "crop_grid": [
+      4,
+      4,
+      4
+    ],
+    "n_crops": 64,
+    "roundtrip_exact": true,
+    "max_abs_err": 0.0
+  },
+  "S1_window": {
+    "shape_padded": [
+      1,
+      512,
+      512,
+      256
+    ],
+    "depth_pad": 256,
+    "kept_after_center_crop": [
+      512,
+      512,
+      256
+    ],
+    "dropped_voxels": 0,
+    "crop_grid": [
+      4,
+      4,
+      4
+    ],
+    "crops_shape": [
+      64,
+      1,
+      128,
+      128,
+      64
+    ],
+    "crops_min": 0.0,
+    "crops_max": 1.0,
+    "pad_value_hu": -1000.0
+  },
+  "S2_tokens": {
+    "dense_shape": [
+      32,
+      32,
+      32,
+      1080
+    ],
+    "num_prefix_tokens": 1,
+    "patch_tokens_per_crop": 512,
+    "embed_dim": 1080,
+    "backbone_params_M": 338.5
+  },
+  "S3_anatomy": {
+    "n_lung_tokens": 3216,
+    "n_other_tokens": 29552,
+    "anchor_hwd": [
+      18,
+      9,
+      17
+    ],
+    "srss_lung_vs_other": 0.1502583771944046,
+    "cos_lung_mean": 0.35316580533981323,
+    "cos_other_mean": 0.20290742814540863,
+    "figure": "tests/repa_probe/u0_smoke/figs/S3_cossim_map_ssl.png"
+  },
+  "S4_intermediates": {
+    "layers": [
+      11,
+      17,
+      23
+    ],
+    "shapes": [
+      [
+        8,
+        8,
+        32,
+        1080
+      ],
+      [
+        8,
+        8,
+        32,
+        1080
+      ],
+      [
+        8,
+        8,
+        32,
+        1080
+      ]
+    ],
+    "depth": 24
+  },
+  "S5_global": {
+    "global_shape": [
+      1080
+    ]
+  },
+  "S6_cost": {
+    "load_resample_s": 6.26,
+    "backbone_build_and_window_s": 8.35,
+    "backbone_forward_s": 1.69,
+    "peak_gpu_GB": 2.45,
+    "dense_32_MB_fp16": 70.8,
+    "dense_16_MB_fp16": 8.8
+  }
+}

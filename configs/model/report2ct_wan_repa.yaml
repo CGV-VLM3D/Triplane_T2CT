@@ -1,0 +1,87 @@
+# report2ct_wan + REPA (U-REPA structure, frozen SPECTRE teacher).
+# Identical to configs/model/report2ct_wan.yaml apart from the `repa:` block — the UNet, scheduler,
+# lr, warmup and CFG regime are untouched so the comparison against the baseline run
+# (outputs/report2ct_wan/2026-07-16_3) isolates the alignment term.
+#
+# L = L_velocity + repa_weight * ( hard_weight * L_cos + rel_weight * L_rel )     (U-REPA Eq.5)
+#
+# Defaults come from measurements in tests/repa_probe/, not from the papers alone:
+#   projector: mlp        U4 — MLP beats conv on reachable cosine (0.5625 vs 0.5303 @1500 steps)
+#                         AND uses 5x fewer params (2.9M vs 14.9M). iREPA's conv claim did not
+#                         reproduce here; `conv` is kept as an ablation.
+#   teacher_grid: 16      U4 — 16^3 is EASIER to align than 32^3 (0.5625 vs 0.4615): an 8^3 student
+#                         tap cannot explain 8x more distinct targets. Also 8x cheaper I/O.
+#   spatial_norm: true    U3 — wins on all four spatial-structure metrics in 12/12 arms.
+#   repa_tap: middle_block  U-REPA's U-Net finding. U4 measured up_blocks.0 reaching higher cosine
+#                         (0.578) but that arm needs no upsampling at all (resolution confound),
+#                         and U-REPA's evidence for `middle` is FID, not reachability.
+#   rel_scope: global     U3 measured a 22.9 % neighbour-cosine drop across SPECTRE crop
+#                         boundaries; `within_crop` removes it for free. Left off by default so the
+#                         first run matches U-REPA, and flipped as the first relational ablation.
+
+_target_: src.models.report2ct_module.Report2CTModule
+
+# Training hyperparameters — source: config_maisi_diff_model_vlm3D.json:30-33
+lr: 2e-4                 # sqrt scale for batch 8 (report2ct baseline is 1e-4 @ batch 2)
+cfg_drop_prob: 0.15      # report2ct regime (whole-batch default); experiment sets cfg_per_sample=true
+spacing_scale: 1.0       # spacing already ×100 in DataModule (upstream :88)
+modality_class_label: 1  # CT modality — upstream :270
+lr_scheduler_power: 2.0  # upstream PolynomialLR :200
+warmup_steps: 500        # linear LR warmup before PolynomialLR (report2ct baseline keeps 0)
+
+# UNet — source: config_maisi_2560.json:diffusion_unet_def (channels adapted for Wan latent)
+unet:
+  _target_: monai.apps.generation.maisi.networks.diffusion_model_unet_maisi.DiffusionModelUNetMaisi
+  spatial_dims: 3
+  in_channels: 16          # Wan2.1 latent channels (was 4 for MAISI/text2ct)
+  out_channels: 16
+  num_channels: [64, 128, 256, 512]
+  num_res_blocks: 2
+  attention_levels: [false, false, true, true]
+  num_head_channels: [0, 0, 32, 32]
+  cross_attention_dim: 2560  # report2ct findings+impression context (B, 2, 2560)
+  num_class_embeds: 128
+  include_fc: true
+  include_spacing_input: true
+  include_top_region_index_input: false  # include_body_region: false (:102)
+  include_bottom_region_index_input: false
+  resblock_updown: true
+  with_conditioning: true
+  use_flash_attention: true
+
+# REPA alignment head — set `repa: null` to fall back to the exact baseline loss.
+repa:
+  _target_: src.models.components.repa.RepaAligner
+  student_channels: 512          # middle_block output channels (num_channels[-1])
+  teacher_dim: 1080              # SPECTRE ViT-L token dim
+  student_grid: [8, 8, 8]        # 64^3 latent / 8 (three stride-2 resblocks)
+  teacher_grid: [16, 16, 16]     # must match configs/data/report2ct_wan_repa.yaml:spectre_dir
+  crop_tokens: [4, 4, 4]         # SPECTRE crop (8^3 tokens at 32^3) after pooling to 16^3
+  projector: mlp
+  upsample: trilinear
+  spatial_norm_teacher: true
+  gamma: 1.0
+  hard_weight: 1.0               # 0 = VideoREPA-style relational-only (Track B)
+  rel_weight: 3.0                # U-REPA's w; their optimum is 3
+  rel_loss: urepa_l2             # | videorepa_l1_st | cos_ce
+  rel_tokens: 1024
+  rel_scope: global              # | within_crop  (removes the crop seam from the Gram)
+  global_weight: 0.0
+
+repa_weight: 0.5                 # lambda in U-REPA Eq.5 (their optimum; lambda=0 -> FID 5.72 to 10.91)
+repa_tap: middle_block
+repa_stop_step: null             # HASTE one-shot termination; e.g. 40000 to drop alignment mid-run
+
+# Finetune entry point (Track B): loads unet.* + scale_factor from a .ckpt and nothing else.
+# NOT Lightning's ckpt_path=, which would also restore a PolynomialLR that has already decayed
+# to ~0 after 300 epochs. Pair it with a small explicit `lr`.
+init_from_ckpt: null
+
+# Noise scheduler — source: config_maisi_2560.json:noise_scheduler
+noise_scheduler:
+  _target_: src.baselines.rflow.RFlowScheduler
+  num_train_timesteps: 1000
+  scale: 1.4
+  use_timestep_transform: true
+  use_discrete_timesteps: false
+  sample_method: uniform

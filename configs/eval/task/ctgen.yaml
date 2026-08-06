@@ -70,6 +70,14 @@ metrics:
                              # distance pass (reuses dice's segmentation — no extra GPU cost)
   subgroup: false            # per-sample subgroup summaries (per-label/burden/cluster) — groupby only
   subgroup_setlevel: false   # subgroup FID (+opt-in FVD) — reuses the fid_2p5d feature cache
+  # FID_2p5D + FVD_CTCLIP scored PER CONDITION for a manifest run (gt / label_matched_swap /
+  # label_mismatched_swap each as its own subset — see condition_setlevel.py). This is the
+  # in-run counterpart to scripts/score_condition_fid.py: set this to true (alongside
+  # task.metrics.per_sample=true, which it needs for sample_id/condition) and the numbers land
+  # in THIS run's SUMMARY.md under "FID/FVD by condition" — no separate command. Ignored
+  # (no-op) outside a manifest run. Unlike the pooled fid_2p5d/fvd/fvd_ctclip above, this is
+  # NOT refused for a manifest run — each condition's subset has no repeated target.
+  condition_fid: false
 
 # Paths to evaluation scripts and model weights.
 # NOTE: vlm3d_eval_dir is documentary only — CTGenEvaluator resolves the eval dir

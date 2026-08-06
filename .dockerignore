@@ -1,0 +1,21 @@
+# Build context is the repo root, which sits on a 28 TB volume holding datasets, checkpoints and
+# eval outputs. Whitelist instead of blacklist: exclude everything, then re-include only what the
+# ctgen submission image copies (vlm3d_challenge_eval/Dockerfile).
+*
+
+!src
+!vlm3d_challenge_eval
+
+# Re-including a file inside an excluded directory needs every ancestor opened, then re-closed,
+# level by level — otherwise the walker never descends into third_party/.
+!third_party
+third_party/*
+!third_party/maisi_bundle
+third_party/maisi_bundle/*
+!third_party/maisi_bundle/scripts
+third_party/maisi_bundle/scripts/*
+!third_party/maisi_bundle/scripts/rectified_flow.py
+
+**/__pycache__
+**/*.pyc
+**/.omc

@@ -27,18 +27,97 @@ def _fmt(value, digits=4, ints: bool = False) -> str:
         return str(value)
 
 
-def _headline_section(metrics_json: Path) -> list[str]:
-    if not metrics_json.is_file():
-        return []
-    metrics = json.loads(metrics_json.read_text())
-    lines = ["## Headline VLM3D metrics (`metrics.json`)", ""]
-    for key, value in metrics.items():
+# FID lives on a different scale per profile, so it is tabulated per profile rather than
+# listed once; everything else (CLIP / FVD) is profile-independent and listed once.
+_FID_COLS = ("FID_2p5D_XY", "FID_2p5D_YZ", "FID_2p5D_XZ", "FID_2p5D_Avg")
+_FID_META = ("fid_num_images", "fid_profile", "fid_model_name")
+# Display order; any profile not listed here is appended alphabetically.
+_PROFILE_ORDER = ("docker", "docker_n300", "research")
+
+
+def _read_json(path: Path) -> dict:
+    try:
+        return json.loads(path.read_text())
+    except (OSError, ValueError):
+        return {}
+
+
+def _collect_metrics(out_dir: Path, metrics_json: Path | None) -> tuple[dict, dict]:
+    """Gather every profile's metrics.json under ``out_dir``.
+
+    Returns:
+        ``(by_profile, shared)`` — ``by_profile`` maps profile name to its metrics dict;
+        ``shared`` holds the profile-independent metrics (CLIP / FVD), taken from
+        ``metrics_json`` when it carries any, else from the first source that does.
+    """
+    by_profile: dict[str, dict] = {}
+    # Pre-2026-07-31 runs kept one metrics.json at the top level with no `fid_profile` key;
+    # by convention that file is the `research` family (docs/ctgen_local_eval.md). Read it
+    # first so a real fid_<profile>/ folder overwrites it on collision.
+    legacy = out_dir / "metrics.json"
+    if legacy.is_file():
+        metrics = _read_json(legacy)
+        by_profile[metrics.get("fid_profile") or "research"] = metrics
+    for path in sorted(out_dir.glob("fid_*/metrics.json")):
+        metrics = _read_json(path)
+        # dir name is the authority — a merged file could carry a stale `fid_profile`.
+        by_profile[path.parent.name[len("fid_") :]] = metrics
+
+    def _shared_of(metrics: dict) -> dict:
         # `_history` (and any future `_`-prefixed bookkeeping) records WHEN each metric was
         # scored, not a metric — rendering it here would dump a nested list into the summary.
-        if key.startswith("_"):
-            continue
+        return {
+            k: v
+            for k, v in metrics.items()
+            if not k.startswith("_") and k not in _FID_COLS and k not in _FID_META
+        }
+
+    preferred = _shared_of(_read_json(metrics_json)) if metrics_json else {}
+    if preferred:
+        return by_profile, preferred
+    for metrics in by_profile.values():
+        shared = _shared_of(metrics)
+        if shared:
+            return by_profile, shared
+    return by_profile, {}
+
+
+def _headline_section(out_dir: Path, metrics_json: Path | None = None) -> list[str]:
+    by_profile, shared = _collect_metrics(out_dir, metrics_json)
+    if not by_profile:
+        return []
+    lines = ["## Headline VLM3D metrics", ""]
+    for key, value in shared.items():
         lines.append(f"- **{key}**: {_fmt(value)}")
     lines.append("")
+
+    ordered = [p for p in _PROFILE_ORDER if p in by_profile]
+    ordered += sorted(p for p in by_profile if p not in _PROFILE_ORDER)
+    rows = [
+        (p, by_profile[p])
+        for p in ordered
+        if any(c in by_profile[p] for c in _FID_COLS)
+    ]
+    if rows:
+        lines += [
+            "### 2.5D-FID by profile",
+            "",
+            "| profile | n | "
+            + " | ".join(c.replace("FID_2p5D_", "") for c in _FID_COLS)
+            + " |",
+            "|---|---|" + "---|" * len(_FID_COLS),
+        ]
+        for profile, metrics in rows:
+            cells = " | ".join(_fmt(metrics.get(c)) for c in _FID_COLS)
+            lines.append(
+                f"| {profile} | {_fmt(metrics.get('fid_num_images'), ints=True)} | {cells} |"
+            )
+        lines += [
+            "",
+            "⚠ Profiles are **not** comparable to each other (different feature network and/or "
+            "volume count); compare a model against another model within one profile only.",
+            "",
+        ]
     return lines
 
 
@@ -228,6 +307,45 @@ def _condition_section(per_sample_csv: Path) -> list[str]:
     return lines
 
 
+def _condition_fid_section(out_dir: Path) -> list[str]:
+    """FID/FVD by condition (``condition_fid/condition_fid_fvd.csv``, opt-in).
+
+    A run's default scoring REFUSES pooled FID/FVD for a manifest run (one target repeated
+    across conditions breaks "1 volume = 1 independent sample" — ``run_eval._refuse_setlevel_
+    metrics``), so this table only exists after ``scripts/score_condition_fid.py`` has scored
+    each condition's SUBSET separately, which has no such problem. Renders nothing until then.
+    """
+    path = out_dir / "condition_fid" / "condition_fid_fvd.csv"
+    if not path.is_file():
+        return []
+    df = pd.read_csv(path)
+    if df.empty:
+        return []
+    cols = ["condition", "n", "FID_2p5D_Avg", "FVD_CTCLIP"]
+    cols = [c for c in cols if c in df.columns]
+    lines = [
+        "## FID/FVD by condition (`condition_fid/condition_fid_fvd.csv`)",
+        "",
+        "Each condition scored as its OWN distribution (no pooling across conditions — see "
+        "module docstring in `condition_setlevel.py`), so these ARE valid FID/FVD, unlike the "
+        "pooled headline metric this run's `metrics.json` refuses to report.",
+        "",
+        "| " + " | ".join(cols) + " |",
+        "|" + "---|" * len(cols),
+    ]
+    for _, row in df.iterrows():
+        lines.append(
+            "| "
+            + " | ".join(
+                str(row[c]) if c == "condition" else _fmt(row[c], ints=(c == "n"))
+                for c in cols
+            )
+            + " |"
+        )
+    lines.append("")
+    return lines
+
+
 def _mask_section(per_sample_csv: Path) -> list[str]:
     if not per_sample_csv.is_file():
         return []
@@ -306,10 +424,13 @@ def write_summary(out_dir: str | Path, metrics_path: str | Path | None = None) -
     Args:
         out_dir: the eval run's top-level output directory; everything except the headline
             metrics is read from ``out_dir/analysis/``.
-        metrics_path: this run's ``metrics.json``. Since 2026-07-31 it lives in the profile
-            folder (``<out_dir>/fid_<profile>/metrics.json``) because ``docker`` and
-            ``research`` write the same keys on incomparable scales. Left as None, the old
-            top-level location is used, so pre-2026-07-31 runs still render.
+        metrics_path: preferred source for the profile-independent metrics (CLIP / FVD) —
+            normally this run's ``<out_dir>/fid_<profile>/metrics.json``. **Optional**: the
+            headline section discovers every ``fid_*/metrics.json`` under ``out_dir`` (plus a
+            pre-2026-07-31 top-level ``metrics.json``, which is the ``research`` family) and
+            tabulates their FIDs per profile regardless. Callers that omit it — e.g.
+            ``scripts/score_subgroups.py``, which re-scores an existing run — still get a full
+            headline instead of none.
 
     Returns:
         Path to the written ``SUMMARY.md``.
@@ -319,11 +440,10 @@ def write_summary(out_dir: str | Path, metrics_path: str | Path | None = None) -
     analysis_dir.mkdir(parents=True, exist_ok=True)
 
     lines = [f"# Eval summary — `{out_dir.name}`", ""]
-    lines += _headline_section(
-        Path(metrics_path) if metrics_path else out_dir / "metrics.json"
-    )
+    lines += _headline_section(out_dir, Path(metrics_path) if metrics_path else None)
     lines += _setlevel_section(analysis_dir)
     lines += _condition_section(analysis_dir / "per_sample.csv")
+    lines += _condition_fid_section(out_dir)
     lines += _subgroup_section(
         "Per-abnormality (18 labels)",
         analysis_dir / "subgroup" / "per_abnormality.csv",

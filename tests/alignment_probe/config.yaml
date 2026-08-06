@@ -1,0 +1,27 @@
+# python -m tests.alignment_probe.main  (또는 CLI 오버라이드: ... stage=train epochs=30)
+stage: eval          # embed | train | eval
+device: cuda:0
+
+# stage=embed
+encoder: ctclip      # t5 | report2ct | ctclip | text2ct | fvlm
+split: valid_v2      # train | valid_v2
+
+# stage=train
+epochs: 300
+batch_size: 16
+lr: 0.001
+weight_decay: 0.01
+num_workers: 8
+exp_name: eval_0629    # results/<exp_name>/ 하위에 plot·metrics 저장
+
+# stage=eval — t-SNE 색칠 abnormality
+# ABNORMALITY_LABELS 예시
+#   Medical material | Arterial wall calcification | Cardiomegaly | Pericardial effusion
+#   Coronary artery wall calcification | Hiatal hernia | Lymphadenopathy | Emphysema
+#   Atelectasis | Lung nodule | Lung opacity | Pulmonary fibrotic sequela
+#   Pleural effusion | Mosaic attenuation pattern | Peribronchial thickening | Consolidation
+#   Bronchiectasis | Interlobular septal thickening
+tsne_labels:
+  - Cardiomegaly
+  - Pleural effusion
+  - Emphysema

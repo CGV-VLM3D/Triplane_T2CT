@@ -71,9 +71,10 @@ so that model must be reachable (network or `HF_HOME` cache). The repo's shared 
 
 ## 2. (Fast path) evaluate their 1,000 released synthetic scans first
 
-The authors released ~1,000 pre-generated chest-CT volumes for the VLM3D challenge. Feeding
-those through [src/vlm3d_runner.py](../src/vlm3d_runner.py) yields a first Text2CT number with
-zero new model code — do this before/while wiring the adapter to de-risk. Confirm the exact HF
+The authors released ~1,000 pre-generated chest-CT volumes for the VLM3D challenge. Scoring
+those directly with `CTGenEvaluator` ([src/eval/tasks/ctgen.py](../src/eval/tasks/ctgen.py))
+yields a first Text2CT number with zero new model code — do this before/while wiring the adapter
+to de-risk. Confirm the exact HF
 repo id/path for the *scans* at download time (it differs from the weights repo) and place them
 under `/workspace/data/checkpoints/text2ct/released_scans/`.
 
@@ -99,8 +100,10 @@ CUDA_VISIBLE_DEVICES=0 pytest tests/test_text2ct_adapter.py -k requires_weights 
 CUDA_VISIBLE_DEVICES=0 python src/inference.py model=text2ct \
     output_dir=/workspace/data/text2ct_preds   # + prompts=... per configs/inference.yaml
 
-# Score against the CT-RATE valid 1000-split via VLM3D-Dockers
-python -m src.vlm3d_runner --out /workspace/data/text2ct_metrics.json
+# Score the generated dir against valid_v2 GT (CTGenEvaluator runs the docker scripts directly)
+python -c "from pathlib import Path; from src.eval.tasks.ctgen import CTGenEvaluator; \
+    CTGenEvaluator(gt_dir='/workspace/data/ctrate_toy_v2/valid_v2').evaluate( \
+        Path('/workspace/data/text2ct_preds'), Path('/workspace/data/text2ct_eval'))"
 ```
 
 > Spacing: upstream saves with affine `diag(0.75, 0.75, 3.0)`. `src/inference.py` currently

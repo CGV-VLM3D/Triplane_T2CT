@@ -1,0 +1,45 @@
+{
+  "scan_id": "valid_1000_a_1",
+  "rows": [
+    {
+      "mode": "fp32",
+      "forward_s": 1.314,
+      "srss": 0.128078,
+      "cos_mean": 1.0,
+      "cos_min": 1.0,
+      "max_abs_diff": 0.0
+    },
+    {
+      "mode": "tf32",
+      "forward_s": 0.353,
+      "srss": 0.128084,
+      "cos_mean": 0.99999988,
+      "cos_min": 0.99998087,
+      "max_abs_diff": 0.07845
+    },
+    {
+      "mode": "bf16",
+      "forward_s": 0.203,
+      "srss": 0.128054,
+      "cos_mean": 0.99995595,
+      "cos_min": 0.99555969,
+      "max_abs_diff": 0.76794
+    },
+    {
+      "mode": "fp16",
+      "forward_s": 0.205,
+      "srss": 0.128059,
+      "cos_mean": 0.99999946,
+      "cos_min": 0.99990797,
+      "max_abs_diff": 0.14322
+    },
+    {
+      "mode": "fp32 \u2192 fp16 \uc800\uc7a5 \uc655\ubcf5",
+      "forward_s": null,
+      "srss": 0.128085,
+      "cos_mean": 1.0,
+      "cos_min": 0.99999964,
+      "max_abs_diff": 0.0039
+    }
+  ]
+}

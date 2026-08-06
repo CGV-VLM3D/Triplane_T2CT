@@ -1,0 +1,37 @@
+split,label,n_positive_labels,affirmed_pred_precision,affirmed_pred_recall,tp,fp,fn,tn,raw_mention_count,raw_mention_in_label_negative_pct
+train,Medical material,2886,0.9518,0.6767,1953,99,933,21143,5994,64.16
+train,Arterial wall calcification,6701,0.8776,0.4793,3212,448,3489,16979,3677,12.37
+train,Cardiomegaly,2586,0.9418,0.5189,1342,83,1244,21459,1562,5.95
+train,Pericardial effusion,1702,0.8494,0.7291,1241,220,461,22206,15937,91.92
+train,Coronary artery wall calcification,5972,1.0,0.0007,4,0,5968,18156,4,0.0
+train,Hiatal hernia,3426,0.9929,0.9764,3345,24,81,20678,3379,0.74
+train,Lymphadenopathy,6115,0.0948,0.1627,995,9502,5120,8511,16515,85.45
+train,Emphysema,4677,0.9926,0.9483,4435,33,242,19418,4625,0.76
+train,Atelectasis,6170,0.8956,0.9131,5634,657,536,17301,6788,10.16
+train,Lung nodule,10974,0.9279,0.9702,10647,827,327,12327,13341,18.55
+train,Lung opacity,8846,0.8373,0.847,7493,1456,1353,13826,20117,57.61
+train,Pulmonary fibrotic sequela,6447,0.924,0.8807,5678,467,769,17214,6743,9.61
+train,Pleural effusion,2858,0.9618,0.8104,2316,92,542,21178,11674,78.82
+train,Mosaic attenuation pattern,1794,0.9426,0.5312,953,58,841,22276,1824,4.11
+train,Peribronchial thickening,2496,0.8435,0.8898,2221,412,275,21220,2733,16.54
+train,Consolidation,4234,0.9607,0.8373,3545,145,689,19749,5299,22.57
+train,Bronchiectasis,2411,0.986,0.9046,2181,31,230,21686,2274,1.63
+train,Interlobular septal thickening,1902,0.9886,0.6856,1304,15,598,22211,1421,1.2
+valid,Medical material,158,0.9739,0.7089,112,3,46,1403,393,67.94
+valid,Arterial wall calcification,435,0.8988,0.5103,222,25,213,1104,248,10.08
+valid,Cardiomegaly,164,0.9432,0.5061,83,5,81,1395,96,6.25
+valid,Pericardial effusion,110,0.8119,0.7455,82,19,28,1435,1004,91.24
+valid,Coronary artery wall calcification,388,0.0,0.0,0,0,388,1176,0,0.0
+valid,Hiatal hernia,218,0.9862,0.9862,215,3,3,1343,218,1.38
+valid,Lymphadenopathy,398,0.09,0.1533,61,617,337,549,1069,84.85
+valid,Emphysema,305,0.9898,0.9574,292,3,13,1256,306,1.31
+valid,Atelectasis,364,0.863,0.9176,334,53,30,1147,421,13.78
+valid,Lung nodule,704,0.9198,0.9616,677,59,27,801,871,19.86
+valid,Lung opacity,606,0.8641,0.8498,515,81,91,877,1314,55.78
+valid,Pulmonary fibrotic sequela,427,0.9364,0.897,383,26,44,1111,443,7.22
+valid,Pleural effusion,189,0.9623,0.8095,153,6,36,1369,765,78.56
+valid,Mosaic attenuation pattern,126,0.9508,0.4603,58,3,68,1435,125,4.0
+valid,Peribronchial thickening,175,0.8519,0.92,161,28,14,1361,192,14.58
+valid,Consolidation,298,0.9881,0.8356,249,3,49,1263,368,21.2
+valid,Bronchiectasis,169,0.9874,0.929,157,2,12,1393,163,1.23
+valid,Interlobular septal thickening,124,0.9873,0.629,78,1,46,1439,89,1.12

@@ -12,7 +12,7 @@ defaults:
   - override /logger: wandb
   - _self_
 
-task_name: report2ct_fvlm   # → outputs/report2ct_fvlm/<timestamp>/
+task_name: report2ct_fvlm   # → outputs/report2ct_fvlm/<KST-date>[_N]/
 tags: ["fvlm_cond", "ctgen"]
 seed: 42
 

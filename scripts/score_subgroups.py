@@ -23,7 +23,7 @@ from pathlib import Path
 from src.eval.analysis import clip_persample
 from src.eval.analysis.orchestrate import run_metrics_analysis, run_qc_figures
 from src.eval.ct_rate_cases import load_eval_cases, write_prompt_xlsx
-from src.eval.tasks.ctgen import _FID_PROFILES
+from src.eval.tasks.ctgen import _DEFAULT_SUBGROUP_FID_PROFILE, _FID_PROFILES
 
 log = logging.getLogger(__name__)
 
@@ -63,13 +63,14 @@ def main() -> None:
     ap.add_argument("--subgroup-config", default=SUBGROUP_CONFIG)
     ap.add_argument(
         "--subgroup-fid-profile",
-        default="research",
+        default=_DEFAULT_SUBGROUP_FID_PROFILE,
         choices=sorted(_FID_PROFILES),
         help="which FID profile's cached features subgroup_setlevel reuses (default: "
-        "research, the profile every existing subgroup-analysis asset was built on). Must "
-        "match a profile this run's task.fid_profile actually scored with, and that "
-        "profile's 29-axis ref-stats must exist (scripts/precompute_subgroup_fid_refstats.py "
-        "--fid-profile <name>) for the fast path — a missing cache still works, just slower.",
+        "docker_n300, changed from research on 2026-08-01 — the n=100 'docker' profile left "
+        "most per-label axes with single-digit or zero GT matches). Must match a profile "
+        "this run's task.fid_profile actually scored with, and that profile's 29-axis "
+        "ref-stats must exist (scripts/precompute_subgroup_fid_refstats.py --fid-profile "
+        "<name>) for the fast path — a missing cache still works, just slower.",
     )
     args = ap.parse_args()
 

@@ -11,7 +11,7 @@ defaults:
   - override /logger: wandb
   - _self_
 
-task_name: report2ct   # → outputs/report2ct/<timestamp>/
+task_name: report2ct   # → outputs/report2ct/<KST-date>[_N]
 tags: ["report2ct", "repro"]
 seed: 42
 

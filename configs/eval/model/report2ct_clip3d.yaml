@@ -1,0 +1,28 @@
+# @package _global_.model
+name: report2ct_clip3d
+
+_target_: src.eval.samplers.report2ct_clip3d.Report2CTCLIP3DSampler
+
+# Must be provided on the CLI:
+#   model.ckpt_path=/workspace/outputs/report2ct_clip3d/<KST-date>[_N]/checkpoints/epoch_*.ckpt
+ckpt_path: ???
+
+# Directory of precomputed FrozenCLIP3D cond embeddings (<scan_id>.pt, each (1, 768)).
+# For valid_v2 eval this is the valid split produced by
+# scripts/precompute_clip3d_cond_embeddings.py.
+cond_dir: /workspace/data/text2ct_clip3d/cond_embeddings/valid
+
+# RFlow denoising steps (100 ≈ 2 min/sample on A6000; 50 for quick eval)
+n_steps: 100
+
+modality_class_label: 1   # CT class (matches training config)
+
+# Voxel spacing (mm) — UNet conditioning AND saved .mha affine (must match; scaled × 100
+# internally). Synced to report2ct.yaml's CONFIRMED value (full-1304 FID 5.56→2.53 at
+# spacing 0.8; see that file's comment for the FOV/384mm rationale) — the latents are
+# Report2CT `_emb.nii.gz`, so the comparison stays apples-to-apples. NOT text2ct's 0.75/0.75/3.0.
+spacing_mm: ???  # REQUIRED on CLI, no default (model.spacing_mm=[0.8,0.8,1.5]); recommended 0.8 0.8 1.5 (FID-optimal, see above)
+
+# Classifier-free guidance scale. Synced to report2ct.yaml (5.0). cfg uncond branch uses
+# zeros_like(context) — works unchanged for the (1, 1, 768) CLIP3D context.
+cfg_scale: ???  # REQUIRED on CLI, no default (model.cfg_scale=5.0); recommended 5.0 (see above)

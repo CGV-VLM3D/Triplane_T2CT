@@ -1,0 +1,945 @@
+{
+  "n_volumes": 300,
+  "labels": [
+    "Medical material",
+    "Arterial wall calcification",
+    "Cardiomegaly",
+    "Pericardial effusion",
+    "Coronary artery wall calcification",
+    "Hiatal hernia",
+    "Lymphadenopathy",
+    "Emphysema",
+    "Atelectasis",
+    "Lung nodule",
+    "Lung opacity",
+    "Pulmonary fibrotic sequela",
+    "Pleural effusion",
+    "Mosaic attenuation pattern",
+    "Peribronchial thickening",
+    "Consolidation",
+    "Bronchiectasis",
+    "Interlobular septal thickening"
+  ],
+  "timestep_frac": 0.5,
+  "figure": "tests/repa_probe/u8_semantic/figs/U8_semantic_by_stage.png",
+  "rows": [
+    {
+      "kind": "teacher",
+      "model": "spectre_ssl",
+      "tap": "-",
+      "dim": 1080,
+      "linear_auroc": 0.7297659477859116,
+      "cknn_auroc": 0.6704300833553247,
+      "cka_spectre_ssl": 1.0
+    },
+    {
+      "kind": "teacher",
+      "model": "spectre_vla",
+      "tap": "-",
+      "dim": 1080,
+      "linear_auroc": 0.7510556290294503,
+      "cknn_auroc": 0.6821773550712962,
+      "cka_spectre_ssl": 0.8479396104812622
+    },
+    {
+      "kind": "teacher",
+      "model": "spectre_vla_scanlevel",
+      "tap": "-",
+      "dim": 1080,
+      "linear_auroc": 0.783409763077886,
+      "cknn_auroc": 0.7978321464418875,
+      "cka_spectre_ssl": 0.28740692138671875
+    },
+    {
+      "kind": "student",
+      "model": "base_ep009",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.5444334933709168,
+      "cknn_auroc": 0.5122240803645632,
+      "cka_spectre_ssl": 0.18604911863803864
+    },
+    {
+      "kind": "student",
+      "model": "base_ep009",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.6436214503187608,
+      "cknn_auroc": 0.5133319870175439,
+      "cka_spectre_ssl": 0.18059785664081573
+    },
+    {
+      "kind": "student",
+      "model": "base_ep009",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6308812918057113,
+      "cknn_auroc": 0.5433151233885014,
+      "cka_spectre_ssl": 0.3355594575405121
+    },
+    {
+      "kind": "student",
+      "model": "base_ep009",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.6678221517836067,
+      "cknn_auroc": 0.5713051353566193,
+      "cka_spectre_ssl": 0.5024299025535583
+    },
+    {
+      "kind": "student",
+      "model": "base_ep009",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.6558068631010064,
+      "cknn_auroc": 0.5436930504794408,
+      "cka_spectre_ssl": 0.4969763457775116
+    },
+    {
+      "kind": "student",
+      "model": "base_ep009",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.6672406779002089,
+      "cknn_auroc": 0.5637883869798959,
+      "cka_spectre_ssl": 0.5036635398864746
+    },
+    {
+      "kind": "student",
+      "model": "base_ep009",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.6673961538156289,
+      "cknn_auroc": 0.5968811868494126,
+      "cka_spectre_ssl": 0.4760490953922272
+    },
+    {
+      "kind": "student",
+      "model": "base_ep009",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.6373142574747103,
+      "cknn_auroc": 0.5928045466234447,
+      "cka_spectre_ssl": 0.37776273488998413
+    },
+    {
+      "kind": "student",
+      "model": "base_ep009",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.6484079911260894,
+      "cknn_auroc": 0.5167277583805713,
+      "cka_spectre_ssl": 0.43997621536254883
+    },
+    {
+      "kind": "student",
+      "model": "base_ep029",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.5415905187787956,
+      "cknn_auroc": 0.5200053370632236,
+      "cka_spectre_ssl": 0.18746180832386017
+    },
+    {
+      "kind": "student",
+      "model": "base_ep029",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.6617021299996627,
+      "cknn_auroc": 0.49910568898233887,
+      "cka_spectre_ssl": 0.16395770013332367
+    },
+    {
+      "kind": "student",
+      "model": "base_ep029",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6564926054749636,
+      "cknn_auroc": 0.5407784065685612,
+      "cka_spectre_ssl": 0.29296454787254333
+    },
+    {
+      "kind": "student",
+      "model": "base_ep029",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.6746117739244184,
+      "cknn_auroc": 0.5617710156828889,
+      "cka_spectre_ssl": 0.40901613235473633
+    },
+    {
+      "kind": "student",
+      "model": "base_ep029",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.6517594696233826,
+      "cknn_auroc": 0.5652506915931189,
+      "cka_spectre_ssl": 0.44889867305755615
+    },
+    {
+      "kind": "student",
+      "model": "base_ep029",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.6583553637245858,
+      "cknn_auroc": 0.5714243983533367,
+      "cka_spectre_ssl": 0.43773236870765686
+    },
+    {
+      "kind": "student",
+      "model": "base_ep029",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.6599436059733004,
+      "cknn_auroc": 0.5736359534221528,
+      "cka_spectre_ssl": 0.26889827847480774
+    },
+    {
+      "kind": "student",
+      "model": "base_ep029",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.6976740522404974,
+      "cknn_auroc": 0.591850189103348,
+      "cka_spectre_ssl": 0.5119206309318542
+    },
+    {
+      "kind": "student",
+      "model": "base_ep029",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.6867097145651376,
+      "cknn_auroc": 0.5576436801110566,
+      "cka_spectre_ssl": 0.45770058035850525
+    },
+    {
+      "kind": "student",
+      "model": "base_ep079",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.5376128954556525,
+      "cknn_auroc": 0.512727892135778,
+      "cka_spectre_ssl": 0.1930430680513382
+    },
+    {
+      "kind": "student",
+      "model": "base_ep079",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.6512746309766789,
+      "cknn_auroc": 0.5091888526376739,
+      "cka_spectre_ssl": 0.17055144906044006
+    },
+    {
+      "kind": "student",
+      "model": "base_ep079",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6824723929709668,
+      "cknn_auroc": 0.5520576998147536,
+      "cka_spectre_ssl": 0.3022189736366272
+    },
+    {
+      "kind": "student",
+      "model": "base_ep079",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.6839100687954648,
+      "cknn_auroc": 0.5549353581017779,
+      "cka_spectre_ssl": 0.4273492097854614
+    },
+    {
+      "kind": "student",
+      "model": "base_ep079",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.6647876004335775,
+      "cknn_auroc": 0.5647691335399123,
+      "cka_spectre_ssl": 0.4219192564487457
+    },
+    {
+      "kind": "student",
+      "model": "base_ep079",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.6661489589967908,
+      "cknn_auroc": 0.5549275221180043,
+      "cka_spectre_ssl": 0.35739004611968994
+    },
+    {
+      "kind": "student",
+      "model": "base_ep079",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.6725854605645206,
+      "cknn_auroc": 0.6457151209107804,
+      "cka_spectre_ssl": 0.39272740483283997
+    },
+    {
+      "kind": "student",
+      "model": "base_ep079",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.6948010761142973,
+      "cknn_auroc": 0.6114364202808433,
+      "cka_spectre_ssl": 0.5147899985313416
+    },
+    {
+      "kind": "student",
+      "model": "base_ep079",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.6907269136518451,
+      "cknn_auroc": 0.588358569249186,
+      "cka_spectre_ssl": 0.4850349426269531
+    },
+    {
+      "kind": "student",
+      "model": "base_ep119",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.5381527924371785,
+      "cknn_auroc": 0.5073720510222741,
+      "cka_spectre_ssl": 0.1951749473810196
+    },
+    {
+      "kind": "student",
+      "model": "base_ep119",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.6490746213275318,
+      "cknn_auroc": 0.5215935449434356,
+      "cka_spectre_ssl": 0.17416422069072723
+    },
+    {
+      "kind": "student",
+      "model": "base_ep119",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6811572278296174,
+      "cknn_auroc": 0.5463366151551452,
+      "cka_spectre_ssl": 0.3010046184062958
+    },
+    {
+      "kind": "student",
+      "model": "base_ep119",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.6928141598735621,
+      "cknn_auroc": 0.5714065896761658,
+      "cka_spectre_ssl": 0.4364945888519287
+    },
+    {
+      "kind": "student",
+      "model": "base_ep119",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.6883127624835526,
+      "cknn_auroc": 0.5671902920279698,
+      "cka_spectre_ssl": 0.4083027243614197
+    },
+    {
+      "kind": "student",
+      "model": "base_ep119",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.6866314928730998,
+      "cknn_auroc": 0.5698627777132075,
+      "cka_spectre_ssl": 0.39515581727027893
+    },
+    {
+      "kind": "student",
+      "model": "base_ep119",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.663244960102409,
+      "cknn_auroc": 0.6245985904305681,
+      "cka_spectre_ssl": 0.42096343636512756
+    },
+    {
+      "kind": "student",
+      "model": "base_ep119",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.6864579976980141,
+      "cknn_auroc": 0.600015835874383,
+      "cka_spectre_ssl": 0.4862816631793976
+    },
+    {
+      "kind": "student",
+      "model": "base_ep119",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.6924343937805273,
+      "cknn_auroc": 0.5781858674237687,
+      "cka_spectre_ssl": 0.44812238216400146
+    },
+    {
+      "kind": "student",
+      "model": "base_ep179",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.5381874064501726,
+      "cknn_auroc": 0.5200066610219213,
+      "cka_spectre_ssl": 0.19810941815376282
+    },
+    {
+      "kind": "student",
+      "model": "base_ep179",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.6495703473770928,
+      "cknn_auroc": 0.5158639519055895,
+      "cka_spectre_ssl": 0.17853498458862305
+    },
+    {
+      "kind": "student",
+      "model": "base_ep179",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6807461104704768,
+      "cknn_auroc": 0.5597395449902355,
+      "cka_spectre_ssl": 0.3128054738044739
+    },
+    {
+      "kind": "student",
+      "model": "base_ep179",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.6868048244314564,
+      "cknn_auroc": 0.5709473656846372,
+      "cka_spectre_ssl": 0.45421627163887024
+    },
+    {
+      "kind": "student",
+      "model": "base_ep179",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.6622143565358152,
+      "cknn_auroc": 0.5782910577997363,
+      "cka_spectre_ssl": 0.4891479015350342
+    },
+    {
+      "kind": "student",
+      "model": "base_ep179",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.668209176122715,
+      "cknn_auroc": 0.5919367484049778,
+      "cka_spectre_ssl": 0.48194652795791626
+    },
+    {
+      "kind": "student",
+      "model": "base_ep179",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.6590213230852404,
+      "cknn_auroc": 0.6148125799204002,
+      "cka_spectre_ssl": 0.4799545705318451
+    },
+    {
+      "kind": "student",
+      "model": "base_ep179",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.6908585316643463,
+      "cknn_auroc": 0.5954837968401097,
+      "cka_spectre_ssl": 0.49031132459640503
+    },
+    {
+      "kind": "student",
+      "model": "base_ep179",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.6989586254550152,
+      "cknn_auroc": 0.5804011274447798,
+      "cka_spectre_ssl": 0.43460169434547424
+    },
+    {
+      "kind": "student",
+      "model": "base_ep239",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.539006087406532,
+      "cknn_auroc": 0.5116353910725598,
+      "cka_spectre_ssl": 0.20019422471523285
+    },
+    {
+      "kind": "student",
+      "model": "base_ep239",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.6500535272534423,
+      "cknn_auroc": 0.5218132718338183,
+      "cka_spectre_ssl": 0.18139678239822388
+    },
+    {
+      "kind": "student",
+      "model": "base_ep239",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6796957822158443,
+      "cknn_auroc": 0.5539854176046286,
+      "cka_spectre_ssl": 0.3019601106643677
+    },
+    {
+      "kind": "student",
+      "model": "base_ep239",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.6894557855607772,
+      "cknn_auroc": 0.5601556223734817,
+      "cka_spectre_ssl": 0.45181456208229065
+    },
+    {
+      "kind": "student",
+      "model": "base_ep239",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.6741177859215753,
+      "cknn_auroc": 0.5907850247523478,
+      "cka_spectre_ssl": 0.47114187479019165
+    },
+    {
+      "kind": "student",
+      "model": "base_ep239",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.6730794390253189,
+      "cknn_auroc": 0.5890214596485543,
+      "cka_spectre_ssl": 0.47091779112815857
+    },
+    {
+      "kind": "student",
+      "model": "base_ep239",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.6692991144231965,
+      "cknn_auroc": 0.6163375805035346,
+      "cka_spectre_ssl": 0.5005573630332947
+    },
+    {
+      "kind": "student",
+      "model": "base_ep239",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.6919628791421872,
+      "cknn_auroc": 0.6108327012017833,
+      "cka_spectre_ssl": 0.48662859201431274
+    },
+    {
+      "kind": "student",
+      "model": "base_ep239",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.7016703065065687,
+      "cknn_auroc": 0.5875879619770914,
+      "cka_spectre_ssl": 0.42620640993118286
+    },
+    {
+      "kind": "student",
+      "model": "base_ep299",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.5385143145883708,
+      "cknn_auroc": 0.5115266805277883,
+      "cka_spectre_ssl": 0.20058128237724304
+    },
+    {
+      "kind": "student",
+      "model": "base_ep299",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.6508578822694117,
+      "cknn_auroc": 0.5231055707265804,
+      "cka_spectre_ssl": 0.18190817534923553
+    },
+    {
+      "kind": "student",
+      "model": "base_ep299",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6798240938316611,
+      "cknn_auroc": 0.5608061601216106,
+      "cka_spectre_ssl": 0.3010607361793518
+    },
+    {
+      "kind": "student",
+      "model": "base_ep299",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.6901708344560865,
+      "cknn_auroc": 0.560659195192497,
+      "cka_spectre_ssl": 0.4484134912490845
+    },
+    {
+      "kind": "student",
+      "model": "base_ep299",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.668802301267184,
+      "cknn_auroc": 0.5885674019372016,
+      "cka_spectre_ssl": 0.467894583940506
+    },
+    {
+      "kind": "student",
+      "model": "base_ep299",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.6625645927290108,
+      "cknn_auroc": 0.5754316572416318,
+      "cka_spectre_ssl": 0.46393707394599915
+    },
+    {
+      "kind": "student",
+      "model": "base_ep299",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.6637433921421909,
+      "cknn_auroc": 0.6247817641875429,
+      "cka_spectre_ssl": 0.49839773774147034
+    },
+    {
+      "kind": "student",
+      "model": "base_ep299",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.6900925936763226,
+      "cknn_auroc": 0.6085178307969927,
+      "cka_spectre_ssl": 0.489183634519577
+    },
+    {
+      "kind": "student",
+      "model": "base_ep299",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.7027955723740578,
+      "cknn_auroc": 0.582879258695844,
+      "cka_spectre_ssl": 0.4274429976940155
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep009",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.5319467320900939,
+      "cknn_auroc": 0.5116802985919161,
+      "cka_spectre_ssl": 0.18601684272289276
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep009",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.6197638761340039,
+      "cknn_auroc": 0.5030202731632145,
+      "cka_spectre_ssl": 0.15575401484966278
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep009",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6550319197630773,
+      "cknn_auroc": 0.5402975896557394,
+      "cka_spectre_ssl": 0.1619298905134201
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep009",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.6605504224133134,
+      "cknn_auroc": 0.5774523153701137,
+      "cka_spectre_ssl": 0.28086912631988525
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep009",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.6810948755299117,
+      "cknn_auroc": 0.6256589640324687,
+      "cka_spectre_ssl": 0.6008818745613098
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep009",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.7071826219838816,
+      "cknn_auroc": 0.6539333900687799,
+      "cka_spectre_ssl": 0.8267462253570557
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep009",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.6972375809216521,
+      "cknn_auroc": 0.6066249302424835,
+      "cka_spectre_ssl": 0.6682873368263245
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep009",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.6818593601879772,
+      "cknn_auroc": 0.5791598571108136,
+      "cka_spectre_ssl": 0.4365062117576599
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep009",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.6754222546074533,
+      "cknn_auroc": 0.545251487554953,
+      "cka_spectre_ssl": 0.46716174483299255
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep029",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.5254720307157533,
+      "cknn_auroc": 0.5104085141046983,
+      "cka_spectre_ssl": 0.18575648963451385
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep029",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.6207294035799424,
+      "cknn_auroc": 0.5090384921959319,
+      "cka_spectre_ssl": 0.1616867631673813
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep029",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6589304071770786,
+      "cknn_auroc": 0.5365093156320682,
+      "cka_spectre_ssl": 0.19750742614269257
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep029",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.6665961893776724,
+      "cknn_auroc": 0.6000029343138187,
+      "cka_spectre_ssl": 0.3382885754108429
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep029",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.6973181715574278,
+      "cknn_auroc": 0.6571043263063735,
+      "cka_spectre_ssl": 0.6388483643531799
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep029",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.7006927699148221,
+      "cknn_auroc": 0.679902779271923,
+      "cka_spectre_ssl": 0.8763701915740967
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep029",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.6861270613471091,
+      "cknn_auroc": 0.6492519241911667,
+      "cka_spectre_ssl": 0.640457272529602
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep029",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.6942337010147062,
+      "cknn_auroc": 0.5858941236944222,
+      "cka_spectre_ssl": 0.4309351444244385
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep029",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.7009183163293495,
+      "cknn_auroc": 0.5693253200599603,
+      "cka_spectre_ssl": 0.45243069529533386
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep059",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.5257843628082403,
+      "cknn_auroc": 0.5003376942448674,
+      "cka_spectre_ssl": 0.18724505603313446
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep059",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.6350668308732585,
+      "cknn_auroc": 0.49837544531991607,
+      "cka_spectre_ssl": 0.16272929310798645
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep059",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6682807066612395,
+      "cknn_auroc": 0.527209261033132,
+      "cka_spectre_ssl": 0.19478824734687805
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep059",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.6717198037562048,
+      "cknn_auroc": 0.5835801999533026,
+      "cka_spectre_ssl": 0.3280549645423889
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep059",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.6967746047039552,
+      "cknn_auroc": 0.6430384923026584,
+      "cka_spectre_ssl": 0.6053239703178406
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep059",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.6994325343937056,
+      "cknn_auroc": 0.6802736397525017,
+      "cka_spectre_ssl": 0.8851150870323181
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep059",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.6725493759021338,
+      "cknn_auroc": 0.6538063012087508,
+      "cka_spectre_ssl": 0.6139927506446838
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep059",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.7088501788247515,
+      "cknn_auroc": 0.6060668142085164,
+      "cka_spectre_ssl": 0.4120453894138336
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep059",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.6986334769486109,
+      "cknn_auroc": 0.5669703791347533,
+      "cka_spectre_ssl": 0.42392250895500183
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep099",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.5260489480106201,
+      "cknn_auroc": 0.4989258008028614,
+      "cka_spectre_ssl": 0.18875649571418762
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep099",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.6301861773674532,
+      "cknn_auroc": 0.5006459413807502,
+      "cka_spectre_ssl": 0.16667866706848145
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep099",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6746338749633486,
+      "cknn_auroc": 0.5310763204914077,
+      "cka_spectre_ssl": 0.2041100412607193
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep099",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.6777567015824572,
+      "cknn_auroc": 0.5714930561350011,
+      "cka_spectre_ssl": 0.3410530984401703
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep099",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.6946901782676446,
+      "cknn_auroc": 0.6589294837449466,
+      "cka_spectre_ssl": 0.5979264378547668
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep099",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.6998884124062834,
+      "cknn_auroc": 0.686586253486465,
+      "cka_spectre_ssl": 0.8884738683700562
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep099",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.6747602774061843,
+      "cknn_auroc": 0.6526759056541684,
+      "cka_spectre_ssl": 0.6205493807792664
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep099",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.7128146793113866,
+      "cknn_auroc": 0.6134505112495376,
+      "cka_spectre_ssl": 0.4219723641872406
+    },
+    {
+      "kind": "student",
+      "model": "repa_ep099",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.6981139459069013,
+      "cknn_auroc": 0.5772871573234606,
+      "cka_spectre_ssl": 0.429196834564209
+    }
+  ]
+}

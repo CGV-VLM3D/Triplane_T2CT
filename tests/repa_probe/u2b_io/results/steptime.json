@@ -1,0 +1,31 @@
+{
+  "n_scans": 701,
+  "steps": 40,
+  "batch_size": 8,
+  "rows": [
+    {
+      "arm": "baseline (no REPA)",
+      "step_s": 0.8917,
+      "data_wait_s": 0.0004,
+      "teacher_MB_per_step": 0.0,
+      "peak_gpu_GB": 80.06,
+      "overhead_pct": 0.0
+    },
+    {
+      "arm": "REPA 16\u00b3",
+      "step_s": 0.9141,
+      "data_wait_s": 0.0006,
+      "teacher_MB_per_step": 70.8,
+      "peak_gpu_GB": 80.1,
+      "overhead_pct": 2.5
+    },
+    {
+      "arm": "REPA 32\u00b3",
+      "step_s": 1.3794,
+      "data_wait_s": 0.1814,
+      "teacher_MB_per_step": 566.2,
+      "peak_gpu_GB": 87.8,
+      "overhead_pct": 54.7
+    }
+  ]
+}

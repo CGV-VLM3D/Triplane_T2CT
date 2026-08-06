@@ -1,0 +1,44 @@
+# CLIP3D-conditioned variant of configs/model/report2ct.yaml.
+# ONLY change vs report2ct.yaml: cross_attention_dim 2560 → 768, so the same Report2CT
+# backbone consumes text2ct's FrozenCLIP3D condition (B, 1, 768) instead of the
+# 3-text-encoder (B, 2, 2560) context. Everything else (RFlow scheduler, channels,
+# attention levels, class embeds, spacing input) is identical — a pure "swap the
+# conditioner" experiment to isolate condition vs architecture. Trained from scratch.
+
+_target_: src.models.report2ct_module.Report2CTModule
+
+# Training hyperparameters — source: config_maisi_diff_model_vlm3D.json:30-33
+lr: 1e-4
+cfg_drop_prob: 0.15      # upstream diff_model_train_vlm3D_2560_multi_text.py:295
+spacing_scale: 1.0       # spacing already ×100 in DataModule (upstream :88)
+modality_class_label: 1  # CT modality — upstream :270
+lr_scheduler_power: 2.0  # upstream PolynomialLR :200
+
+# UNet — source: config_maisi_2560.json:diffusion_unet_def
+unet:
+  _target_: monai.apps.generation.maisi.networks.diffusion_model_unet_maisi.DiffusionModelUNetMaisi
+  spatial_dims: 3
+  in_channels: 4           # latent_channels :103
+  out_channels: 4
+  num_channels: [64, 128, 256, 512]
+  num_res_blocks: 2
+  attention_levels: [false, false, true, true]
+  num_head_channels: [0, 0, 32, 32]
+  cross_attention_dim: 768   # FrozenCLIP3D condition dim (was 2560 in report2ct.yaml)
+  num_class_embeds: 128
+  include_fc: true
+  include_spacing_input: true
+  include_top_region_index_input: false  # include_body_region: false (:102)
+  include_bottom_region_index_input: false
+  resblock_updown: true
+  with_conditioning: true
+  use_flash_attention: true
+
+# Noise scheduler — source: config_maisi_2560.json:noise_scheduler
+noise_scheduler:
+  _target_: src.baselines.rflow.RFlowScheduler
+  num_train_timesteps: 1000
+  scale: 1.4
+  use_timestep_transform: true
+  use_discrete_timesteps: false
+  sample_method: uniform

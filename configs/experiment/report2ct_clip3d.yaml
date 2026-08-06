@@ -1,0 +1,37 @@
+# @package _global_
+# CLIP3D-conditioned ctgen experiment — SAME Report2CT backbone, conditioner swapped from
+# 3 text encoders (B,2,2560) to text2ct's frozen FrozenCLIP3D embedding (B,1,768). Isolates
+# whether text2ct's edge is its condition or its UNet/training (cf. report2ct_repro / report2ct_fvlm).
+# Launch: CUDA_VISIBLE_DEVICES=0 python src/train.py experiment=report2ct_clip3d
+# Smoke:  CUDA_VISIBLE_DEVICES=0 python src/train.py experiment=report2ct_clip3d trainer.max_epochs=1 trainer.limit_train_batches=50
+
+defaults:
+  - override /data: clip3d_cond
+  - override /model: report2ct_clip3d
+  - override /trainer: report2ct
+  - override /callbacks: default
+  - override /logger: wandb
+  - _self_
+
+task_name: report2ct_clip3d   # → outputs/report2ct_clip3d/<KST-date>[_N]/
+tags: ["clip3d_cond", "ctgen"]
+seed: 42
+
+logger:
+  wandb:
+    group: "clip3d-cond"   # cf. report2ct_repro "baseline-repro", report2ct_fvlm "fvlm-cond"
+test: false   # no test_step() in Report2CTModule
+
+# Validation = valid_v2 1304 — the canonical validation set; Report2CT/fVLM are measured on
+# the same set, so this stays apples-to-apples. Needs the datalist validation split: valid_v2
+# image latents + valid CLIP3D cond embeddings (precompute_clip3d_cond_embeddings.py).
+callbacks:
+  early_stopping: null   # disabled: diffusion trains to fixed n_epochs
+  model_checkpoint:
+    monitor: null              # no metric-based "best" selection
+    every_n_epochs: 5          # ← periodic snapshot interval (tune here)
+    save_top_k: -1             # keep every snapshot (post-hoc FID select / future post-hoc EMA)
+    save_last: true            # keep last.ckpt for resume
+    filename: "epoch_{epoch:03d}"
+    auto_insert_metric_name: false
+  rich_progress_bar: null   # disabled: conflicts with wandb's Rich console

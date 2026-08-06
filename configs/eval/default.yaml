@@ -3,17 +3,25 @@ defaults:
   - model: report2ct
   - _self_
 
-# Output root: each eval run lands under outputs/<model>/eval_<timestamp>/ (mirrors training's
-# outputs/<model>/<timestamp>/). Shared GT / FID-feature caches stay under data/vlm3d_eval/ (see ctgen task).
-# out_dir mirrors Hydra's run dir (set below) so .hydra/config.yaml + run_eval.log land in the SAME
-# folder as metrics.json / summary.json / predictions/ — single timestamp, nothing split off.
-out_dir: ${hydra:runtime.output_dir}
+# Output root: each eval run lands under outputs/<model>/eval_<KST-date>[_N]/ (mirrors training's
+# outputs/<model>/<KST-date>[_N]/). Shared GT / FID-feature caches stay under data/vlm3d_eval/ (see ctgen task).
+# `out_dir` is THE knob — Hydra's run dir follows it below, so .hydra/config.yaml + run_eval.log
+# always land in the SAME folder as metrics.json / summary.json / predictions/ (single run dir,
+# nothing split off). dated_rundir (src/utils/resolvers.py) gives the KST date + _2/_3… on same-day
+# collision; the eval_ prefix keeps eval runs distinct from training runs in the same folder. It is
+# registered with use_cache=True, so resolving it here AND in hydra.run.dir yields one same path.
+out_dir: ${dated_rundir:/workspace/outputs/${model.name},eval_}
 
-# Point Hydra's run dir at the model-namespaced eval folder (its default would scatter .hydra/ + the
-# .log under outputs/<date>/<time>/). This is the single source of the run timestamp.
+# Follows out_dir — NOT the reverse. The old wiring was `out_dir: ${hydra:runtime.output_dir}`, under
+# which `out_dir=<dir>` sent results somewhere Hydra never logged to: that results dir then kept a
+# .hydra/ belonging to a DIFFERENT run, which is exactly how the 2026-07-29 clobber hid its origin
+# (docs/ctgen_local_eval.md). Now `out_dir=<dir>` moves both. Overriding `hydra.run.dir=` directly
+# splits them the other way instead, so prefer `out_dir=`.
+# ⚠ --multirun would break the pairing (sweeps use hydra.sweep.dir, which out_dir cannot follow);
+# nothing in this repo uses multirun today.
 hydra:
   run:
-    dir: /workspace/outputs/${model.name}/eval_${now:%Y-%m-%d}_${now:%H-%M-%S}
+    dir: ${out_dir}
 
 # Set via CUDA_VISIBLE_DEVICES externally; this selects the logical device index.
 device: cuda

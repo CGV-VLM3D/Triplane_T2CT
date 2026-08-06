@@ -1,0 +1,1099 @@
+{
+  "population": "clean (no_chest + unencodable excluded); unit=SCAN (recon-deduped)",
+  "scan_counts": {
+    "train": 24128,
+    "valid": 1564
+  },
+  "field_statistics": {
+    "train__ClinicalInformation_EN": {
+      "word": {
+        "mean": 3.094808126410835,
+        "median": 2.0,
+        "std": 2.4281410322624697,
+        "p05": 1.0,
+        "p25": 1.0,
+        "p75": 4.0,
+        "p95": 8.0,
+        "min": 1.0,
+        "max": 28.0
+      },
+      "sent": {
+        "mean": 1.0286765320625366,
+        "median": 1.0,
+        "std": 0.1771033615172029,
+        "p05": 1.0,
+        "p25": 1.0,
+        "p75": 1.0,
+        "p95": 1.0,
+        "min": 1.0,
+        "max": 3.0
+      },
+      "char": {
+        "mean": 21.920407992642755,
+        "median": 18.0,
+        "std": 15.904378982876077,
+        "p05": 6.0,
+        "p25": 10.0,
+        "p75": 29.0,
+        "p95": 52.0,
+        "min": 1.0,
+        "max": 193.0
+      },
+      "missing_rate_pct": 50.4268899204244,
+      "exact_unique_ratio_pct": 41.8276063874258,
+      "n": 24128
+    },
+    "train__Technique_EN": {
+      "word": {
+        "mean": 14.59203382103038,
+        "median": 15.0,
+        "std": 1.8012879632010612,
+        "p05": 11.0,
+        "p25": 14.0,
+        "p75": 15.0,
+        "p95": 18.0,
+        "min": 8.0,
+        "max": 64.0
+      },
+      "sent": {
+        "mean": 1.0054710490322045,
+        "median": 1.0,
+        "std": 0.07706156466441995,
+        "p05": 1.0,
+        "p25": 1.0,
+        "p75": 1.0,
+        "p95": 1.0,
+        "min": 1.0,
+        "max": 3.0
+      },
+      "char": {
+        "mean": 86.36896423094458,
+        "median": 85.0,
+        "std": 12.595260559809468,
+        "p05": 65.0,
+        "p25": 85.0,
+        "p75": 85.0,
+        "p95": 114.0,
+        "min": 50.0,
+        "max": 395.0
+      },
+      "missing_rate_pct": 0.004144562334217506,
+      "exact_unique_ratio_pct": 1.475525345049115,
+      "n": 24128
+    },
+    "train__Findings_EN": {
+      "word": {
+        "mean": 195.5868943507274,
+        "median": 185.0,
+        "std": 71.44589852676522,
+        "p05": 101.0,
+        "p25": 147.0,
+        "p75": 231.0,
+        "p95": 328.0,
+        "min": 4.0,
+        "max": 1035.0
+      },
+      "sent": {
+        "mean": 16.75620673933767,
+        "median": 16.0,
+        "std": 4.865071322410232,
+        "p05": 10.0,
+        "p25": 14.0,
+        "p75": 19.0,
+        "p95": 25.0,
+        "min": 1.0,
+        "max": 60.0
+      },
+      "char": {
+        "mean": 1317.6312430057612,
+        "median": 1253.0,
+        "std": 450.8868035442538,
+        "p05": 693.0,
+        "p25": 1024.0,
+        "p75": 1537.0,
+        "p95": 2156.0,
+        "min": 27.0,
+        "max": 6447.0
+      },
+      "missing_rate_pct": 0.004144562334217506,
+      "exact_unique_ratio_pct": 94.34243793260663,
+      "n": 24128
+    },
+    "train__Impressions_EN": {
+      "word": {
+        "mean": 34.273397010322526,
+        "median": 28.0,
+        "std": 28.471239285216896,
+        "p05": 4.0,
+        "p25": 12.0,
+        "p75": 48.0,
+        "p95": 89.0,
+        "min": 1.0,
+        "max": 328.0
+      },
+      "sent": {
+        "mean": 3.1087934209962738,
+        "median": 3.0,
+        "std": 2.265664618508543,
+        "p05": 1.0,
+        "p25": 1.0,
+        "p75": 4.0,
+        "p95": 8.0,
+        "min": 1.0,
+        "max": 28.0
+      },
+      "char": {
+        "mean": 239.7234334175697,
+        "median": 192.0,
+        "std": 195.29181743433898,
+        "p05": 33.0,
+        "p25": 86.0,
+        "p75": 334.0,
+        "p95": 617.7000000000007,
+        "min": 1.0,
+        "max": 2276.0
+      },
+      "missing_rate_pct": 3.2369031830238724,
+      "exact_unique_ratio_pct": 82.35747633528932,
+      "n": 24128
+    },
+    "valid__ClinicalInformation_EN": {
+      "word": {
+        "mean": 3.0065359477124183,
+        "median": 2.0,
+        "std": 2.127617133557731,
+        "p05": 1.0,
+        "p25": 1.0,
+        "p75": 4.0,
+        "p95": 7.7999999999999545,
+        "min": 1.0,
+        "max": 14.0
+      },
+      "sent": {
+        "mean": 1.0326797385620916,
+        "median": 1.0,
+        "std": 0.1919388741749297,
+        "p05": 1.0,
+        "p25": 1.0,
+        "p75": 1.0,
+        "p95": 1.0,
+        "min": 1.0,
+        "max": 3.0
+      },
+      "char": {
+        "mean": 21.75686274509804,
+        "median": 18.0,
+        "std": 14.762024077460177,
+        "p05": 6.0,
+        "p25": 10.0,
+        "p75": 29.0,
+        "p95": 53.799999999999955,
+        "min": 2.0,
+        "max": 92.0
+      },
+      "missing_rate_pct": 51.08695652173913,
+      "exact_unique_ratio_pct": 65.09803921568627,
+      "n": 1564
+    },
+    "valid__Technique_EN": {
+      "word": {
+        "mean": 14.508951406649617,
+        "median": 15.0,
+        "std": 1.7351626544898853,
+        "p05": 11.0,
+        "p25": 14.0,
+        "p75": 15.0,
+        "p95": 18.0,
+        "min": 11.0,
+        "max": 26.0
+      },
+      "sent": {
+        "mean": 1.0089514066496164,
+        "median": 1.0,
+        "std": 0.09418746715253348,
+        "p05": 1.0,
+        "p25": 1.0,
+        "p75": 1.0,
+        "p95": 1.0,
+        "min": 1.0,
+        "max": 2.0
+      },
+      "char": {
+        "mean": 85.72058823529412,
+        "median": 85.0,
+        "std": 12.094441269790174,
+        "p05": 65.0,
+        "p25": 85.0,
+        "p75": 85.0,
+        "p95": 114.0,
+        "min": 63.0,
+        "max": 147.0
+      },
+      "missing_rate_pct": 0.0,
+      "exact_unique_ratio_pct": 4.859335038363171,
+      "n": 1564
+    },
+    "valid__Findings_EN": {
+      "word": {
+        "mean": 195.66368286445012,
+        "median": 183.0,
+        "std": 71.1976603522436,
+        "p05": 107.0,
+        "p25": 145.0,
+        "p75": 233.0,
+        "p95": 328.8499999999999,
+        "min": 14.0,
+        "max": 626.0
+      },
+      "sent": {
+        "mean": 16.755115089514067,
+        "median": 16.0,
+        "std": 4.999693665761962,
+        "p05": 10.0,
+        "p25": 14.0,
+        "p75": 19.0,
+        "p95": 25.0,
+        "min": 2.0,
+        "max": 49.0
+      },
+      "char": {
+        "mean": 1320.7909207161126,
+        "median": 1246.0,
+        "std": 453.1127103500165,
+        "p05": 721.0,
+        "p25": 1013.0,
+        "p75": 1546.25,
+        "p95": 2146.85,
+        "min": 84.0,
+        "max": 4142.0
+      },
+      "missing_rate_pct": 0.0,
+      "exact_unique_ratio_pct": 96.0997442455243,
+      "n": 1564
+    },
+    "valid__Impressions_EN": {
+      "word": {
+        "mean": 34.75328947368421,
+        "median": 29.0,
+        "std": 28.513552681975355,
+        "p05": 4.0,
+        "p25": 11.0,
+        "p75": 49.0,
+        "p95": 89.0,
+        "min": 1.0,
+        "max": 210.0
+      },
+      "sent": {
+        "mean": 3.126315789473684,
+        "median": 3.0,
+        "std": 2.2788713977856294,
+        "p05": 1.0,
+        "p25": 1.0,
+        "p75": 4.0,
+        "p95": 7.0499999999999545,
+        "min": 1.0,
+        "max": 18.0
+      },
+      "char": {
+        "mean": 243.83157894736843,
+        "median": 200.5,
+        "std": 196.4719292997605,
+        "p05": 33.0,
+        "p25": 82.0,
+        "p75": 346.25,
+        "p95": 617.1499999999999,
+        "min": 13.0,
+        "max": 1392.0
+      },
+      "missing_rate_pct": 2.813299232736573,
+      "exact_unique_ratio_pct": 87.03947368421052,
+      "n": 1564
+    },
+    "train__imp_find_word_ratio_median": 0.1417004048582996,
+    "valid__imp_find_word_ratio_median": 0.149589474392624
+  },
+  "tokenizer_truncation": {
+    "tokenizer": "microsoft/BiomedVLP-CXR-BERT-specialized",
+    "splits": {
+      "train": {
+        "findings": {
+          "token_mean": 239.10415285145888,
+          "token_median": 226.0,
+          "token_p95": 398.0,
+          "token_max": 1174.0,
+          "trunc_rate_pct": {
+            "77": 99.333,
+            "128": 93.995,
+            "256": 34.052,
+            "512": 0.991
+          }
+        },
+        "impression": {
+          "token_mean": 43.30048076923077,
+          "token_median": 35.0,
+          "token_p95": 111.0,
+          "token_max": 407.0,
+          "trunc_rate_pct": {
+            "77": 15.053,
+            "128": 2.69,
+            "256": 0.062,
+            "512": 0.0
+          }
+        },
+        "findings+impression": {
+          "token_mean": 280.40463362068965,
+          "token_median": 259.0,
+          "token_p95": 495.0,
+          "token_max": 1272.0,
+          "trunc_rate_pct": {
+            "77": 99.411,
+            "128": 96.357,
+            "256": 51.239,
+            "512": 4.116
+          }
+        }
+      },
+      "valid": {
+        "findings": {
+          "token_mean": 239.61892583120203,
+          "token_median": 224.0,
+          "token_p95": 394.8499999999999,
+          "token_max": 757.0,
+          "trunc_rate_pct": {
+            "77": 99.616,
+            "128": 95.077,
+            "256": 34.527,
+            "512": 1.023
+          }
+        },
+        "impression": {
+          "token_mean": 44.25703324808184,
+          "token_median": 37.0,
+          "token_p95": 111.84999999999991,
+          "token_max": 243.0,
+          "trunc_rate_pct": {
+            "77": 16.049,
+            "128": 3.005,
+            "256": 0.0,
+            "512": 0.0
+          }
+        },
+        "findings+impression": {
+          "token_mean": 281.87595907928386,
+          "token_median": 259.0,
+          "token_p95": 489.0,
+          "token_max": 928.0,
+          "trunc_rate_pct": {
+            "77": 99.68,
+            "128": 97.059,
+            "256": 51.407,
+            "512": 3.708
+          }
+        }
+      }
+    }
+  },
+  "boilerplate": {
+    "train__Findings_EN": {
+      "n_reports": 24127,
+      "total_sentences": 404277,
+      "unique_exact_sentences": 105602,
+      "unique_norm_sentences": 104542,
+      "boilerplate_token_fraction": 0.4394,
+      "n_boilerplate_sentence_types": 156,
+      "top5": [
+        [
+          "When examined in the lung parenchyma window;",
+          14029
+        ],
+        [
+          "Pericardial effusion-thickening was not observed.",
+          9201
+        ],
+        [
+          "Bilateral adrenal glands were normal and no space-occupying lesion was detected.",
+          8246
+        ],
+        [
+          "No space-occupying lesion was detected in the liver that entered the cross-sectional area.",
+          7122
+        ],
+        [
+          "Vertebral corpus heights are preserved.",
+          7089
+        ]
+      ]
+    },
+    "train__Impressions_EN": {
+      "n_reports": 23347,
+      "total_sentences": 72581,
+      "unique_exact_sentences": 42292,
+      "unique_norm_sentences": 39918,
+      "boilerplate_token_fraction": 0.0617,
+      "n_boilerplate_sentence_types": 26,
+      "top5": [
+        [
+          "Hiatal hernia.",
+          763
+        ],
+        [
+          "Hepatosteatosis.",
+          756
+        ],
+        [
+          "Thoracic CT examination within normal limits",
+          573
+        ],
+        [
+          "Emphysematous changes in both lungs.",
+          470
+        ],
+        [
+          "Cholelithiasis.",
+          420
+        ]
+      ]
+    },
+    "train__near_dup_whole_report_rate_pct": 5.687,
+    "valid__Findings_EN": {
+      "n_reports": 1564,
+      "total_sentences": 26205,
+      "unique_exact_sentences": 9119,
+      "unique_norm_sentences": 9049,
+      "boilerplate_token_fraction": 0.4476,
+      "n_boilerplate_sentence_types": 172,
+      "top5": [
+        [
+          "When examined in the lung parenchyma window;",
+          939
+        ],
+        [
+          "Pericardial effusion-thickening was not observed.",
+          587
+        ],
+        [
+          "Bilateral adrenal glands were normal and no space-occupying lesion was detected.",
+          559
+        ],
+        [
+          "No space-occupying lesion was detected in the liver that entered the cross-sectional area.",
+          489
+        ],
+        [
+          "No enlarged lymph nodes in prevascular, pre-paratracheal, subcarinal or bilateral hilar-axillary pathological dimensions",
+          473
+        ]
+      ]
+    },
+    "valid__Impressions_EN": {
+      "n_reports": 1520,
+      "total_sentences": 4752,
+      "unique_exact_sentences": 3566,
+      "unique_norm_sentences": 3398,
+      "boilerplate_token_fraction": 0.0528,
+      "n_boilerplate_sentence_types": 23,
+      "top5": [
+        [
+          "Hepatosteatosis.",
+          52
+        ],
+        [
+          "Hiatal hernia.",
+          45
+        ],
+        [
+          "Thoracic CT examination within normal limits",
+          40
+        ],
+        [
+          "Clinical and laboratory correlation is recommended.",
+          35
+        ],
+        [
+          "Cholelithiasis.",
+          23
+        ]
+      ]
+    },
+    "valid__near_dup_whole_report_rate_pct": 3.9
+  },
+  "language_patterns": {
+    "train": {
+      "all_zero": {
+        "n": 2731,
+        "negation_rate_pct": 99.45,
+        "normal_wording_rate_pct": 99.12,
+        "uncertainty_rate_pct": 22.19,
+        "comparison_rate_pct": 2.12,
+        "recommendation_rate_pct": 3.44
+      },
+      "positive": {
+        "n": 21397,
+        "negation_rate_pct": 99.36,
+        "normal_wording_rate_pct": 98.51,
+        "uncertainty_rate_pct": 51.09,
+        "comparison_rate_pct": 16.41,
+        "recommendation_rate_pct": 26.18
+      }
+    },
+    "valid": {
+      "all_zero": {
+        "n": 181,
+        "negation_rate_pct": 99.45,
+        "normal_wording_rate_pct": 100.0,
+        "uncertainty_rate_pct": 21.55,
+        "comparison_rate_pct": 0.55,
+        "recommendation_rate_pct": 2.76
+      },
+      "positive": {
+        "n": 1383,
+        "negation_rate_pct": 99.28,
+        "normal_wording_rate_pct": 98.63,
+        "uncertainty_rate_pct": 53.36,
+        "comparison_rate_pct": 15.4,
+        "recommendation_rate_pct": 27.69
+      }
+    }
+  },
+  "assertion_totals": {
+    "uncertain": 27173,
+    "affirmed": 155875,
+    "negated": 64121
+  },
+  "term_label_agreement": [
+    {
+      "split": "train",
+      "label": "Medical material",
+      "n_positive_labels": 2886,
+      "affirmed_pred_precision": 0.9518,
+      "affirmed_pred_recall": 0.6767,
+      "tp": 1953,
+      "fp": 99,
+      "fn": 933,
+      "tn": 21143,
+      "raw_mention_count": 5994,
+      "raw_mention_in_label_negative_pct": 64.16
+    },
+    {
+      "split": "train",
+      "label": "Arterial wall calcification",
+      "n_positive_labels": 6701,
+      "affirmed_pred_precision": 0.8776,
+      "affirmed_pred_recall": 0.4793,
+      "tp": 3212,
+      "fp": 448,
+      "fn": 3489,
+      "tn": 16979,
+      "raw_mention_count": 3677,
+      "raw_mention_in_label_negative_pct": 12.37
+    },
+    {
+      "split": "train",
+      "label": "Cardiomegaly",
+      "n_positive_labels": 2586,
+      "affirmed_pred_precision": 0.9418,
+      "affirmed_pred_recall": 0.5189,
+      "tp": 1342,
+      "fp": 83,
+      "fn": 1244,
+      "tn": 21459,
+      "raw_mention_count": 1562,
+      "raw_mention_in_label_negative_pct": 5.95
+    },
+    {
+      "split": "train",
+      "label": "Pericardial effusion",
+      "n_positive_labels": 1702,
+      "affirmed_pred_precision": 0.8494,
+      "affirmed_pred_recall": 0.7291,
+      "tp": 1241,
+      "fp": 220,
+      "fn": 461,
+      "tn": 22206,
+      "raw_mention_count": 15937,
+      "raw_mention_in_label_negative_pct": 91.92
+    },
+    {
+      "split": "train",
+      "label": "Coronary artery wall calcification",
+      "n_positive_labels": 5972,
+      "affirmed_pred_precision": 1.0,
+      "affirmed_pred_recall": 0.0007,
+      "tp": 4,
+      "fp": 0,
+      "fn": 5968,
+      "tn": 18156,
+      "raw_mention_count": 4,
+      "raw_mention_in_label_negative_pct": 0.0
+    },
+    {
+      "split": "train",
+      "label": "Hiatal hernia",
+      "n_positive_labels": 3426,
+      "affirmed_pred_precision": 0.9929,
+      "affirmed_pred_recall": 0.9764,
+      "tp": 3345,
+      "fp": 24,
+      "fn": 81,
+      "tn": 20678,
+      "raw_mention_count": 3379,
+      "raw_mention_in_label_negative_pct": 0.74
+    },
+    {
+      "split": "train",
+      "label": "Lymphadenopathy",
+      "n_positive_labels": 6115,
+      "affirmed_pred_precision": 0.0948,
+      "affirmed_pred_recall": 0.1627,
+      "tp": 995,
+      "fp": 9502,
+      "fn": 5120,
+      "tn": 8511,
+      "raw_mention_count": 16515,
+      "raw_mention_in_label_negative_pct": 85.45
+    },
+    {
+      "split": "train",
+      "label": "Emphysema",
+      "n_positive_labels": 4677,
+      "affirmed_pred_precision": 0.9926,
+      "affirmed_pred_recall": 0.9483,
+      "tp": 4435,
+      "fp": 33,
+      "fn": 242,
+      "tn": 19418,
+      "raw_mention_count": 4625,
+      "raw_mention_in_label_negative_pct": 0.76
+    },
+    {
+      "split": "train",
+      "label": "Atelectasis",
+      "n_positive_labels": 6170,
+      "affirmed_pred_precision": 0.8956,
+      "affirmed_pred_recall": 0.9131,
+      "tp": 5634,
+      "fp": 657,
+      "fn": 536,
+      "tn": 17301,
+      "raw_mention_count": 6788,
+      "raw_mention_in_label_negative_pct": 10.16
+    },
+    {
+      "split": "train",
+      "label": "Lung nodule",
+      "n_positive_labels": 10974,
+      "affirmed_pred_precision": 0.9279,
+      "affirmed_pred_recall": 0.9702,
+      "tp": 10647,
+      "fp": 827,
+      "fn": 327,
+      "tn": 12327,
+      "raw_mention_count": 13341,
+      "raw_mention_in_label_negative_pct": 18.55
+    },
+    {
+      "split": "train",
+      "label": "Lung opacity",
+      "n_positive_labels": 8846,
+      "affirmed_pred_precision": 0.8373,
+      "affirmed_pred_recall": 0.847,
+      "tp": 7493,
+      "fp": 1456,
+      "fn": 1353,
+      "tn": 13826,
+      "raw_mention_count": 20117,
+      "raw_mention_in_label_negative_pct": 57.61
+    },
+    {
+      "split": "train",
+      "label": "Pulmonary fibrotic sequela",
+      "n_positive_labels": 6447,
+      "affirmed_pred_precision": 0.924,
+      "affirmed_pred_recall": 0.8807,
+      "tp": 5678,
+      "fp": 467,
+      "fn": 769,
+      "tn": 17214,
+      "raw_mention_count": 6743,
+      "raw_mention_in_label_negative_pct": 9.61
+    },
+    {
+      "split": "train",
+      "label": "Pleural effusion",
+      "n_positive_labels": 2858,
+      "affirmed_pred_precision": 0.9618,
+      "affirmed_pred_recall": 0.8104,
+      "tp": 2316,
+      "fp": 92,
+      "fn": 542,
+      "tn": 21178,
+      "raw_mention_count": 11674,
+      "raw_mention_in_label_negative_pct": 78.82
+    },
+    {
+      "split": "train",
+      "label": "Mosaic attenuation pattern",
+      "n_positive_labels": 1794,
+      "affirmed_pred_precision": 0.9426,
+      "affirmed_pred_recall": 0.5312,
+      "tp": 953,
+      "fp": 58,
+      "fn": 841,
+      "tn": 22276,
+      "raw_mention_count": 1824,
+      "raw_mention_in_label_negative_pct": 4.11
+    },
+    {
+      "split": "train",
+      "label": "Peribronchial thickening",
+      "n_positive_labels": 2496,
+      "affirmed_pred_precision": 0.8435,
+      "affirmed_pred_recall": 0.8898,
+      "tp": 2221,
+      "fp": 412,
+      "fn": 275,
+      "tn": 21220,
+      "raw_mention_count": 2733,
+      "raw_mention_in_label_negative_pct": 16.54
+    },
+    {
+      "split": "train",
+      "label": "Consolidation",
+      "n_positive_labels": 4234,
+      "affirmed_pred_precision": 0.9607,
+      "affirmed_pred_recall": 0.8373,
+      "tp": 3545,
+      "fp": 145,
+      "fn": 689,
+      "tn": 19749,
+      "raw_mention_count": 5299,
+      "raw_mention_in_label_negative_pct": 22.57
+    },
+    {
+      "split": "train",
+      "label": "Bronchiectasis",
+      "n_positive_labels": 2411,
+      "affirmed_pred_precision": 0.986,
+      "affirmed_pred_recall": 0.9046,
+      "tp": 2181,
+      "fp": 31,
+      "fn": 230,
+      "tn": 21686,
+      "raw_mention_count": 2274,
+      "raw_mention_in_label_negative_pct": 1.63
+    },
+    {
+      "split": "train",
+      "label": "Interlobular septal thickening",
+      "n_positive_labels": 1902,
+      "affirmed_pred_precision": 0.9886,
+      "affirmed_pred_recall": 0.6856,
+      "tp": 1304,
+      "fp": 15,
+      "fn": 598,
+      "tn": 22211,
+      "raw_mention_count": 1421,
+      "raw_mention_in_label_negative_pct": 1.2
+    },
+    {
+      "split": "valid",
+      "label": "Medical material",
+      "n_positive_labels": 158,
+      "affirmed_pred_precision": 0.9739,
+      "affirmed_pred_recall": 0.7089,
+      "tp": 112,
+      "fp": 3,
+      "fn": 46,
+      "tn": 1403,
+      "raw_mention_count": 393,
+      "raw_mention_in_label_negative_pct": 67.94
+    },
+    {
+      "split": "valid",
+      "label": "Arterial wall calcification",
+      "n_positive_labels": 435,
+      "affirmed_pred_precision": 0.8988,
+      "affirmed_pred_recall": 0.5103,
+      "tp": 222,
+      "fp": 25,
+      "fn": 213,
+      "tn": 1104,
+      "raw_mention_count": 248,
+      "raw_mention_in_label_negative_pct": 10.08
+    },
+    {
+      "split": "valid",
+      "label": "Cardiomegaly",
+      "n_positive_labels": 164,
+      "affirmed_pred_precision": 0.9432,
+      "affirmed_pred_recall": 0.5061,
+      "tp": 83,
+      "fp": 5,
+      "fn": 81,
+      "tn": 1395,
+      "raw_mention_count": 96,
+      "raw_mention_in_label_negative_pct": 6.25
+    },
+    {
+      "split": "valid",
+      "label": "Pericardial effusion",
+      "n_positive_labels": 110,
+      "affirmed_pred_precision": 0.8119,
+      "affirmed_pred_recall": 0.7455,
+      "tp": 82,
+      "fp": 19,
+      "fn": 28,
+      "tn": 1435,
+      "raw_mention_count": 1004,
+      "raw_mention_in_label_negative_pct": 91.24
+    },
+    {
+      "split": "valid",
+      "label": "Coronary artery wall calcification",
+      "n_positive_labels": 388,
+      "affirmed_pred_precision": 0.0,
+      "affirmed_pred_recall": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 388,
+      "tn": 1176,
+      "raw_mention_count": 0,
+      "raw_mention_in_label_negative_pct": 0.0
+    },
+    {
+      "split": "valid",
+      "label": "Hiatal hernia",
+      "n_positive_labels": 218,
+      "affirmed_pred_precision": 0.9862,
+      "affirmed_pred_recall": 0.9862,
+      "tp": 215,
+      "fp": 3,
+      "fn": 3,
+      "tn": 1343,
+      "raw_mention_count": 218,
+      "raw_mention_in_label_negative_pct": 1.38
+    },
+    {
+      "split": "valid",
+      "label": "Lymphadenopathy",
+      "n_positive_labels": 398,
+      "affirmed_pred_precision": 0.09,
+      "affirmed_pred_recall": 0.1533,
+      "tp": 61,
+      "fp": 617,
+      "fn": 337,
+      "tn": 549,
+      "raw_mention_count": 1069,
+      "raw_mention_in_label_negative_pct": 84.85
+    },
+    {
+      "split": "valid",
+      "label": "Emphysema",
+      "n_positive_labels": 305,
+      "affirmed_pred_precision": 0.9898,
+      "affirmed_pred_recall": 0.9574,
+      "tp": 292,
+      "fp": 3,
+      "fn": 13,
+      "tn": 1256,
+      "raw_mention_count": 306,
+      "raw_mention_in_label_negative_pct": 1.31
+    },
+    {
+      "split": "valid",
+      "label": "Atelectasis",
+      "n_positive_labels": 364,
+      "affirmed_pred_precision": 0.863,
+      "affirmed_pred_recall": 0.9176,
+      "tp": 334,
+      "fp": 53,
+      "fn": 30,
+      "tn": 1147,
+      "raw_mention_count": 421,
+      "raw_mention_in_label_negative_pct": 13.78
+    },
+    {
+      "split": "valid",
+      "label": "Lung nodule",
+      "n_positive_labels": 704,
+      "affirmed_pred_precision": 0.9198,
+      "affirmed_pred_recall": 0.9616,
+      "tp": 677,
+      "fp": 59,
+      "fn": 27,
+      "tn": 801,
+      "raw_mention_count": 871,
+      "raw_mention_in_label_negative_pct": 19.86
+    },
+    {
+      "split": "valid",
+      "label": "Lung opacity",
+      "n_positive_labels": 606,
+      "affirmed_pred_precision": 0.8641,
+      "affirmed_pred_recall": 0.8498,
+      "tp": 515,
+      "fp": 81,
+      "fn": 91,
+      "tn": 877,
+      "raw_mention_count": 1314,
+      "raw_mention_in_label_negative_pct": 55.78
+    },
+    {
+      "split": "valid",
+      "label": "Pulmonary fibrotic sequela",
+      "n_positive_labels": 427,
+      "affirmed_pred_precision": 0.9364,
+      "affirmed_pred_recall": 0.897,
+      "tp": 383,
+      "fp": 26,
+      "fn": 44,
+      "tn": 1111,
+      "raw_mention_count": 443,
+      "raw_mention_in_label_negative_pct": 7.22
+    },
+    {
+      "split": "valid",
+      "label": "Pleural effusion",
+      "n_positive_labels": 189,
+      "affirmed_pred_precision": 0.9623,
+      "affirmed_pred_recall": 0.8095,
+      "tp": 153,
+      "fp": 6,
+      "fn": 36,
+      "tn": 1369,
+      "raw_mention_count": 765,
+      "raw_mention_in_label_negative_pct": 78.56
+    },
+    {
+      "split": "valid",
+      "label": "Mosaic attenuation pattern",
+      "n_positive_labels": 126,
+      "affirmed_pred_precision": 0.9508,
+      "affirmed_pred_recall": 0.4603,
+      "tp": 58,
+      "fp": 3,
+      "fn": 68,
+      "tn": 1435,
+      "raw_mention_count": 125,
+      "raw_mention_in_label_negative_pct": 4.0
+    },
+    {
+      "split": "valid",
+      "label": "Peribronchial thickening",
+      "n_positive_labels": 175,
+      "affirmed_pred_precision": 0.8519,
+      "affirmed_pred_recall": 0.92,
+      "tp": 161,
+      "fp": 28,
+      "fn": 14,
+      "tn": 1361,
+      "raw_mention_count": 192,
+      "raw_mention_in_label_negative_pct": 14.58
+    },
+    {
+      "split": "valid",
+      "label": "Consolidation",
+      "n_positive_labels": 298,
+      "affirmed_pred_precision": 0.9881,
+      "affirmed_pred_recall": 0.8356,
+      "tp": 249,
+      "fp": 3,
+      "fn": 49,
+      "tn": 1263,
+      "raw_mention_count": 368,
+      "raw_mention_in_label_negative_pct": 21.2
+    },
+    {
+      "split": "valid",
+      "label": "Bronchiectasis",
+      "n_positive_labels": 169,
+      "affirmed_pred_precision": 0.9874,
+      "affirmed_pred_recall": 0.929,
+      "tp": 157,
+      "fp": 2,
+      "fn": 12,
+      "tn": 1393,
+      "raw_mention_count": 163,
+      "raw_mention_in_label_negative_pct": 1.23
+    },
+    {
+      "split": "valid",
+      "label": "Interlobular septal thickening",
+      "n_positive_labels": 124,
+      "affirmed_pred_precision": 0.9873,
+      "affirmed_pred_recall": 0.629,
+      "tp": 78,
+      "fp": 1,
+      "fn": 46,
+      "tn": 1439,
+      "raw_mention_count": 89,
+      "raw_mention_in_label_negative_pct": 1.12
+    }
+  ],
+  "burden_vs_length": {
+    "train": {
+      "spearman_nlabels_vs_findings_words": {
+        "rho": 0.6689,
+        "p": 0.0
+      },
+      "spearman_nlabels_vs_impression_words": {
+        "rho": 0.6323,
+        "p": 0.0
+      },
+      "bands": {
+        "all_zero": {
+          "n": 2731,
+          "findings_word_median": 130.0,
+          "impression_word_median": 6.0
+        },
+        "1-3": {
+          "n": 11382,
+          "findings_word_median": 168.0,
+          "impression_word_median": 20.0
+        },
+        "4-7": {
+          "n": 7905,
+          "findings_word_median": 220.0,
+          "impression_word_median": 41.0
+        },
+        "8+": {
+          "n": 2110,
+          "findings_word_median": 289.0,
+          "impression_word_median": 62.0
+        }
+      }
+    },
+    "valid": {
+      "spearman_nlabels_vs_findings_words": {
+        "rho": 0.6845,
+        "p": 1.2713989580799093e-216
+      },
+      "spearman_nlabels_vs_impression_words": {
+        "rho": 0.6475,
+        "p": 1.4987106365498895e-186
+      },
+      "bands": {
+        "all_zero": {
+          "n": 181,
+          "findings_word_median": 130.0,
+          "impression_word_median": 6.0
+        },
+        "1-3": {
+          "n": 726,
+          "findings_word_median": 167.0,
+          "impression_word_median": 20.0
+        },
+        "4-7": {
+          "n": 518,
+          "findings_word_median": 222.5,
+          "impression_word_median": 43.0
+        },
+        "8+": {
+          "n": 139,
+          "findings_word_median": 291.0,
+          "impression_word_median": 63.0
+        }
+      }
+    }
+  }
+}

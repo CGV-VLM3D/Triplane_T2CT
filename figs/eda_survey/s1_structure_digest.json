@@ -1,0 +1,64 @@
+{
+  "split": "valid",
+  "unit_terms": "patient / scan / reconstruction (CT-RATE official)",
+  "hierarchy": {
+    "n_volumes": 3039,
+    "n_scans": 1564,
+    "n_patients": 1304,
+    "reconstructions_per_scan": {
+      "mean": 1.943,
+      "min": 1,
+      "max": 6
+    },
+    "volumes_per_patient": {
+      "mean": 2.331,
+      "max": 16
+    },
+    "scans_per_patient": {
+      "mean": 1.199,
+      "max": 8
+    }
+  },
+  "report_duplication": {
+    "unique_findings": 1505,
+    "n_rows": 3039,
+    "dup_fraction": 0.505,
+    "scans_with_1_unique_report": 1564,
+    "scans_with_gt1_report": 0
+  },
+  "multirecon_kernels": {
+    "multirecon_scans": 1432,
+    "of_which_distinct_kernels": 1431,
+    "of_which_same_kernel": 1
+  },
+  "join_integrity": {
+    "reports_not_in_labels": 0,
+    "reports_not_in_meta": 0,
+    "labels_not_in_reports": 0,
+    "meta_not_in_reports": 0
+  },
+  "special_sets": {
+    "no_chest_listed": 37,
+    "no_chest_present_in_valid_reports": 0,
+    "zspacing_nan_in_meta": 0,
+    "error_ctrate_data_dir_exists": true
+  },
+  "valid_v2": {
+    "n_ids": 1304,
+    "n_patients": 1304,
+    "one_per_patient": true,
+    "subset_of_valid": true,
+    "raw_keys": [
+      "split",
+      "source",
+      "selection",
+      "n",
+      "ids",
+      "no_chest_correction"
+    ]
+  },
+  "leakage": {
+    "all_valid_prefixed": true,
+    "note": "train patients are train_* by construction; no valid/train overlap"
+  }
+}

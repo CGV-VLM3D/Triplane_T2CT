@@ -1,0 +1,179 @@
+{
+  "final_mean_auc": 0.7860985159740612,
+  "per_label_auc": {
+    "Medical material": 0.8096040570762592,
+    "Arterial wall calcification": 0.8976552789409535,
+    "Cardiomegaly": 0.9314753242930445,
+    "Pericardial effusion": 0.8009559884559885,
+    "Coronary artery wall calcification": 0.8929254549214226,
+    "Hiatal hernia": 0.728371617067543,
+    "Lymphadenopathy": 0.7520021043090799,
+    "Emphysema": 0.7269250609914554,
+    "Atelectasis": 0.7060930447669492,
+    "Lung nodule": 0.6349790528211484,
+    "Lung opacity": 0.7463604199292384,
+    "Pulmonary fibrotic sequela": 0.6630954504906335,
+    "Pleural effusion": 0.9398976450029125,
+    "Mosaic attenuation pattern": 0.8528935260190527,
+    "Peribronchial thickening": 0.7439878295068028,
+    "Consolidation": 0.7893766612363885,
+    "Bronchiectasis": 0.6902219670876387,
+    "Interlobular septal thickening": 0.8429528046165906
+  },
+  "z2_mean_pairwise_cosine": {
+    "raw": 0.7576360702514648,
+    "centered": 0.004260579124093056
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.4362458791106175,
+      "val_mean_auc": 0.6630553490804864
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.40977120915284526,
+      "val_mean_auc": 0.6660942339670994
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.3989047930599787,
+      "val_mean_auc": 0.717660899368876
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.3916224842079175,
+      "val_mean_auc": 0.6466096855620124
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.3851648280635858,
+      "val_mean_auc": 0.7441076263042503
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.3836274155630515,
+      "val_mean_auc": 0.7214813606610423
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.378561127357758,
+      "val_mean_auc": 0.7022855693907091
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.3768119366409687,
+      "val_mean_auc": 0.6973029126761798
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.3730884379683397,
+      "val_mean_auc": 0.6874374630061932
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.36970527737568587,
+      "val_mean_auc": 0.6846359623000057
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.36832121874277407,
+      "val_mean_auc": 0.7602606131423647
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.36487086231891924,
+      "val_mean_auc": 0.7315316711030861
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.36119970263769996,
+      "val_mean_auc": 0.7584332235157437
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.35989614614309406,
+      "val_mean_auc": 0.7649276357084258
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.3589423794585925,
+      "val_mean_auc": 0.7785343272873508
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.3555737637365476,
+      "val_mean_auc": 0.7619009305760235
+    },
+    {
+      "epoch": 17,
+      "train_loss": 0.3539486860808654,
+      "val_mean_auc": 0.7694552691202882
+    },
+    {
+      "epoch": 18,
+      "train_loss": 0.35250189508765173,
+      "val_mean_auc": 0.7803314132241044
+    },
+    {
+      "epoch": 19,
+      "train_loss": 0.35079104209748596,
+      "val_mean_auc": 0.7610664730757088
+    },
+    {
+      "epoch": 20,
+      "train_loss": 0.3490202766962541,
+      "val_mean_auc": 0.7844208144852934
+    },
+    {
+      "epoch": 21,
+      "train_loss": 0.34657403979545987,
+      "val_mean_auc": 0.7751783038496286
+    },
+    {
+      "epoch": 22,
+      "train_loss": 0.3448527597177487,
+      "val_mean_auc": 0.7483609236776672
+    },
+    {
+      "epoch": 23,
+      "train_loss": 0.34321036060842186,
+      "val_mean_auc": 0.7556071009864486
+    },
+    {
+      "epoch": 24,
+      "train_loss": 0.34094566140228355,
+      "val_mean_auc": 0.7903016017648326
+    },
+    {
+      "epoch": 25,
+      "train_loss": 0.338389397957004,
+      "val_mean_auc": 0.76733769091449
+    },
+    {
+      "epoch": 26,
+      "train_loss": 0.3362336943929012,
+      "val_mean_auc": 0.7865566715111884
+    },
+    {
+      "epoch": 27,
+      "train_loss": 0.3334787466014043,
+      "val_mean_auc": 0.7883399501852544
+    },
+    {
+      "epoch": 28,
+      "train_loss": 0.33186632442550784,
+      "val_mean_auc": 0.7907495356842135
+    },
+    {
+      "epoch": 29,
+      "train_loss": 0.3293249549296422,
+      "val_mean_auc": 0.7690010283961392
+    },
+    {
+      "epoch": 30,
+      "train_loss": 0.32556107296393466,
+      "val_mean_auc": 0.7860985159740612
+    }
+  ]
+}

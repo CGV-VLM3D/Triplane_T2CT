@@ -1,0 +1,15 @@
+split,level,field,value,count,pct
+train,scan,manufacturer_raw,Philips,14218,
+train,scan,manufacturer_raw,Siemens Healthineers,6904,
+train,scan,manufacturer_raw,PNMS,1937,
+train,scan,manufacturer_raw,SIEMENS,1069,
+train,scan,manufacturer_canon,Philips,14218,58.93
+train,scan,manufacturer_canon,Siemens,7973,33.04
+train,scan,manufacturer_canon,PNMS,1937,8.03
+valid,scan,manufacturer_raw,Philips,953,
+valid,scan,manufacturer_raw,Siemens Healthineers,426,
+valid,scan,manufacturer_raw,PNMS,125,
+valid,scan,manufacturer_raw,SIEMENS,60,
+valid,scan,manufacturer_canon,Philips,953,60.93
+valid,scan,manufacturer_canon,Siemens,486,31.07
+valid,scan,manufacturer_canon,PNMS,125,7.99

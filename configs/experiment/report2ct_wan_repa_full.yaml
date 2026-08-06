@@ -1,0 +1,61 @@
+# @package _global_
+# report2ct_wan_repa, continued onto the FULL 46,393-scan train set (was toy 5,000).
+# From-scratch on full data (user's call, 2026-08-06) — like Track A, but with the full datalist.
+# max_epochs=150: the toy run's own FID plateaued noisily around ep100-200 on only 5,000 scans
+# (see docs/vlm3d_research_roadmap.md discussion); full data gives ~4.6x more steps/epoch (2,900
+# vs 625 at batch 8), and report2ct(MAISI)'s own from-scratch full run looked good by ~epoch
+# 75/100 on this same 46k set — so 150 is a ceiling, not a target. Judge by checkpoint FID
+# (every_n_epochs=10, inherited below) and stop early rather than waiting for the full run.
+# REPA hyperparameters (hard_weight, rel_weight, repa_weight, ...), cfg_drop_prob, cfg_per_sample
+# are left at the Track A values — none of them are data-scale-dependent.
+#
+# batch_size=12 (2GPU ⇒ global 24, vs Track A's global 8 on 1 GPU): lr sqrt-scaled from Track A's
+# 2e-4 (√(24/8)≈1.73 ⇒ ~3.46e-4, rounded down to 3e-4 — user's call, still a real increase over
+# 2e-4). Optimizer is plain torch.optim.Adam (not AdamW — no decoupled weight decay), but the
+# same "Adam is less batch-sensitive than SGD" reasoning still applies.
+# warmup_steps=1000 (was 500): 500 was under 0.2% of this run's ~290k total steps, below the
+# usual 0.5-2%-of-total heuristic; 1000 is a smaller bump than a strict 1% would give (~2900)
+# but still meaningfully more headroom than 500.
+# ema.decay=0.999 (was 0.9999, callbacks/ema.yaml default): shortens the EMA horizon from
+# ~10,000 steps (~5.2 epochs at this batch) to ~1,000 (~0.5 epoch) — deliberately, since the plan
+# is to judge early checkpoints (ep10-30ish) for an FID plateau and stop early; a long EMA
+# horizon would still be "catching up" at that point and understate current quality.
+# num_workers=16 (was 32): batch_size=12 crashed both DDP ranks with a DataLoader "Bus error"
+# (shared-memory exhaustion) — 32 workers/rank × 2 ranks × bigger per-batch tensors overloaded
+# /dev/shm-backed tensor transfer, even though /dev/shm itself has room (64G) and GPU memory was
+# nowhere near full (~2.9GB peak). GPU was already at 100% util at num_workers=32/batch=8, so the
+# data pipeline had slack to begin with; halving to 16 halves the shared-memory pressure while
+# very likely still keeping the GPU fed — verify via smoke test, not just assumed.
+#
+#   CUDA_VISIBLE_DEVICES=2,3 NCCL_P2P_DISABLE=1 NCCL_SHM_DISABLE=1 nohup python src/train.py \
+#       experiment=report2ct_wan_repa_full \
+#       > logs/report2ct_wan_repa_full_$(date +%Y%m%d_%H%M%S).log 2>&1 &
+
+defaults:
+  - report2ct_wan_repa
+  - _self_
+
+task_name: report2ct_wan_repa_full   # → outputs/report2ct_wan_repa_full/<KST-date>[_N]/
+tags: ["wan_latent", "repa", "spectre", "ctgen", "full_data"]
+
+logger:
+  wandb:
+    group: "wan-repa-full"
+
+data:
+  datalist_path: /workspace/data/report2ct_wan/datalist_wan_full_2560.json
+  batch_size: 12
+  num_workers: 16
+
+model:
+  lr: 3e-4
+  warmup_steps: 1000
+
+callbacks:
+  ema:
+    decay: 0.999
+
+trainer:
+  max_epochs: 150
+  devices: 2
+  strategy: ddp   # the find_unused_parameters variant confirmed no unused params in the forward pass

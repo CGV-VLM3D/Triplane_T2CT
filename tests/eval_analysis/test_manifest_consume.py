@@ -63,6 +63,28 @@ def test_condition_null_leaves_dice_to_input_na(tmp_path: Path, monkeypatch):
     )  # same source scan
 
 
+def test_organ_generated_is_reference_independent(tmp_path: Path, monkeypatch):
+    """``organ_generated_<organ>`` reflects only the model's own segmentation (lung present,
+    the other three absent, per the autouse fake), regardless of whether any reference mask is
+    available at all — unlike dice/surface metrics, it needs no gt_mask/input_mask."""
+    gen_path = write_mha(tmp_path / "gen.mha", np.zeros((6, 6, 6), dtype=np.int16))
+
+    def _no_ref_mask(scan_id, target_shape_xyz, split="valid_fixed"):
+        return None
+
+    monkeypatch.setattr(seg_metrics, "load_reference_organ_mask", _no_ref_mask)
+
+    result = seg_metrics.compute_seg_metrics(
+        gen_mha_path=gen_path, target_id="target1", cond_mask_source_id=None
+    )
+    assert result["organ_generated_lung"] == 1
+    assert result["organ_generated_heart"] == 0
+    assert result["organ_generated_aorta"] == 0
+    assert result["organ_generated_esophagus"] == 0
+    # no reference was available at all, yet organ_generated_* is still populated
+    assert np.isnan(result["dice_to_gt_mask"])
+
+
 def test_manifest_condition_null_propagates_to_persample(tmp_path: Path):
     pred_dir = tmp_path / "pred"
     gt_dir = tmp_path / "gt"

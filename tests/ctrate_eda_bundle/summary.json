@@ -1,0 +1,60 @@
+{
+  "total_files": 30,
+  "total_size_MB": 5289.91,
+  "total_size_GB": 5.29,
+  "per_group": {
+    "all-zero": {
+      "n_files": 6,
+      "size_MB": 1147.49
+    },
+    "lung-nodule-only": {
+      "n_files": 6,
+      "size_MB": 828.86
+    },
+    "diffuse-low-burden": {
+      "n_files": 6,
+      "size_MB": 1193.43
+    },
+    "multi-abnormality": {
+      "n_files": 6,
+      "size_MB": 862.21
+    },
+    "medical-material": {
+      "n_files": 6,
+      "size_MB": 1257.92
+    }
+  },
+  "missing": [
+    [
+      "all-zero",
+      "valid_1000_a_1 (raw)",
+      "comparison_raw",
+      "no raw/original valid NIfTI on server; only valid_fixed exists"
+    ],
+    [
+      "lung-nodule-only",
+      "valid_1001_a_1 (raw)",
+      "comparison_raw",
+      "no raw/original valid NIfTI on server; only valid_fixed exists"
+    ],
+    [
+      "diffuse-low-burden",
+      "valid_1022_a_1 (raw)",
+      "comparison_raw",
+      "no raw/original valid NIfTI on server; only valid_fixed exists"
+    ],
+    [
+      "multi-abnormality",
+      "valid_1016_b_1 (raw)",
+      "comparison_raw",
+      "no raw/original valid NIfTI on server; only valid_fixed exists"
+    ],
+    [
+      "medical-material",
+      "valid_1288_a_1 (raw)",
+      "comparison_raw",
+      "no raw/original valid NIfTI on server; only valid_fixed exists"
+    ]
+  ],
+  "no_chest_hits": []
+}

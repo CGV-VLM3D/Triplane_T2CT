@@ -1,0 +1,31 @@
+# @package _global_.model
+# Eval for report2ct_text2ct_mask: Report2CT backbone on text2ct's (4,128,128,32) latent +
+# FrozenCLIP3D cond + LDM-concat organ mask. Same text2ct geometry/eval settings as
+# report2ct_text2ct.yaml (128³ latent → 512×512×128, n_steps 30, cfg 5.0, spacing 0.75/0.75/3.0),
+# plus a mask_dir of precomputed top-K latent-grid masks. NOT an apples-to-apples "== text2ct"
+# A/B — it adds GT-mask conditioning; use it to ask whether the mask helps.
+name: report2ct_text2ct_mask
+
+_target_: src.eval.samplers.report2ct_text2ct_mask.Report2CTText2CTMaskSampler
+
+# Must be provided on the CLI:
+#   model.ckpt_path=/workspace/outputs/report2ct_text2ct_mask/<KST-date>[_N]/checkpoints/epoch_099.ckpt
+ckpt_path: ???
+
+# Precomputed FrozenCLIP3D cond embeddings (<scan_id>.pt, each (1, 768)) — collapsed scan-id keyed.
+cond_dir: /workspace/data/text2ct_clip3d/cond_embeddings/valid
+
+# Precomputed top-K latent-grid organ masks (<vol>.pt, full-id keyed) from
+# scripts/precompute_mask_latentgrid.py --split valid_fixed --k 12.
+mask_dir: /workspace/data/text2ct_mask/valid
+
+# RFlow denoising steps — matches text2ct_100ep_toy_v2 eval (30).
+n_steps: 30
+
+modality_class_label: 1   # CT class (matches training config)
+
+# text2ct native spacing (its 512×512×128 output), matching how this model was trained.
+spacing_mm: ???  # REQUIRED on CLI, no default (model.spacing_mm=[0.75,0.75,3.0]); recommended 0.75 0.75 3.0 (text2ct native, see above)
+
+# Classifier-free guidance scale (text-only CFG; mask is always present). Matches text2ct eval.
+cfg_scale: ???  # REQUIRED on CLI, no default (model.cfg_scale=5.0); recommended 5.0 (see above)

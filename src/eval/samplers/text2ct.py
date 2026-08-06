@@ -20,6 +20,7 @@ import torch
 from tqdm import tqdm
 
 from src.baselines.text2ct_adapter import Text2CTAdapter
+from src.eval.samplers._orient import ras_to_lps
 from src.eval.samplers.base import AbstractSampler, EvalCase
 
 log = logging.getLogger(__name__)
@@ -45,6 +46,7 @@ class Text2CTSampler(AbstractSampler):
     def __init__(
         self,
         ckpt_dir: str = "/workspace/data/checkpoints/text2ct",
+        unet_filename: str = "unet_rflow_200ep.pt",
         n_steps: int = 30,
         guidance_scale: float = 5.0,
         output_spacing_mm: list[float] | None = None,
@@ -55,6 +57,9 @@ class Text2CTSampler(AbstractSampler):
         Args:
             ckpt_dir: directory containing the three Text2CT checkpoint files
                 (accepted by ``Text2CTAdapter``; may contain a ``models/`` subdirectory).
+            unet_filename: UNet checkpoint filename under ``ckpt_dir`` (or its ``models/``
+                subdir). Defaults to the released baseline; override to eval a self-trained
+                UNet (e.g. ``unet_rflow_200ep_toy_v2.pt``).
             n_steps: number of RFlow denoising steps (upstream default 30).
             guidance_scale: classifier-free-guidance scale (upstream default 5.0).
             output_spacing_mm: physical voxel spacing (mm) written to the saved ``.mha``.
@@ -62,6 +67,7 @@ class Text2CTSampler(AbstractSampler):
                 resamples to 1 mm correctly (mirrors upstream ``save_image`` call).
         """
         self.ckpt_dir = ckpt_dir
+        self.unet_filename = unet_filename
         self.n_steps = int(n_steps)
         self.guidance_scale = float(guidance_scale)
         self.output_spacing_mm = (
@@ -88,6 +94,7 @@ class Text2CTSampler(AbstractSampler):
             dev = "cpu"
         self._adapter = Text2CTAdapter(
             ckpt_dir=self.ckpt_dir,
+            unet_filename=self.unet_filename,
             device_str=dev,
             load_weights=True,
             guidance_scale=self.guidance_scale,
@@ -107,6 +114,10 @@ class Text2CTSampler(AbstractSampler):
     def _save_mha(hu: np.ndarray, spacing_mm: list[float], out_path: Path) -> None:
         """Save HU array as .mha. hu (H, W, D) == (X, Y, Z) → SimpleITK (Z, Y, X)."""
         arr_zyx = hu.transpose(2, 1, 0)  # (D, W, H)
+        # Text2CT trains on RAS latents (upstream preprocess_ctrate.py load_and_orient_to_RAS +
+        # diff_model_create_training_data.py Orientationd(RAS)), so its VAE decode emits RAS
+        # content; flip in-plane to LPS so it matches the LPS GT / real CT-RATE (same as report2ct.py).
+        arr_zyx = ras_to_lps(arr_zyx)  # (Z, Y, X), X/Y reversed
         img = sitk.GetImageFromArray(arr_zyx)
         img.SetSpacing([float(s) for s in spacing_mm])
         out_path.parent.mkdir(parents=True, exist_ok=True)

@@ -25,9 +25,6 @@ from src.eval.samplers.report2ct import Report2CTSampler, _load_checkpoint
 
 log = logging.getLogger(__name__)
 
-# fVLM per-organ embedding dim (configs/model/report2ct_fvlm.yaml cross_attention_dim).
-_FVLM_CROSS_ATTENTION_DIM = 256
-
 
 class Report2CTFVLMSampler(Report2CTSampler):
     """Report2CT backbone + fVLM per-organ conditioning, loaded from precomputed `.pt`.
@@ -38,6 +35,11 @@ class Report2CTFVLMSampler(Report2CTSampler):
             a (4, 256) tensor) — typically data/fVLM/cond_embeddings/valid.
         (n_steps / modality_class_label / spacing_mm / cfg_scale / name as Report2CTSampler.)
     """
+
+    # UNet cross-attention dim for the swapped conditioner (matches the trained model's
+    # configs/model/report2ct_fvlm.yaml). Subclasses override to load a different-width
+    # condition (e.g. report2ct_CLIP3D → 768 for the (1, 768) FrozenCLIP3D vector).
+    cross_attention_dim: int = 256
 
     def __init__(
         self,
@@ -83,7 +85,7 @@ class Report2CTFVLMSampler(Report2CTSampler):
 
         log.info("Loading fVLM-cond UNet from %s …", self.ckpt_path)
         self._unet, self._scale_factor = _load_checkpoint(
-            self.ckpt_path, device, cross_attention_dim=_FVLM_CROSS_ATTENTION_DIM
+            self.ckpt_path, device, cross_attention_dim=self.cross_attention_dim
         )
 
         log.info("Loading frozen MAISI VAE …")

@@ -24,6 +24,7 @@ from tqdm import tqdm
 from src.baselines.maisi import load_frozen
 from src.baselines.report2ct_text_encoder import Report2CTTextEncoder
 from src.baselines.rflow import RFlowScheduler
+from src.eval.samplers._orient import ras_to_lps
 from src.eval.samplers.base import AbstractSampler, EvalCase
 
 log = logging.getLogger(__name__)
@@ -78,15 +79,19 @@ def _dynamic_infer(
     return out
 
 
-def _build_unet(cross_attention_dim: int = 2560) -> DiffusionModelUNetMaisi:
+def _build_unet(
+    cross_attention_dim: int = 2560, in_channels: int = 4
+) -> DiffusionModelUNetMaisi:
     """Instantiate UNet with kwargs from configs/model/report2ct.yaml.
 
     cross_attention_dim defaults to Report2CT's 2560; the fVLM-conditioned variant
-    (src/eval/samplers/report2ct_fvlm.py) passes 256.
+    (src/eval/samplers/report2ct_fvlm.py) passes 256. in_channels defaults to 4 (plain
+    latent); the mask-conditioned variant passes 4+embed_dim (LDM concat) — out_channels
+    stays 4 (the UNet predicts only the latent).
     """
     return DiffusionModelUNetMaisi(
         spatial_dims=3,
-        in_channels=4,
+        in_channels=in_channels,
         out_channels=4,
         num_channels=[64, 128, 256, 512],
         num_res_blocks=2,
@@ -105,7 +110,10 @@ def _build_unet(cross_attention_dim: int = 2560) -> DiffusionModelUNetMaisi:
 
 
 def _load_checkpoint(
-    ckpt_path: str | Path, device: torch.device, cross_attention_dim: int = 2560
+    ckpt_path: str | Path,
+    device: torch.device,
+    cross_attention_dim: int = 2560,
+    in_channels: int = 4,
 ):
     """Load UNet weights and scale_factor from a Lightning .ckpt file.
 
@@ -117,7 +125,7 @@ def _load_checkpoint(
     scale_factor: float = sd["scale_factor"].item()
     log.info("scale_factor from checkpoint: %.4f", scale_factor)
 
-    unet = _build_unet(cross_attention_dim=cross_attention_dim)
+    unet = _build_unet(cross_attention_dim=cross_attention_dim, in_channels=in_channels)
     unet_sd = {k[len("unet.") :]: v for k, v in sd.items() if k.startswith("unet.")}
     missing, unexpected = unet.load_state_dict(unet_sd, strict=True)
     if missing or unexpected:
@@ -142,6 +150,11 @@ class Report2CTSampler(AbstractSampler):
         spacing_mm: voxel spacing (mm) used BOTH as UNet conditioning and as the saved .mha
             affine. Defaults to upstream's (1.0, 1.0, 1.5) (diff_model_infer_vlm3D.py:95,320).
     """
+
+    # Latent shape (C, H, W, D) the RFlow loop samples noise at. Report2CT's MAISI latents
+    # are (4, 120, 120, 64); a subclass trained on a different VAE-latent geometry
+    # (e.g. text2ct's (4, 128, 128, 32)) overrides this so generation matches its training.
+    _latent_shape: tuple[int, int, int, int] = _LATENT_SHAPE
 
     def __init__(
         self,
@@ -190,6 +203,9 @@ class Report2CTSampler(AbstractSampler):
         self._text_encoder: Report2CTTextEncoder | None = None
         self._autoencoder = None
         self._device: torch.device | None = None
+        # Optional LDM-concat mask embedding (B, embed_dim, H, W, D), set per-case by a
+        # mask-conditioned subclass; None ⇒ the UNet input is the plain 4-channel latent.
+        self._mask_embed: torch.Tensor | None = None
 
     # ------------------------------------------------------------------ #
     #  Lazy initialisation                                                 #
@@ -267,13 +283,17 @@ class Report2CTSampler(AbstractSampler):
         # input_img_size = H*W*D of the latent space (matches training sample_timesteps);
         # timestep_transform requires a torch tensor for .pow(); kept on CPU because
         # set_timesteps then converts the timestep list via np.array.
+        _, h, w, d = self._latent_shape  # (C, H, W, D)
+        latent_numel = h * w * d
         scheduler.set_timesteps(
             self.n_steps,
             device=self._device,
-            input_img_size=torch.tensor(float(_LATENT_VOL)),
+            input_img_size=torch.tensor(float(latent_numel)),
         )
 
-        z = torch.randn(1, *_LATENT_SHAPE, device=self._device, dtype=torch.float32)
+        z = torch.randn(
+            1, *self._latent_shape, device=self._device, dtype=torch.float32
+        )
         class_labels = torch.tensor([self.modality_class_label], device=self._device)
 
         # Mirror upstream diff_model_infer_vlm3D.py:215-216 — append 0 to next_timesteps
@@ -306,9 +326,18 @@ class Report2CTSampler(AbstractSampler):
             t_tensor = torch.tensor(
                 [t_scalar], device=self._device, dtype=torch.float32
             )
+            # LDM concat: append the (fixed) mask embedding to the UNet input each step; the
+            # mask is never noised (matches Report2CTModule training). None ⇒ plain latent.
+            x_single = (
+                z
+                if self._mask_embed is None
+                else torch.cat(
+                    [z, self._mask_embed], dim=1
+                )  # (1, 4+embed_dim, H, W, D)
+            )
             if use_cfg:
                 pred_b = self._unet(
-                    x=torch.cat([z, z], dim=0),
+                    x=torch.cat([x_single, x_single], dim=0),
                     timesteps=t_tensor.repeat(2),
                     context=context_b,
                     class_labels=class_labels_b,
@@ -318,7 +347,7 @@ class Report2CTSampler(AbstractSampler):
                 pred = pred_uncond + self.cfg_scale * (pred_cond - pred_uncond)
             else:
                 pred = self._unet(
-                    x=z,
+                    x=x_single,
                     timesteps=t_tensor,
                     context=context,
                     class_labels=class_labels,
@@ -366,6 +395,9 @@ class Report2CTSampler(AbstractSampler):
         # SimpleITK GetImageFromArray expects (Z, Y, X); our hu is (H, W, D)
         # (H, W, D) == (X, Y, Z) in CT convention → transpose to (Z, Y, X) = (D, W, H)
         arr_zyx = hu.transpose(2, 1, 0)  # (D, W, H)
+        # Decoder emits RAS content (Orientationd(RAS) precompute); flip in-plane to LPS so it
+        # matches the LPS GT / real CT-RATE for eval + submission (plan: eval-wise-catmull).
+        arr_zyx = ras_to_lps(arr_zyx)  # (Z, Y, X), X/Y reversed
         img = sitk.GetImageFromArray(arr_zyx)
         img.SetSpacing([float(s) for s in spacing_mm])
         out_path.parent.mkdir(parents=True, exist_ok=True)

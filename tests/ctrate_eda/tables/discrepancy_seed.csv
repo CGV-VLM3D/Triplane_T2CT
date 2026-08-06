@@ -1,0 +1,17 @@
+metric,gpt_value,recomputed,verdict
+train.patients,20000,20000,Verified
+train.scans,24128,24128,Verified
+train.volumes,47149,47149,Verified
+valid.patients,1304,1304,Verified
+valid.scans,1564,1564,Verified
+valid.volumes,3039,3039,Verified
+total.patients,21304,21304,Verified
+total.scans,25692,25692,Verified
+total.volumes,50188,50188,Verified
+orphans,0,0,Verified
+recon_label_mismatch,0,0,Verified
+no_chest.train,752,752,Verified
+no_chest.valid,37,37,Verified
+no_chest.total,789,789,Verified
+no_chest.scans,260,280,Major
+no_chest.patients,258,278,Major

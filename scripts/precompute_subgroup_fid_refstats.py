@@ -34,7 +34,11 @@ from src.eval.analysis.subgroup_refstats import (
     subgroup_refstats_dir,
 )
 from src.eval.analysis.subgroup_setlevel import _build_feature_index, _build_gt_axes
-from src.eval.tasks.ctgen import _FID_PROFILES, _shared_gt_feat_dir
+from src.eval.tasks.ctgen import (
+    _DEFAULT_SUBGROUP_FID_PROFILE,
+    _FID_PROFILES,
+    _shared_gt_feat_dir,
+)
 
 log = logging.getLogger(__name__)
 
@@ -48,10 +52,10 @@ def main() -> None:
     ap.add_argument("--label-split", default="valid")
     ap.add_argument(
         "--fid-profile",
-        default="research",
+        default=_DEFAULT_SUBGROUP_FID_PROFILE,
         choices=sorted(_FID_PROFILES),
-        help="which FID profile's cached GT features to re-group (default: research, the "
-        "profile every existing subgroup-analysis asset was built on).",
+        help="which FID profile's cached GT features to re-group (default: docker_n300, "
+        "changed from research on 2026-08-01 to match subgroup_setlevel's new default).",
     )
     args = ap.parse_args()
 

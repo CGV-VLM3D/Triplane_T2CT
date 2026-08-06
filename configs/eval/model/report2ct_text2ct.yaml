@@ -1,0 +1,31 @@
+# @package _global_.model
+# Eval for the report2ct_text2ct A/B: Report2CT backbone trained on text2ct's VAE latents
+# + FrozenCLIP3D condition. Samples text2ct's (4,128,128,32) latent → 512×512×128 (via the
+# Report2CTText2CTSampler override), so it is apples-to-apples with text2ct_100ep_toy_v2.
+# n_steps / cfg / spacing are synced to text2ct_100ep_toy_v2's eval (30 steps, guidance 5.0,
+# 0.75/0.75/3.0) so any CLIPScore gap reflects the training code, not eval settings.
+name: report2ct_text2ct
+
+_target_: src.eval.samplers.report2ct_text2ct.Report2CTText2CTSampler
+
+# Must be provided on the CLI:
+#   model.ckpt_path=/workspace/outputs/report2ct_text2ct/<KST-date>[_N]/checkpoints/last.ckpt
+ckpt_path: ???
+
+# Precomputed FrozenCLIP3D cond embeddings (<scan_id>.pt, each (1, 768)) — same valid split
+# as report2ct_clip3d (scripts/precompute_clip3d_cond_embeddings.py).
+cond_dir: /workspace/data/text2ct_clip3d/cond_embeddings/valid
+
+# RFlow denoising steps — matches text2ct_100ep_toy_v2 eval (30).
+n_steps: 30
+
+modality_class_label: 1   # CT class (matches training config)
+
+# Voxel spacing (mm) — UNet conditioning AND saved .mha affine. text2ct's native
+# 0.75/0.75/3.0 (its 512×512×128 output), matching how this model was trained. Scaled × 100
+# internally. NOT Report2CT's 1.0/1.0/1.5 nor the 0.8 FID-tuned value.
+spacing_mm: ???  # REQUIRED on CLI, no default (model.spacing_mm=[0.75,0.75,3.0]); recommended 0.75 0.75 3.0 (text2ct native, see above)
+
+# Classifier-free guidance scale — matches text2ct_100ep_toy_v2 eval (guidance 5.0). cfg
+# uncond branch uses zeros_like(context) — works for the (1, 1, 768) CLIP3D context.
+cfg_scale: ???  # REQUIRED on CLI, no default (model.cfg_scale=5.0); recommended 5.0 (see above)

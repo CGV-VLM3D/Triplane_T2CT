@@ -20,6 +20,7 @@ Lambdad transforms (matches upstream behavior).
 from __future__ import annotations
 
 import json
+import random
 from pathlib import Path
 from typing import Any
 
@@ -28,6 +29,48 @@ import torch
 from lightning.pytorch import LightningDataModule
 from monai.data import CacheDataset, DataLoader
 from monai.transforms import Compose
+from torch.utils.data import Dataset
+
+from src.utils import pylogger
+
+log = pylogger.RankedLogger(__name__, rank_zero_only=False)
+
+
+class _SkipCorruptDataset(Dataset):
+    """Wraps a dataset so a bad sample logs + retries instead of killing the whole run.
+
+    A single truncated/corrupt file (e.g. disk-full-interrupted write) otherwise crashes
+    every DDP rank minutes into a multi-day training job — one bad file out of tens of
+    thousands shouldn't cost the whole run. Retries are bounded so a systemic problem
+    (e.g. a stale datalist) still surfaces as an error instead of looping forever.
+    """
+
+    def __init__(self, dataset: Dataset, max_retries: int = 20) -> None:
+        self.dataset = dataset
+        self.max_retries = max_retries
+
+    def __len__(self) -> int:
+        return len(self.dataset)
+
+    def __getitem__(self, index: int) -> Any:
+        for attempt in range(self.max_retries):
+            try:
+                return self.dataset[index]
+            except Exception as exc:  # noqa: BLE001 — one bad sample must not kill training
+                path = self.dataset.data[index].get("image", "<unknown>")
+                log.error(
+                    "Corrupt sample skipped (attempt %d/%d): %s — %s: %s",
+                    attempt + 1,
+                    self.max_retries,
+                    path,
+                    type(exc).__name__,
+                    exc,
+                )
+                index = random.randrange(len(self.dataset))
+        raise RuntimeError(
+            f"{self.max_retries} consecutive corrupt samples starting near index "
+            f"{index} — likely a systemic data problem, not a one-off bad file."
+        )
 
 
 def _load_json_key(file_path: str, key: str) -> torch.Tensor:
@@ -119,8 +162,8 @@ class Report2CTDataModule(LightningDataModule):
         self.pin_memory = pin_memory
         self.train_files: list[dict[str, Any]] = []
         self.val_files: list[dict[str, Any]] = []
-        self.train_ds: CacheDataset | None = None
-        self.val_ds: CacheDataset | None = None
+        self.train_ds: _SkipCorruptDataset | None = None
+        self.val_ds: _SkipCorruptDataset | None = None
 
     def _transforms(self) -> Compose:
         """Build the per-sample transform pipeline (overridable hook for subclass variants)."""
@@ -144,18 +187,22 @@ class Report2CTDataModule(LightningDataModule):
         self.val_files = data.get("validation", [])
         transforms = self._transforms()
         if stage in (None, "fit"):
-            self.train_ds = CacheDataset(
-                data=self.train_files,
-                transform=transforms,
-                cache_rate=self.cache_rate,
-                num_workers=self.num_workers,
+            self.train_ds = _SkipCorruptDataset(
+                CacheDataset(
+                    data=self.train_files,
+                    transform=transforms,
+                    cache_rate=self.cache_rate,
+                    num_workers=self.num_workers,
+                )
             )
         if stage in (None, "fit", "validate"):
-            self.val_ds = CacheDataset(
-                data=self.val_files,
-                transform=transforms,
-                cache_rate=self.cache_rate,
-                num_workers=self.num_workers,
+            self.val_ds = _SkipCorruptDataset(
+                CacheDataset(
+                    data=self.val_files,
+                    transform=transforms,
+                    cache_rate=self.cache_rate,
+                    num_workers=self.num_workers,
+                )
             )
 
     def train_dataloader(self) -> DataLoader:

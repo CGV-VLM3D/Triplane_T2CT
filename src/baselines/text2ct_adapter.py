@@ -210,6 +210,11 @@ class Text2CTAdapter(LightningModule):
             config sets ``cuda:0``.
         load_weights: if False, build the nets with random init (architecture sanity only) and
             skip the three ``load_state_dict`` calls. Default True.
+        unet_filename: UNet checkpoint filename resolved under ``ckpt_dir`` (or its ``models/``
+            subdir). Defaults to the released baseline ``unet_rflow_200ep.pt``; override to load
+            a self-trained UNet (e.g. ``unet_rflow_200ep_toy_v2.pt``). The autoencoder/CLIP3D
+            filenames are unchanged. ``load_models`` reads ``scale_factor`` from the wrapper-dict
+            checkpoint, falling back to 1.0287 for a raw ``state_dict``.
         guidance_scale: classifier-free-guidance scale (upstream default 5.0).
         num_inference_steps: RFlow sampling steps (upstream default 30).
     """
@@ -223,6 +228,7 @@ class Text2CTAdapter(LightningModule):
         ckpt_dir: str | Path = CKPT_DIR,
         device_str: str = "cpu",
         load_weights: bool = True,
+        unet_filename: str = UNET_CKPT.name,
         guidance_scale: float = 5.0,
         num_inference_steps: int = 30,
     ) -> None:
@@ -230,6 +236,7 @@ class Text2CTAdapter(LightningModule):
         self._ckpt_dir = Path(ckpt_dir)
         self._device_str = device_str
         self._load_weights = load_weights
+        self._unet_filename = unet_filename
         self._guidance_scale = float(guidance_scale)
         self._num_inference_steps = int(num_inference_steps)
 
@@ -244,6 +251,44 @@ class Text2CTAdapter(LightningModule):
         self._divisor: int | None = None
 
     # -- build ---------------------------------------------------------------
+
+    def _ensure_clip(self) -> None:
+        """Lazily build ONLY the FrozenCLIP3D text encoder (no VAE/UNet).
+
+        Used by ``encode_text`` (e.g. the report2ct_CLIP3D condition precompute), which needs
+        the text embedding but not the generator. ``_ensure_built`` also calls this so the full
+        inference path and the text-only path share one CLIP build. Idempotent.
+        """
+        if self._clip is not None:
+            return
+
+        device = torch.device(self._device_str)
+        if self._device_str.startswith("cuda"):
+            idx = int(self._device_str.split(":")[-1]) if ":" in self._device_str else 0
+            torch.cuda.set_device(idx)
+
+        _prioritize_text2ct_on_path()
+
+        # CLIP3D text encoder (cfg-bank build; relative-path cwd dependency).
+        from core.cfg_helper import model_cfg_bank  # noqa: PLC0415
+        from core.models.common.get_model import get_model  # noqa: PLC0415
+
+        _patch_clip_tokenizer_for_transformers_compat()
+        with _chdir(_TEXT2CT_ROOT):
+            cfgm = model_cfg_bank()("clip_3D")
+            clip = get_model()(cfgm).to(device)
+        if self._load_weights:
+            clip_ckpt = _resolve_ckpt(self._ckpt_dir, CLIP_CKPT.name)
+            if not clip_ckpt.is_file():
+                raise FileNotFoundError(
+                    f"Text2CT CLIP3D checkpoint missing at {clip_ckpt}. "
+                    f"See docs/text2ct_runbook.md for the download recipe."
+                )
+            clip.load_state_dict(
+                torch.load(str(clip_ckpt), map_location=device), strict=True
+            )
+        clip.eval()
+        self._clip = clip
 
     def _ensure_built(self) -> None:
         if self._unet is not None:
@@ -271,7 +316,7 @@ class Text2CTAdapter(LightningModule):
         args = load_config(str(_ENV_CONFIG), str(_MODEL_CONFIG), str(_MODEL_DEF))
         # Point the config at our checkpoints and our vendored scheduler; thread sampler knobs.
         ae_path = _resolve_ckpt(self._ckpt_dir, AUTOENCODER_CKPT.name)
-        unet_path = _resolve_ckpt(self._ckpt_dir, UNET_CKPT.name)
+        unet_path = _resolve_ckpt(self._ckpt_dir, self._unet_filename)
         args.trained_autoencoder_path = str(ae_path)
         args.model_dir = str(unet_path.parent)
         args.model_filename = unet_path.name
@@ -292,25 +337,8 @@ class Text2CTAdapter(LightningModule):
         autoencoder.eval()
         unet.eval()
 
-        # --- CLIP3D text encoder (cfg-bank build; relative-path cwd dependency) ---
-        from core.cfg_helper import model_cfg_bank  # noqa: PLC0415
-        from core.models.common.get_model import get_model  # noqa: PLC0415
-
-        _patch_clip_tokenizer_for_transformers_compat()
-        with _chdir(_TEXT2CT_ROOT):
-            cfgm = model_cfg_bank()("clip_3D")
-            clip = get_model()(cfgm).to(device)
-        if self._load_weights:
-            clip_ckpt = _resolve_ckpt(self._ckpt_dir, CLIP_CKPT.name)
-            if not clip_ckpt.is_file():
-                raise FileNotFoundError(
-                    f"Text2CT CLIP3D checkpoint missing at {clip_ckpt}. "
-                    f"See docs/text2ct_runbook.md for the download recipe."
-                )
-            clip.load_state_dict(
-                torch.load(str(clip_ckpt), map_location=device), strict=True
-            )
-        clip.eval()
+        # --- CLIP3D text encoder (factored into `_ensure_clip`, reused by `encode_text`) ---
+        self._ensure_clip()
 
         # --- divisor + conditioning tensors (mirror diff_model_demo.py:245-256) ---
         num_channels = args.diffusion_unet_def["num_channels"]
@@ -326,13 +354,33 @@ class Text2CTAdapter(LightningModule):
         self._args = args
         self._autoencoder = autoencoder
         self._unet = unet
-        self._clip = clip
         self._scale_factor = scale_factor
         self._run_inference = run_inference
         self._prepared = prepared
         self._divisor = divisor
 
     # -- inference -----------------------------------------------------------
+
+    @torch.no_grad()
+    def encode_text(self, text: str) -> torch.Tensor:
+        """Encode one report string into the FrozenCLIP3D condition vector.
+
+        Mirrors the text→context step upstream ``run_inference`` uses
+        (``clip([text], "encode_text")``, diff_model_demo.py:130): CLIP text_model pooler →
+        ``text_projection`` → L2-norm. Used to precompute the report2ct_CLIP3D condition; the
+        same string ``"Findings: {f} Impression: {i}"`` text2ct conditions on.
+
+        Args:
+            text: report string, formatted as text2ct trains
+                (``"Findings: {findings} Impression: {impression}"``).
+
+        Returns:
+            ``(1, 768)`` L2-normalized embedding on CPU float32 (the encoder returns
+            ``(1, 1, 768)``; the leading batch dim is squeezed).
+        """
+        self._ensure_clip()
+        emb = self._clip([text], "encode_text")  # (1, 1, 768)
+        return emb.squeeze(0).detach().cpu().float()  # (1, 768)
 
     @torch.no_grad()
     def inference(self, prompt: str, **_) -> torch.Tensor:

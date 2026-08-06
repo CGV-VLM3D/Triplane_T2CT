@@ -1,0 +1,858 @@
+{
+  "population": {
+    "train": {
+      "csv_volumes": 47149,
+      "clean_volumes": 46393,
+      "no_chest_volumes": 752,
+      "unencodable_volumes": 4,
+      "clean_scans": 24128,
+      "clean_patients": 20000
+    },
+    "valid": {
+      "csv_volumes": 3039,
+      "clean_volumes": 3001,
+      "no_chest_volumes": 37,
+      "unencodable_volumes": 1,
+      "clean_scans": 1564,
+      "clean_patients": 1304
+    }
+  },
+  "demographics": {
+    "train": {
+      "n_scans": 24128,
+      "n_patients": 20000,
+      "age_scan_median": 46.0,
+      "age_scan_q25": 35.0,
+      "age_scan_q75": 62.0,
+      "age_scan_min": 18,
+      "age_scan_max": 102,
+      "age_scan_missing": 6,
+      "age_gt100_count": 3,
+      "age_patient_median": 45.0,
+      "age_patient_q25": 34.0,
+      "age_patient_q75": 61.0,
+      "sex_counts": {
+        "M": 14098,
+        "F": 10027,
+        "missing": 3
+      },
+      "scans_per_patient_mean": 1.2064,
+      "scans_per_patient_max": 17,
+      "patients_multi_scan": 2638,
+      "repeat_interval_days_median": 74.0,
+      "repeat_interval_days_mean": 177.3389050387597,
+      "repeat_interval_n_pairs": 4128
+    },
+    "valid": {
+      "n_scans": 1564,
+      "n_patients": 1304,
+      "age_scan_median": 46.0,
+      "age_scan_q25": 35.0,
+      "age_scan_q75": 61.0,
+      "age_scan_min": 18,
+      "age_scan_max": 96,
+      "age_scan_missing": 1,
+      "age_gt100_count": 0,
+      "age_patient_median": 45.0,
+      "age_patient_q25": 34.0,
+      "age_patient_q75": 60.0,
+      "sex_counts": {
+        "M": 910,
+        "F": 654
+      },
+      "scans_per_patient_mean": 1.1993865030674846,
+      "scans_per_patient_max": 8,
+      "patients_multi_scan": 169,
+      "repeat_interval_days_median": 73.0,
+      "repeat_interval_days_mean": 178.7576923076923,
+      "repeat_interval_n_pairs": 260
+    }
+  },
+  "scanner_protocol": {
+    "train": {
+      "n_scans": 24128,
+      "manufacturer_raw": {
+        "Philips": 14218,
+        "Siemens Healthineers": 6904,
+        "PNMS": 1937,
+        "SIEMENS": 1069
+      },
+      "manufacturer_canon": {
+        "Philips": 14218,
+        "Siemens": 7973,
+        "PNMS": 1937
+      },
+      "manufacturer_canon_pct": {
+        "Philips": 58.93,
+        "Siemens": 33.04,
+        "PNMS": 8.03
+      },
+      "model_top": {
+        "iCT 256": 11927,
+        "SOMATOM go.All": 6904,
+        "Brilliance Big Bore": 2290,
+        "MX 16": 1937,
+        "SOMATOM Force": 996,
+        "SOMATOM Scope": 73,
+        "GEMINI TF TOF 16": 1
+      },
+      "series_top": {
+        "HRCT": 13777,
+        "Thorax 1,50 Br40 S3": 4215,
+        "Thorax 1,50 Bl56 S3": 2581,
+        "MEDIASTEN, iDose (4)": 2282,
+        "Thorax  Lung 1.5  Bl57  3": 743,
+        "Thorax  Lung 2.0  Bl57  3": 234,
+        "Lung 1,50 Br40 S3": 80,
+        "Thorax_Mediasten 1.5  B31s Via": 73,
+        "missing": 58,
+        "PARANKIM": 7,
+        "Thorax Mediasten 1.5  Br36  3": 7,
+        "1 MM": 6,
+        "Thorax 1,50 Br36 S3": 6,
+        "PARANKIM, iDose (4)": 6,
+        "Thorax 1,50 Br40 S3 ax": 5
+      },
+      "kernel_top": {
+        "YA": 11834,
+        "['Br40f', '3']": 4303,
+        "['Bl56f', '3']": 2580,
+        "EA": 1921,
+        "A": 1374,
+        "B": 981,
+        "['Bl57d', '3']": 980,
+        "B31s": 73,
+        "E": 16,
+        "['Br36f', '3']": 10,
+        "['Br36d', '3']": 8,
+        "LungB": 8,
+        "UB": 7,
+        "['Bl64f', '3']": 5,
+        "L": 5,
+        "['Br60f', '3']": 4,
+        "SA": 4,
+        "SB": 4,
+        "['Br64f', '3']": 2,
+        "['Br44f', '3']": 2
+      }
+    },
+    "valid": {
+      "n_scans": 1564,
+      "manufacturer_raw": {
+        "Philips": 953,
+        "Siemens Healthineers": 426,
+        "PNMS": 125,
+        "SIEMENS": 60
+      },
+      "manufacturer_canon": {
+        "Philips": 953,
+        "Siemens": 486,
+        "PNMS": 125
+      },
+      "manufacturer_canon_pct": {
+        "Philips": 60.93,
+        "Siemens": 31.07,
+        "PNMS": 7.99
+      },
+      "model_top": {
+        "iCT 256": 785,
+        "SOMATOM go.All": 426,
+        "Brilliance Big Bore": 168,
+        "MX 16": 125,
+        "SOMATOM Force": 60
+      },
+      "series_top": {
+        "HRCT": 901,
+        "Thorax 1,50 Br40 S3": 239,
+        "Thorax 1,50 Bl56 S3": 180,
+        "MEDIASTEN, iDose (4)": 167,
+        "Thorax  Lung 1.5  Bl57  3": 44,
+        "Thorax  Lung 2.0  Bl57  3": 16,
+        "Lung 1,50 Br40 S3": 6,
+        "missing": 4,
+        "PARANKIM": 1,
+        "15 DK GEC FAZ": 1,
+        "HELICAL": 1,
+        "PARANKIM, iDose (4)": 1,
+        "Thorax 1,50 Br60 S3": 1,
+        "AKS": 1,
+        "AXIAL": 1
+      },
+      "kernel_top": {
+        "YA": 777,
+        "['Br40f', '3']": 245,
+        "['Bl56f', '3']": 180,
+        "EA": 124,
+        "A": 102,
+        "B": 73,
+        "['Bl57d', '3']": 60,
+        "SB": 1,
+        "L": 1,
+        "['Br60f', '3']": 1
+      }
+    },
+    "train_mfr_label_prevalence": {
+      "PNMS": {
+        "n_scans": 1937,
+        "Medical material": 0.0671,
+        "Arterial wall calcification": 0.1946,
+        "Cardiomegaly": 0.0769,
+        "Pericardial effusion": 0.0351,
+        "Coronary artery wall calcification": 0.1435,
+        "Hiatal hernia": 0.1275,
+        "Lymphadenopathy": 0.1502,
+        "Emphysema": 0.2019,
+        "Atelectasis": 0.1988,
+        "Lung nodule": 0.46,
+        "Lung opacity": 0.2674,
+        "Pulmonary fibrotic sequela": 0.2566,
+        "Pleural effusion": 0.064,
+        "Mosaic attenuation pattern": 0.0465,
+        "Peribronchial thickening": 0.0356,
+        "Consolidation": 0.1213,
+        "Bronchiectasis": 0.0707,
+        "Interlobular septal thickening": 0.0589
+      },
+      "Philips": {
+        "n_scans": 14218,
+        "Medical material": 0.1111,
+        "Arterial wall calcification": 0.2691,
+        "Cardiomegaly": 0.1092,
+        "Pericardial effusion": 0.0689,
+        "Coronary artery wall calcification": 0.2372,
+        "Hiatal hernia": 0.1405,
+        "Lymphadenopathy": 0.2643,
+        "Emphysema": 0.1792,
+        "Atelectasis": 0.2375,
+        "Lung nodule": 0.4315,
+        "Lung opacity": 0.3872,
+        "Pulmonary fibrotic sequela": 0.2711,
+        "Pleural effusion": 0.1129,
+        "Mosaic attenuation pattern": 0.0731,
+        "Peribronchial thickening": 0.0891,
+        "Consolidation": 0.1815,
+        "Bronchiectasis": 0.0967,
+        "Interlobular septal thickening": 0.0765
+      },
+      "Siemens": {
+        "n_scans": 7973,
+        "Medical material": 0.1476,
+        "Arterial wall calcification": 0.3133,
+        "Cardiomegaly": 0.1109,
+        "Pericardial effusion": 0.082,
+        "Coronary artery wall calcification": 0.2911,
+        "Hiatal hernia": 0.1483,
+        "Lymphadenopathy": 0.2591,
+        "Emphysema": 0.218,
+        "Atelectasis": 0.302,
+        "Lung nodule": 0.4952,
+        "Lung opacity": 0.3541,
+        "Pulmonary fibrotic sequela": 0.2629,
+        "Pleural effusion": 0.1416,
+        "Mosaic attenuation pattern": 0.0833,
+        "Peribronchial thickening": 0.1455,
+        "Consolidation": 0.1779,
+        "Bronchiectasis": 0.1128,
+        "Interlobular septal thickening": 0.0879
+      }
+    }
+  },
+  "spacing_shape": {
+    "train": {
+      "n_volumes": 46393,
+      "xy_median": 0.6796875,
+      "xy_q": {
+        "1": 0.310546875,
+        "25": 0.4033203125,
+        "50": 0.6796875,
+        "75": 0.740234375,
+        "99": 0.921875
+      },
+      "xy_min": 0.227539062,
+      "xy_max": 1.3671875,
+      "z_median": 1.25,
+      "z_q": {
+        "1": 0.75,
+        "25": 0.75,
+        "50": 1.25,
+        "75": 1.5,
+        "99": 3.0
+      },
+      "z_min": 0.3,
+      "z_max": 6.0,
+      "z_value_counts_top": {
+        "1.5": 18606,
+        "0.75": 11852,
+        "1.0": 8431,
+        "1.25": 5371,
+        "3.0": 1234,
+        "2.0": 488,
+        "1.3": 146,
+        "1.501": 136,
+        "1.499": 60,
+        "0.751": 18,
+        "0.5": 10,
+        "1.49": 6
+      },
+      "nslices_median": 261.0,
+      "nslices_q": {
+        "1": 107.0,
+        "25": 228.0,
+        "50": 261.0,
+        "75": 390.0,
+        "99": 542.0
+      },
+      "nslices_min": 100,
+      "nslices_max": 2062,
+      "nslices_gt1000_count": 11,
+      "matrix_counts": {
+        "512x512": 30438,
+        "1024x1024": 13985,
+        "768x768": 1957,
+        "512x727": 2,
+        "512x666": 2,
+        "652x652": 2,
+        "535x512": 1,
+        "512x709": 1,
+        "622x622": 1,
+        "666x512": 1,
+        "512x717": 1,
+        "512x732": 1,
+        "512x616": 1
+      },
+      "rescale_intercept_counts": {
+        "-1024": 32608,
+        "-8192": 13785
+      }
+    },
+    "valid": {
+      "n_volumes": 3001,
+      "xy_median": 0.68259375,
+      "xy_q": {
+        "1": 0.307617188,
+        "25": 0.396484375,
+        "50": 0.68259375,
+        "75": 0.7423203125,
+        "99": 0.927734375
+      },
+      "xy_min": 0.28125,
+      "xy_max": 0.9765625,
+      "z_median": 1.25,
+      "z_q": {
+        "1": 0.75,
+        "25": 0.75,
+        "50": 1.25,
+        "75": 1.5,
+        "99": 3.0
+      },
+      "z_min": 0.75,
+      "z_max": 5.0,
+      "z_value_counts_top": {
+        "1.5": 1239,
+        "0.75": 773,
+        "1.0": 480,
+        "1.25": 371,
+        "3.0": 93,
+        "2.0": 32,
+        "1.499": 5,
+        "1.501": 4,
+        "0.751": 1,
+        "5.0": 1,
+        "1.51": 1,
+        "3.01": 1
+      },
+      "nslices_median": 257.0,
+      "nslices_q": {
+        "1": 106.0,
+        "25": 227.0,
+        "50": 257.0,
+        "75": 389.0,
+        "99": 540.0
+      },
+      "nslices_min": 100,
+      "nslices_max": 1617,
+      "nslices_gt1000_count": 3,
+      "matrix_counts": {
+        "512x512": 1938,
+        "1024x1024": 938,
+        "768x768": 125
+      },
+      "rescale_intercept_counts": {
+        "-1024": 2151,
+        "-8192": 850
+      }
+    },
+    "z_low_investigation": {
+      "clean_min_z": 0.3,
+      "clean_n_below_0.1mm": 0,
+      "raw_min_z": 0.035,
+      "raw_n_below_0.1mm": 2,
+      "raw_below_0.1mm_examples": [
+        {
+          "VolumeName": "train_9792_a_1.nii.gz",
+          "zval": "0.035",
+          "nslices": "331",
+          "is_no_chest": "True",
+          "is_unencodable": "False",
+          "mfr": "Siemens"
+        },
+        {
+          "VolumeName": "train_9792_a_2.nii.gz",
+          "zval": "0.075",
+          "nslices": "296",
+          "is_no_chest": "True",
+          "is_unencodable": "False",
+          "mfr": "Siemens"
+        }
+      ],
+      "note": "0.035/0.075mm z from patient train_9792 (both no_chest, physically implausible: 0.035mm x 331 slices = 11.6mm coverage -> metadata error); clean-population Z min is 0.3mm."
+    },
+    "train_gt1000_slice_cases": [
+      {
+        "VolumeName": "train_8789_a_2.nii.gz",
+        "nslices": "2062",
+        "z": "0.75",
+        "mfr": "Philips"
+      },
+      {
+        "VolumeName": "train_35_a_2.nii.gz",
+        "nslices": "1671",
+        "z": "0.75",
+        "mfr": "Philips"
+      },
+      {
+        "VolumeName": "train_12477_a_1.nii.gz",
+        "nslices": "1456",
+        "z": "0.75",
+        "mfr": "Siemens"
+      },
+      {
+        "VolumeName": "train_2191_a_3.nii.gz",
+        "nslices": "1111",
+        "z": "0.5",
+        "mfr": "Philips"
+      },
+      {
+        "VolumeName": "train_15375_a_2.nii.gz",
+        "nslices": "1106",
+        "z": "0.75",
+        "mfr": "Philips"
+      },
+      {
+        "VolumeName": "train_17679_a_1.nii.gz",
+        "nslices": "1059",
+        "z": "1.0",
+        "mfr": "Siemens"
+      },
+      {
+        "VolumeName": "train_7794_a_2.nii.gz",
+        "nslices": "1050",
+        "z": "0.75",
+        "mfr": "Philips"
+      },
+      {
+        "VolumeName": "train_10176_a_2.nii.gz",
+        "nslices": "1034",
+        "z": "0.75",
+        "mfr": "Philips"
+      },
+      {
+        "VolumeName": "train_12822_a_2.nii.gz",
+        "nslices": "1023",
+        "z": "0.75",
+        "mfr": "Philips"
+      },
+      {
+        "VolumeName": "train_14843_a_2.nii.gz",
+        "nslices": "1004",
+        "z": "0.75",
+        "mfr": "Philips"
+      },
+      {
+        "VolumeName": "train_13442_a_4.nii.gz",
+        "nslices": "1004",
+        "z": "0.5",
+        "mfr": "Philips"
+      }
+    ],
+    "train_matrix_x_kernel": {
+      "1024x1024": {
+        "YA": 11834,
+        "L": 5,
+        "['Bl64f', '3']": 4,
+        "YB": 1
+      },
+      "512x512": {
+        "['Br40f', '3']": 4298,
+        "['Bl56f', '3']": 2580,
+        "A": 1373,
+        "['Bl57d', '3']": 980,
+        "B": 978
+      },
+      "512x616": {
+        "['Br40f', '3']": 1
+      },
+      "512x666": {
+        "B": 2
+      },
+      "512x709": {
+        "['Br40f', '3']": 1
+      },
+      "512x717": {
+        "['Br40f', '3']": 1
+      },
+      "512x727": {
+        "['Br40f', '3']": 1
+      },
+      "512x732": {
+        "['Br40f', '3']": 1
+      },
+      "622x622": {
+        "B": 1
+      },
+      "666x512": {
+        "A": 1
+      },
+      "768x768": {
+        "EA": 1921,
+        "E": 13,
+        "LungB": 3,
+        "['Bl57f', '3']": 1
+      }
+    }
+  },
+  "missingness": {
+    "train": {
+      "Manufacturer": 0.0,
+      "SeriesDescription": 25.5,
+      "ManufacturerModelName": 0.0,
+      "PatientSex": 0.01,
+      "PatientAge": 0.03,
+      "ReconstructionDiameter": 0.0,
+      "DistanceSourceToDetector": 51.33,
+      "DistanceSourceToPatient": 51.33,
+      "GantryDetectorTilt": 0.0,
+      "TableHeight": 0.0,
+      "RotationDirection": 9.53,
+      "ExposureTime": 0.0,
+      "XRayTubeCurrent": 0.0,
+      "Exposure": 0.0,
+      "FilterType": 29.36,
+      "GeneratorPower": 65.65,
+      "FocalSpots": 65.65,
+      "ConvolutionKernel": 0.0,
+      "PatientPosition": 0.0,
+      "RevolutionTime": 55.97,
+      "SingleCollimationWidth": 56.13,
+      "TotalCollimationWidth": 56.13,
+      "TableSpeed": 51.33,
+      "TableFeedPerRotation": 51.33,
+      "SpiralPitchFactor": 51.33,
+      "DataCollectionCenterPatient": 65.65,
+      "ReconstructionTargetCenterPatient": 65.65,
+      "ExposureModulationType": 4.91,
+      "CTDIvol": 0.12,
+      "ImagePositionPatient": 0.0,
+      "ImageOrientationPatient": 0.0,
+      "SliceLocation": 0.0,
+      "SamplesPerPixel": 0.0,
+      "PhotometricInterpretation": 0.0,
+      "Rows": 0.0,
+      "Columns": 0.0,
+      "XYSpacing": 0.0,
+      "RescaleIntercept": 0.0,
+      "RescaleSlope": 0.0,
+      "RescaleType": 65.96,
+      "NumberofSlices": 0.0,
+      "ZSpacing": 0.0,
+      "StudyDate": 0.0
+    },
+    "valid": {
+      "Manufacturer": 0.0,
+      "SeriesDescription": 25.59,
+      "ManufacturerModelName": 0.0,
+      "PatientSex": 0.0,
+      "PatientAge": 0.07,
+      "ReconstructionDiameter": 0.0,
+      "DistanceSourceToDetector": 52.15,
+      "DistanceSourceToPatient": 52.15,
+      "GantryDetectorTilt": 0.0,
+      "TableHeight": 0.0,
+      "RotationDirection": 10.83,
+      "ExposureTime": 0.0,
+      "XRayTubeCurrent": 0.0,
+      "Exposure": 0.0,
+      "FilterType": 27.92,
+      "GeneratorPower": 67.64,
+      "FocalSpots": 67.64,
+      "ConvolutionKernel": 0.0,
+      "PatientPosition": 0.0,
+      "RevolutionTime": 56.18,
+      "SingleCollimationWidth": 56.81,
+      "TotalCollimationWidth": 56.81,
+      "TableSpeed": 52.15,
+      "TableFeedPerRotation": 52.15,
+      "SpiralPitchFactor": 52.15,
+      "DataCollectionCenterPatient": 67.64,
+      "ReconstructionTargetCenterPatient": 67.64,
+      "ExposureModulationType": 4.83,
+      "CTDIvol": 0.17,
+      "ImagePositionPatient": 0.0,
+      "ImageOrientationPatient": 0.0,
+      "SliceLocation": 0.0,
+      "SamplesPerPixel": 0.0,
+      "PhotometricInterpretation": 0.0,
+      "Rows": 0.0,
+      "Columns": 0.0,
+      "XYSpacing": 0.0,
+      "RescaleIntercept": 0.0,
+      "RescaleSlope": 0.0,
+      "RescaleType": 67.64,
+      "NumberofSlices": 0.0,
+      "ZSpacing": 0.0,
+      "StudyDate": 0.0
+    },
+    "vendor_conditioned_train": {
+      "PNMS": {
+        "Manufacturer": 0.0,
+        "SeriesDescription": 0.1,
+        "ManufacturerModelName": 0.0,
+        "PatientSex": 0.0,
+        "PatientAge": 0.0,
+        "ReconstructionDiameter": 0.0,
+        "DistanceSourceToDetector": 0.0,
+        "DistanceSourceToPatient": 0.0,
+        "GantryDetectorTilt": 0.0,
+        "TableHeight": 0.0,
+        "RotationDirection": 0.1,
+        "ExposureTime": 0.0,
+        "XRayTubeCurrent": 0.0,
+        "Exposure": 0.0,
+        "FilterType": 0.0,
+        "GeneratorPower": 100.0,
+        "FocalSpots": 100.0,
+        "ConvolutionKernel": 0.0,
+        "PatientPosition": 0.0,
+        "RevolutionTime": 0.0,
+        "SingleCollimationWidth": 100.0,
+        "TotalCollimationWidth": 100.0,
+        "TableSpeed": 0.0,
+        "TableFeedPerRotation": 0.0,
+        "SpiralPitchFactor": 0.0,
+        "DataCollectionCenterPatient": 100.0,
+        "ReconstructionTargetCenterPatient": 100.0,
+        "ExposureModulationType": 100.0,
+        "CTDIvol": 0.3,
+        "ImagePositionPatient": 0.0,
+        "ImageOrientationPatient": 0.0,
+        "SliceLocation": 0.0,
+        "SamplesPerPixel": 0.0,
+        "PhotometricInterpretation": 0.0,
+        "Rows": 0.0,
+        "Columns": 0.0,
+        "XYSpacing": 0.0,
+        "RescaleIntercept": 0.0,
+        "RescaleSlope": 0.0,
+        "RescaleType": 100.0,
+        "NumberofSlices": 0.0,
+        "ZSpacing": 0.0,
+        "StudyDate": 0.0
+      },
+      "Philips": {
+        "Manufacturer": 0.0,
+        "SeriesDescription": 0.4,
+        "ManufacturerModelName": 0.0,
+        "PatientSex": 0.0,
+        "PatientAge": 0.0,
+        "ReconstructionDiameter": 0.0,
+        "DistanceSourceToDetector": 83.9,
+        "DistanceSourceToPatient": 83.9,
+        "GantryDetectorTilt": 0.0,
+        "TableHeight": 0.0,
+        "RotationDirection": 16.1,
+        "ExposureTime": 0.0,
+        "XRayTubeCurrent": 0.0,
+        "Exposure": 0.0,
+        "FilterType": 0.0,
+        "GeneratorPower": 100.0,
+        "FocalSpots": 100.0,
+        "ConvolutionKernel": 0.0,
+        "PatientPosition": 0.0,
+        "RevolutionTime": 83.9,
+        "SingleCollimationWidth": 83.9,
+        "TotalCollimationWidth": 83.9,
+        "TableSpeed": 83.9,
+        "TableFeedPerRotation": 83.9,
+        "SpiralPitchFactor": 83.9,
+        "DataCollectionCenterPatient": 100.0,
+        "ReconstructionTargetCenterPatient": 100.0,
+        "ExposureModulationType": 0.1,
+        "CTDIvol": 0.1,
+        "ImagePositionPatient": 0.0,
+        "ImageOrientationPatient": 0.0,
+        "SliceLocation": 0.0,
+        "SamplesPerPixel": 0.0,
+        "PhotometricInterpretation": 0.0,
+        "Rows": 0.0,
+        "Columns": 0.0,
+        "XYSpacing": 0.0,
+        "RescaleIntercept": 0.0,
+        "RescaleSlope": 0.0,
+        "RescaleType": 100.0,
+        "NumberofSlices": 0.0,
+        "ZSpacing": 0.0,
+        "StudyDate": 0.0
+      },
+      "Siemens": {
+        "Manufacturer": 0.0,
+        "SeriesDescription": 0.0,
+        "ManufacturerModelName": 0.0,
+        "PatientSex": 0.0,
+        "PatientAge": 0.1,
+        "ReconstructionDiameter": 0.0,
+        "DistanceSourceToDetector": 0.0,
+        "DistanceSourceToPatient": 0.0,
+        "GantryDetectorTilt": 0.0,
+        "TableHeight": 0.0,
+        "RotationDirection": 0.0,
+        "ExposureTime": 0.0,
+        "XRayTubeCurrent": 0.0,
+        "Exposure": 0.0,
+        "FilterType": 85.6,
+        "GeneratorPower": 0.0,
+        "FocalSpots": 0.0,
+        "ConvolutionKernel": 0.0,
+        "PatientPosition": 0.0,
+        "RevolutionTime": 13.4,
+        "SingleCollimationWidth": 0.0,
+        "TotalCollimationWidth": 0.0,
+        "TableSpeed": 0.0,
+        "TableFeedPerRotation": 0.0,
+        "SpiralPitchFactor": 0.0,
+        "DataCollectionCenterPatient": 0.0,
+        "ReconstructionTargetCenterPatient": 0.0,
+        "ExposureModulationType": 0.0,
+        "CTDIvol": 0.0,
+        "ImagePositionPatient": 0.0,
+        "ImageOrientationPatient": 0.0,
+        "SliceLocation": 0.0,
+        "SamplesPerPixel": 0.0,
+        "PhotometricInterpretation": 0.0,
+        "Rows": 0.0,
+        "Columns": 0.0,
+        "XYSpacing": 0.0,
+        "RescaleIntercept": 0.0,
+        "RescaleSlope": 0.0,
+        "RescaleType": 0.9,
+        "NumberofSlices": 0.0,
+        "ZSpacing": 0.0,
+        "StudyDate": 0.0
+      }
+    },
+    "scanner_fingerprint_columns": {
+      "DistanceSourceToDetector": {
+        "PNMS": 0.0,
+        "Philips": 83.9,
+        "Siemens": 0.0
+      },
+      "DistanceSourceToPatient": {
+        "PNMS": 0.0,
+        "Philips": 83.9,
+        "Siemens": 0.0
+      },
+      "FilterType": {
+        "PNMS": 0.0,
+        "Philips": 0.0,
+        "Siemens": 85.6
+      },
+      "GeneratorPower": {
+        "PNMS": 100.0,
+        "Philips": 100.0,
+        "Siemens": 0.0
+      },
+      "FocalSpots": {
+        "PNMS": 100.0,
+        "Philips": 100.0,
+        "Siemens": 0.0
+      },
+      "RevolutionTime": {
+        "PNMS": 0.0,
+        "Philips": 83.9,
+        "Siemens": 13.4
+      },
+      "SingleCollimationWidth": {
+        "PNMS": 100.0,
+        "Philips": 83.9,
+        "Siemens": 0.0
+      },
+      "TotalCollimationWidth": {
+        "PNMS": 100.0,
+        "Philips": 83.9,
+        "Siemens": 0.0
+      },
+      "TableSpeed": {
+        "PNMS": 0.0,
+        "Philips": 83.9,
+        "Siemens": 0.0
+      },
+      "TableFeedPerRotation": {
+        "PNMS": 0.0,
+        "Philips": 83.9,
+        "Siemens": 0.0
+      },
+      "SpiralPitchFactor": {
+        "PNMS": 0.0,
+        "Philips": 83.9,
+        "Siemens": 0.0
+      },
+      "DataCollectionCenterPatient": {
+        "PNMS": 100.0,
+        "Philips": 100.0,
+        "Siemens": 0.0
+      },
+      "ReconstructionTargetCenterPatient": {
+        "PNMS": 100.0,
+        "Philips": 100.0,
+        "Siemens": 0.0
+      },
+      "ExposureModulationType": {
+        "PNMS": 100.0,
+        "Philips": 0.1,
+        "Siemens": 0.0
+      },
+      "RescaleType": {
+        "PNMS": 100.0,
+        "Philips": 100.0,
+        "Siemens": 0.9
+      }
+    }
+  },
+  "condition_safe_columns": [
+    "Manufacturer",
+    "ManufacturerModelName",
+    "PatientSex",
+    "PatientAge",
+    "ReconstructionDiameter",
+    "GantryDetectorTilt",
+    "TableHeight",
+    "ExposureTime",
+    "XRayTubeCurrent",
+    "Exposure",
+    "ConvolutionKernel",
+    "PatientPosition",
+    "CTDIvol",
+    "ImagePositionPatient",
+    "ImageOrientationPatient",
+    "SliceLocation",
+    "SamplesPerPixel",
+    "PhotometricInterpretation",
+    "Rows",
+    "Columns",
+    "XYSpacing",
+    "RescaleIntercept",
+    "RescaleSlope",
+    "NumberofSlices",
+    "ZSpacing",
+    "StudyDate"
+  ]
+}

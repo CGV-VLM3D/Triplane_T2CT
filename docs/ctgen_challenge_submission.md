@@ -88,10 +88,17 @@ forithmus status
 - `process.py` — `/input/prompts.json` 로드 → (Stage1 MaskGIT 저해상도 → Stage2 diffusion super-res) →
   `save` 시 HU clip→`SetSpacing` → `/output/<input_image_name>.nii.gz` loose 저장(zip 안 함).
 
-## 우리 제출용으로 가는 길 (후속 작업)
-예제는 GenerateCT cascade다. 우리 베이스라인(text2ct/report2ct, MAISI latent-diffusion)을 제출하려면
-같은 thin-image 패턴으로 `process.py`만 우리 sampler로 교체:
-- `/input/prompts.json` → 우리 sampler(`src/baselines/text2ct_adapter.py` 등) → MAISI decode →
-  truthful spacing stamp([[ctgen_eval_spacing_convention]]) → `/output/<name>.nii.gz`.
-- 가중치(MAISI VAE + 우리 diffusion ckpt)는 `weights.zip` 분리 업로드 + entrypoint 심링크.
-- 별도 플랜으로 진행.
+## 우리 제출 (구현 완료 — `report2ct_wan`)
+빌드 컨텍스트와 실행 런북은 **[../vlm3d_challenge_eval/README.md](../vlm3d_challenge_eval/README.md)**.
+이 문서(절차 레퍼런스)와 달리 거기엔 실측치와 우리 구성이 들어 있다. 요약:
+
+- `vlm3d_challenge_eval/process.py`가 `/input/prompts.json` → `report2ct_wan` RFlow(50 step,
+  cfg 5.0, spacing 0.75/0.75/1.3) → Wan VAE decode → `/output/<stem>.nii.gz`를 한 프로세스로 처리한다
+  (로컬의 3-step 플로우는 두 conda env의 diffusers 버전 차이 때문일 뿐이다).
+- 출력은 **float32** `.nii.gz`다 — 스키마가 dtype만 검사하고 int16을 거부한다. shape 512×512×253과
+  spacing 0.75는 통과한다. 값은 int16 반올림 후 float32로 넓혀 로컬 `.mha`와 동일하게 유지한다.
+- 가중치는 `stage_weights.sh`가 만드는 `weights.zip`(4.0 GB: ckpt + HF 캐시)로 분리 업로드하고,
+  `HF_HOME=/weights/hf_cache`로 가리켜 **entrypoint 심링크 없이** 오프라인 로드한다.
+- ⚠ 헤드라인 `report2ct_wan_mask_v2`는 GT organ mask가 필요해 제출 불가 — README의 "왜 mask
+  모델이 아닌가" 참고.
+- ⚠ `forithmus test`는 weights 마운트 옵션이 없어 쓸 수 없다; 드라이런은 `docker run`으로 직접 한다.

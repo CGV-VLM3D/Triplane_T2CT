@@ -5,11 +5,13 @@ defaults:
   - override hydra_logging: colorlog
   - override job_logging: colorlog
 
-# output directory, generated dynamically on each run
+# output directory, generated dynamically on each run.
+# dated_rundir (src/utils/resolvers.py): KST date, with _2/_3… on same-day collision
+# → outputs/<task_name>/2026-06-22 , 2026-06-22_2 , … (replaces UTC-clock HH-MM-SS).
 run:
-  dir: ${paths.output_root}/${task_name}/${now:%Y-%m-%d}_${now:%H-%M-%S}
+  dir: ${dated_rundir:${paths.output_root}/${task_name}}
 sweep:
-  dir: ${paths.output_root}/${task_name}/multiruns/${now:%Y-%m-%d}_${now:%H-%M-%S}
+  dir: ${dated_rundir:${paths.output_root}/${task_name}/multiruns}
   subdir: ${hydra.job.num}
 
 job_logging:

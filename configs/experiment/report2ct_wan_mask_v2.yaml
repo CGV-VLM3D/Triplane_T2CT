@@ -1,0 +1,44 @@
+# @package _global_
+# Dual-condition-CFG Wan mask ctgen experiment (report2ct_wan_mask_v2). Identical to
+# report2ct_wan_mask PLUS: IP2P 5/5/5 dropout of TEXT + MASK conditions and a LEARNED null mask
+# embedding (mask_cfg=true in the model). Reuses the SAME mask-latent data as report2ct_wan_mask.
+# At eval, sampling uses text-inner/mask-outer dual CFG (Report2CTWanMaskV2LatentSampler) so s_m
+# becomes a clean "mask effect" dial (s_m=0 ignores the mask → pure text→CT, s_m>1 amplifies it).
+# Launch (GPU 1):
+#   CUDA_VISIBLE_DEVICES=1 python src/train.py experiment=report2ct_wan_mask_v2
+# Smoke:
+#   CUDA_VISIBLE_DEVICES=1 python src/train.py experiment=report2ct_wan_mask_v2 \
+#       trainer.max_epochs=1 trainer.limit_train_batches=50
+
+defaults:
+  - override /data: report2ct_wan_mask       # same 4-organ Wan mask latents as report2ct_wan_mask
+  - override /model: report2ct_wan_mask_v2   # in=32, mask_cfg=true (IP2P 5/5/5 + learned null)
+  - override /trainer: report2ct
+  - override /callbacks: default
+  - override /logger: wandb
+  - _self_
+
+task_name: report2ct_wan_mask_v2   # → outputs/report2ct_wan_mask_v2/<KST-date>[_N]/
+tags: ["wan_latent", "mask_cond", "dual_cfg", "ctgen"]
+seed: 42
+
+logger:
+  wandb:
+    group: "wan-latent-mask-v2"
+test: false
+
+# 300 epochs (Wan @ batch 8 is step-starved at 100). Dropout is now dual-condition (mask_cfg owns
+# it); model.cfg_drop_prob / cfg_per_sample are IGNORED under mask_cfg=true.
+trainer:
+  max_epochs: 300
+
+callbacks:
+  early_stopping: null
+  model_checkpoint:
+    monitor: null
+    every_n_epochs: 10
+    save_top_k: -1
+    save_last: true
+    filename: "epoch_{epoch:03d}"
+    auto_insert_metric_name: false
+  rich_progress_bar: null

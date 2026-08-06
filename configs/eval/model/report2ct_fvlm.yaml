@@ -4,7 +4,7 @@ name: report2ct_fvlm
 _target_: src.eval.samplers.report2ct_fvlm.Report2CTFVLMSampler
 
 # Must be provided on the CLI:
-#   model.ckpt_path=/workspace/outputs/report2ct_fvlm/<timestamp>/checkpoints/epoch_*_valloss_*.ckpt
+#   model.ckpt_path=/workspace/outputs/report2ct_fvlm/<KST-date>[_N]/checkpoints/epoch_*_valloss_*.ckpt
 ckpt_path: ???
 
 # Directory of precomputed fVLM per-organ cond embeddings (<scan_id>.pt, each (4, 256)).
@@ -18,9 +18,11 @@ n_steps: 100
 modality_class_label: 1   # CT class (matches training config)
 
 # Voxel spacing (mm) — UNet conditioning AND saved .mha affine (must match; scaled × 100
-# internally). Same convention as report2ct.yaml so the comparison stays apples-to-apples.
-spacing_mm: [1.0, 1.0, 1.5]
+# internally). Synced to report2ct.yaml's CONFIRMED value (full-1304 FID 5.56→2.53 at
+# spacing 0.8; see that file's comment for the FOV/384mm rationale) so the comparison
+# stays apples-to-apples.
+spacing_mm: ???  # REQUIRED on CLI, no default (model.spacing_mm=[0.8,0.8,1.5]); recommended 0.8 0.8 1.5 (FID-optimal, see above)
 
-# Classifier-free guidance scale. 1.0 = no guidance (faithful). cfg uncond branch uses
+# Classifier-free guidance scale. Synced to report2ct.yaml (5.0). cfg uncond branch uses
 # zeros_like(context) — works unchanged for the (1, 4, 256) fVLM context.
-cfg_scale: 1.0
+cfg_scale: ???  # REQUIRED on CLI, no default (model.cfg_scale=5.0); recommended 5.0 (see above)

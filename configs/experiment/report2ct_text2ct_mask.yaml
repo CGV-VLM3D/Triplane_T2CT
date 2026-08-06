@@ -1,0 +1,40 @@
+# @package _global_
+# Mask-conditioned ctgen on the text2ct-VAE latent substrate (TREATMENT arm of the A/B).
+# Same Report2CTModule loop + CLIP3D (768) conditioner as report2ct_text2ct (the baseline),
+# PLUS a top-K organ-mask concatenated at the UNet input (LDM concat). Tests whether GT-mask
+# conditioning improves 2.5D-FID / CLIPScore-T2I / FVD on valid_v2.
+# Launch: CUDA_VISIBLE_DEVICES=1 python src/train.py experiment=report2ct_text2ct_mask
+# Smoke:  ... trainer.max_epochs=1 trainer.limit_train_batches=50
+
+defaults:
+  - override /data: text2ct_mask
+  - override /model: report2ct_text2ct_mask
+  - override /trainer: report2ct
+  - override /callbacks: default
+  - override /logger: wandb
+  - _self_
+
+task_name: report2ct_text2ct_mask   # → outputs/report2ct_text2ct_mask/<KST-date>[_N]/
+tags: ["text2ct_latent", "mask_cond", "ctgen"]
+seed: 42
+
+logger:
+  wandb:
+    group: "text2ct-mask"
+test: false   # no test_step() in Report2CTModule
+
+# text2ct training regime (config_diff_model.json diffusion_unet_train): 200 epochs.
+# (batch_size 4 → data/text2ct_mask.yaml; CFG dropout 0.1 → model; lr/optimizer/RFlow already match.)
+trainer:
+  max_epochs: 200
+
+callbacks:
+  early_stopping: null   # diffusion trains to fixed n_epochs
+  model_checkpoint:
+    monitor: null
+    every_n_epochs: 10
+    save_top_k: -1
+    save_last: true
+    filename: "epoch_{epoch:03d}"
+    auto_insert_metric_name: false
+  rich_progress_bar: null

@@ -72,7 +72,7 @@ class Report2CTModule(LightningModule):
         repa_stop_step: int | None = None,
         init_from_ckpt: str | None = None,
         text_projector: nn.Module | None = None,
-        text_pooled_adaln: bool = False,
+        text_pooled_cond: bool = False,
     ) -> None:
         """Wire up the training loop around an externally-built UNet + scheduler.
 
@@ -128,7 +128,7 @@ class Report2CTModule(LightningModule):
                 and a key-padding mask is passed alongside it. Requires the batch to carry the
                 ``context_{f,i}_{seq,mask}_<k>`` keys emitted by ``Report2CTSeqDataModule``.
                 ``None`` ⇒ the pooled path, byte-identical to the baseline.
-            text_pooled_adaln: route the pooled findings/impression vectors into the UNet's ``emb``
+            text_pooled_cond: route the pooled findings/impression vectors into the UNet's ``emb``
                 (the vector every ResBlock reads) in addition to whatever the cross-attention
                 context is. Requires ``unet`` to be a ``DiffusionModelUNetMaisiTextPooled``.
                 Independent of ``text_projector``, so the two knobs give the A/B/C arms of
@@ -152,7 +152,7 @@ class Report2CTModule(LightningModule):
         # that method builds its list from self.unet, so a submodule alone would silently never
         # train (same trap as mask_conditioner / repa below).
         self.text_projector = text_projector
-        self.text_pooled_adaln = text_pooled_adaln
+        self.text_pooled_cond = text_pooled_cond
         # Optional LDM concat mask conditioner (nn.Module, registered so it lands in state_dict /
         # .to(device) / .train()/.eval()). None ⇒ behaviour byte-identical to the text-only baseline.
         self.mask_conditioner = mask_conditioner
@@ -321,7 +321,7 @@ class Report2CTModule(LightningModule):
         # so the same drop can be applied to them; `None` leaves the UNet's text_pooled path idle.
         text_pooled_f: torch.Tensor | None = None
         text_pooled_i: torch.Tensor | None = None
-        if self.text_pooled_adaln:
+        if self.text_pooled_cond:
             text_pooled_f = batch["context_f"]
             text_pooled_i = batch["context_i"]
         # Classifier-free-guidance dropout (training only). Three mutually-exclusive regimes:

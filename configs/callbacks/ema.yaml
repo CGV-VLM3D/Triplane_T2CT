@@ -1,0 +1,7 @@
+ema:
+  _target_: src.callbacks.ema.EMACallback
+  # decay 0.9999 ⇒ horizon ≈ 10k steps (wan: ~620 steps/epoch ⇒ ~16 epochs) — the LDM/DiT/ADM
+  # standard, ramped up from 0.1 over the first steps. The callback writes no files: the EMA
+  # rides in each checkpoint's callback state, and scripts/extract_ema.py turns any snapshot
+  # into a loadable {"state_dict": ...}. Raw snapshots are bit-identical to an EMA-off run.
+  decay: 0.9999

@@ -1,0 +1,12 @@
+# @package _global_.model
+name: report2ct_wan
+
+# Pass-through sampler: run_eval scores PRE-DECODED Wan .mha predictions (the Wan VAE decode
+# runs in the separate `wan` conda env, not here). 3-step flow (docs/wan_latent_runbook.md):
+#   1. CUDA_VISIBLE_DEVICES=2 python scripts/generate_wan_latents.py --ckpt <ckpt> \
+#        --out <OUT>                      # main env: RFlow → <OUT>/latents/*.npy
+#   2. CUDA_VISIBLE_DEVICES=2 /opt/conda/envs/wan/bin/python scripts/decode_wan_latents.py \
+#        --latent-dir <OUT>/latents --out <OUT>/predictions   # wan env: .npy → .mha
+#   3. python scripts/run_eval.py task=ctgen model=report2ct_wan out_dir=<OUT> task.n_samples=1304
+#      (this config; the sampler verifies <OUT>/predictions/*.mha exist and scores them)
+_target_: src.eval.samplers.report2ct_wan.Report2CTWanEvalSampler

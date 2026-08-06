@@ -1,0 +1,39 @@
+# @package _global_
+# Mask-conditioned ctgen on text2ct-VAE latent, ts_seg MERGED to 4 흉부 organ groups (g4).
+# Same recipe as experiment=report2ct_text2ct_mask, but data/model point at the g4 variants
+# (grouped masks + mask_conditioner.num_classes=5). Tests whether the coarse 4-organ mask (report/
+# disease/FOV-driven; plan radiant-popping-fox.md) conditions better than the full-118 mask.
+# Launch: CUDA_VISIBLE_DEVICES=1 python src/train.py experiment=report2ct_text2ct_mask_g4
+# Smoke:  ... trainer.max_epochs=1 trainer.limit_train_batches=50
+
+defaults:
+  - override /data: text2ct_mask_g4
+  - override /model: report2ct_text2ct_mask_g4
+  - override /trainer: report2ct
+  - override /callbacks: default
+  - override /logger: wandb
+  - _self_
+
+task_name: report2ct_text2ct_mask_g4   # → outputs/report2ct_text2ct_mask_g4/<KST-date>[_N]/
+tags: ["text2ct_latent", "mask_cond", "g4", "ctgen"]
+seed: 42
+
+logger:
+  wandb:
+    group: "text2ct-mask"
+test: false   # no test_step() in Report2CTModule
+
+# text2ct training regime (config_diff_model.json diffusion_unet_train): 200 epochs.
+trainer:
+  max_epochs: 200
+
+callbacks:
+  early_stopping: null   # diffusion trains to fixed n_epochs
+  model_checkpoint:
+    monitor: null
+    every_n_epochs: 10
+    save_top_k: -1
+    save_last: true
+    filename: "epoch_{epoch:03d}"
+    auto_insert_metric_name: false
+  rich_progress_bar: null

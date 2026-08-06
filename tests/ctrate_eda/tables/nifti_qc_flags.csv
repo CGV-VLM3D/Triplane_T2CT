@@ -1,0 +1,1 @@
+split,patient_id,scan_id,recon_id,volume_name,source,absolute_path,file_size,shape,dtype,zooms,axcodes,affine_determinant,qform_code,sform_code,ndim,read_error,no_chest,metadata_spacing_vs_header_zoom_diff,metadata_shape_vs_header_shape_diff,flags

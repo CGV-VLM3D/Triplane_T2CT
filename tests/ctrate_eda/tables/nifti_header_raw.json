@@ -1,0 +1,57 @@
+{
+  "n_files_total": 3031,
+  "n_valid_on_disk": 3001,
+  "n_bundle": 30,
+  "n_train_sampled": 0,
+  "n_read_error": 0,
+  "n_no_chest_on_disk": 0,
+  "n_flagged": 0,
+  "flag_counts_all": {},
+  "flag_counts_valid_on_disk": {},
+  "dtype_counts": {
+    "int16": 3031
+  },
+  "axcodes_counts": {
+    "LPS": 3031
+  },
+  "ndim_counts": {
+    "3": 3031
+  },
+  "qform_code_counts": {
+    "1": 3031
+  },
+  "sform_code_counts": {
+    "1": 3031
+  },
+  "affine_det_stats": {
+    "min": 0.11947774887084957,
+    "max": 4.768371582031249,
+    "mean": 0.4395830298619901,
+    "n_negative": 0
+  },
+  "spacing_metadata_diff_stats": {
+    "max": 4.6730041614040374e-08,
+    "n_gt_1e-2": 0,
+    "n_compared": 3031
+  },
+  "shape_metadata_diff_stats": {
+    "max": 0.0,
+    "n_gt_0": 0,
+    "n_compared": 3031
+  },
+  "zoom_x_stats_on_disk_valid": {
+    "min": 3001.0
+  },
+  "header_zoom_valid_on_disk": {
+    "in_plane_x": {
+      "min": 0.28125,
+      "median": 0.6825937628746033,
+      "max": 0.9765625
+    },
+    "z": {
+      "min": 0.75,
+      "median": 1.25,
+      "max": 5.0
+    }
+  }
+}

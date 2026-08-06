@@ -1,5 +1,11 @@
 # @package _global_
 
+# wandb override cheat-sheet (CLI 뒤에 그냥 붙이면 됨):
+#   logger.wandb.project=my_project          # wandb Project 탭 이름 (기본 vlm3d)
+#   logger.wandb.name=my_run_v1              # run 이름을 직접 지정 (기본 task_name_timestamp)
+#   logger.wandb.group=ablation-lr           # run 묶음 그룹
+#   예: python src/train.py experiment=report2ct_fvlm logger.wandb.name=fvlm_lr1e4 logger.wandb.project=report2ct
+
 # specify here default configuration
 # order of defaults determines the order in which configs override each other
 defaults:
@@ -28,7 +34,7 @@ defaults:
   # debugging config (enable through command line, e.g. `python train.py debug=default)
   - debug: null
 
-# task name, determines output directory path
+# task name, determines output directory path (outputs/<task_name>/<KST-date>[_N]/, _2/_3… on same-day reruns)
 task_name: "train"
 
 # tags to help you identify your experiments

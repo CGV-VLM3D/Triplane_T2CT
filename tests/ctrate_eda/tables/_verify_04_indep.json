@@ -1,0 +1,49 @@
+{
+  "train_n_clean_scans_set": 24128,
+  "train_n_deduped_rows": 24128,
+  "train_clinical_missing_pct": 50.43,
+  "train_findings_word_median": 185.0,
+  "train_findings_iqr": [
+    147.0,
+    231.0
+  ],
+  "train_impression_word_median": 28.0,
+  "train_impression_missing_pct": 3.24,
+  "train_findings_exact_unique_pct": 94.34,
+  "valid_n_clean_scans_set": 1564,
+  "valid_n_deduped_rows": 1564,
+  "valid_clinical_missing_pct": 51.09,
+  "valid_findings_word_median": 183.0,
+  "valid_findings_iqr": [
+    145.0,
+    233.0
+  ],
+  "valid_impression_word_median": 29.0,
+  "valid_impression_missing_pct": 2.81,
+  "valid_findings_exact_unique_pct": 96.1,
+  "peri_sentence_reports_with": 9168,
+  "peri_sentence_total_occ": 9201,
+  "spearman_nl_findings": 0.669,
+  "bands": {
+    "all_zero": [
+      130,
+      6,
+      2731
+    ],
+    "1-3": [
+      168,
+      20,
+      11382
+    ],
+    "4-7": [
+      220,
+      41,
+      7905
+    ],
+    "8+": [
+      289,
+      62,
+      2110
+    ]
+  }
+}

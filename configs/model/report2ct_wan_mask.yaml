@@ -1,0 +1,47 @@
+# Mask-conditioned variant of configs/model/report2ct_wan.yaml. vs report2ct_wan the ONLY change is:
+#   * unet.in_channels 16 -> 32  (16 image latent + 16 Wan-encoded mask latent, channel-concat)
+# out_channels stays 16 (predict the image latent only). NO trainable MaskConditioner: the mask is
+# a PRECOMPUTED frozen-Wan encode of the painted 4-organ GT mask (scripts/precompute_wan_mask_latents.py),
+# concatenated RAW onto the noisy latent at the UNet input by Report2CTModule._shared_forward. Because
+# the mask uses the SAME Wan VAE + per-channel normalization as the image latent, both concat halves
+# live in the same latent space. Everything else (RFlow, channels, attention, class embeds, spacing,
+# cross_attention_dim=2560, lr/warmup) is identical to report2ct_wan. See docs/wan_latent_runbook.md.
+
+_target_: src.models.report2ct_module.Report2CTModule
+
+# Training hyperparameters — identical to report2ct_wan (source: config_maisi_diff_model_vlm3D.json:30-33)
+lr: 2e-4                 # sqrt scale for batch 8 (report2ct baseline is 1e-4 @ batch 2)
+cfg_drop_prob: 0.15      # report2ct regime; experiment sets cfg_per_sample=true. TEXT-only CFG (mask always on)
+spacing_scale: 1.0       # spacing already ×100 in DataModule (upstream :88)
+modality_class_label: 1  # CT modality — upstream :270
+lr_scheduler_power: 2.0  # upstream PolynomialLR :200
+warmup_steps: 500        # linear LR warmup before PolynomialLR (report2ct baseline keeps 0)
+
+# UNet — source: config_maisi_2560.json:diffusion_unet_def (in_channels doubled for the mask concat)
+unet:
+  _target_: monai.apps.generation.maisi.networks.diffusion_model_unet_maisi.DiffusionModelUNetMaisi
+  spatial_dims: 3
+  in_channels: 32          # 16 Wan image latent + 16 Wan mask latent (concat)
+  out_channels: 16         # predict the 16-channel image latent only
+  num_channels: [64, 128, 256, 512]
+  num_res_blocks: 2
+  attention_levels: [false, false, true, true]
+  num_head_channels: [0, 0, 32, 32]
+  cross_attention_dim: 2560  # report2ct findings+impression context (B, 2, 2560)
+  num_class_embeds: 128
+  include_fc: true
+  include_spacing_input: true
+  include_top_region_index_input: false  # include_body_region: false (:102)
+  include_bottom_region_index_input: false
+  resblock_updown: true
+  with_conditioning: true
+  use_flash_attention: true
+
+# Noise scheduler — source: config_maisi_2560.json:noise_scheduler (identical to report2ct_wan)
+noise_scheduler:
+  _target_: src.baselines.rflow.RFlowScheduler
+  num_train_timesteps: 1000
+  scale: 1.4
+  use_timestep_transform: true
+  use_discrete_timesteps: false
+  sample_method: uniform

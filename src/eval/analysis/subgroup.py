@@ -14,9 +14,14 @@ from pathlib import Path
 
 import pandas as pd
 
+from src.data.organ_groups import GROUP_NAMES, NUM_GROUPS
 from src.eval.analysis.labels import LABEL_NAMES
 from src.eval.analysis.seg_metrics import SURFACE_METRICS
 from src.eval.analysis.subgroup_config import SubgroupConfig
+
+# Mirrors seg_metrics._ORGAN_NAMES's own derivation (not imported directly — that name is
+# private there); both read the same public source so the two lists cannot drift apart.
+_ORGAN_NAMES = [GROUP_NAMES[i] for i in range(1, NUM_GROUPS + 1)]
 
 # The per-sample metric columns every subgroup aggregate is computed over. Derived from the metric
 # families in seg_metrics rather than hand-listed, so a new family propagates here AND to
@@ -29,10 +34,18 @@ METRIC_COLS = (
         for family in ("dice", *SURFACE_METRICS)
         for ref in ("input_mask", "gt_mask")
     ]
-    # Not a quality metric — the surface-distance means' own denominator. A subgroup whose mean
-    # here is below 4 scored fewer organs than one at 4, which is exactly when those means stop
-    # being comparable (seg_metrics._surface_metrics_per_organ). Which organs dropped out is in
-    # per_sample.csv's `organs_missing_to_*` (a string, so it cannot be averaged here).
+    # Reference-independent: the model's own per-organ generation rate (mean of this 0/1 column
+    # over a subgroup). Not affected by the surface-distance sentinel policy below — this is the
+    # diagnostic for "how often does this model fail to generate organ X at all" (seg_metrics.
+    # compute_seg_metrics, 2026-08-01).
+    + [f"organ_generated_{o}" for o in _ORGAN_NAMES]
+    # Not a quality metric — the surface-distance means' own denominator. Since 2026-08-01 an
+    # organ present in the reference always counts toward this (a model that fails to generate it
+    # is penalized with a sentinel distance, not dropped — seg_metrics._surface_metrics_per_organ)
+    # — so a subgroup's mean here is below 4 only when the REFERENCE itself lacked an organ
+    # (both-empty, genuinely nothing to score), not merely because a model failed to generate one.
+    # Which organs were penalized vs excluded is in per_sample.csv's `organs_missing_to_*` (a
+    # string, so it cannot be averaged here).
     + [f"n_organs_scored_to_{ref}" for ref in ("input_mask", "gt_mask")]
 )
 

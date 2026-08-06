@@ -61,7 +61,7 @@ def _build_transforms() -> Compose:
             ),
             monai.transforms.Resized(
                 keys="image", spatial_size=OUTPUT_SPATIAL_SIZE, mode="trilinear"
-            ),
+            ), # 모델의 입력 사이즈로 resize, 이때 Affine 교정 해줌
         ]
     )
 

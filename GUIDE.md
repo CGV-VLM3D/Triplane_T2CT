@@ -1,6 +1,6 @@
 # VLM3D 2026 Project Guidebook
 
-> Last updated: 2026-06-09 (Phase B 진행 중). 코드/디렉토리 변경 시 이 문서도 같이 갱신해 주세요.
+> Last updated: 2026-07-25 (Phase C 진행 중 — baseline 어댑터 + 다수 생성 변종 학습·eval 완료). 코드/디렉토리 변경 시 이 문서도 같이 갱신해 주세요.
 
 이 문서는 **(1) 프로젝트 코드 구조 투어**, **(2) 읽어야 할 파일 우선순위**, **(3) 데이터셋 통계 요약 + 그림**, **(4) GenerateCT 출력 보는 법**, **(5) 자주 쓰는 명령**을 한 곳에 모은 가이드북입니다. baseline 코드를 어떤 순서로 읽을지는 별도 문서 [docs/baseline_reading_order.md](docs/baseline_reading_order.md)에 정리돼 있습니다.
 
@@ -20,9 +20,9 @@ radiology report (findings + impression) + voxel spacing
   → CT volume [1, 480, 480, 256]
 ```
 
-**제출 마감**: 2026-08-20. Phase A 완료. **Phase B 진행 중** — Report2CT 학습 완료(`data/report2ct_work_dir/checkpoints/epoch_079*.ckpt`), 베이스라인 어댑터(CT-CLIP / fVLM / GenerateCT / Text2CT) 추가, VLM3D eval 하네스 구축.
+**제출 마감**: 2026-08-20. Phase A·B 완료, **Phase C 진행 중**. 베이스라인 어댑터(CT-CLIP / fVLM / GenerateCT / Text2CT) + 다수 생성 변종(report2ct_clip3d / fvlm / text2ct / text2ct_mask / wan / wan_mask)이 `outputs/<model>/`에 학습·eval됨. ⚠ 초기 Report2CT `epoch_079` ckpt는 no_chest 오염으로 `outputs/report2ct/legacy_work_dir/`에 격리(`CONTAMINATED.md`) — 사용 금지. 상세: [[no-chest-correction-report2ct]].
 
-**Win condition**: VLM3D-Dockers로 측정한 CT-RATE valid 1000-split에서 `ours_final`이 `report2ct_our_repro` 대비 `{FID_2p5D_Avg, CLIPScore, FVD_CTNet}` 중 2개 이상에서 이긴다. 우선 metric: **2.5D-FID > CLIPScore-T2I > FVD**.
+**Win condition**: VLM3D-Dockers로 측정한 CT-RATE **valid_v2 1304 (one-scan-per-patient)** 에서 `ours_final`이 `report2ct_our_repro` 대비 `{2.5D-FID, CLIPScore-T2I, FVD}` 중 2개 이상에서 이긴다. 우선 metric: **2.5D-FID > CLIPScore-T2I > FVD**. ⚠ 리더보드 1차 지표 FVD_CTNet은 로컬 계산 불가(ctnet 가중치 손상, 항상 NaN — [[fvd-ctnet-corrupt-weight]]) → 로컬은 CT-CLIP feature FVD proxy로 대체([[fvd-ctclip-local-proxy]]).
 
 전체 의사결정 흐름은 `.omc/specs/`의 deep-interview 기록과 `.omc/plans/vlm3d-pivot-plan.md`(3-iteration consensus)에 정돈돼 있습니다.
 
@@ -49,7 +49,6 @@ radiology report (findings + impression) + voxel spacing
 │
 ├── src/                            # 우리 코드 (lightning-hydra-template base + 우리 추가)
 │   ├── train.py, eval.py, inference.py   # Hydra @main entrypoints
-│   ├── vlm3d_runner.py             # ★ VLM3D-Dockers ctgen 평가 subprocess wrapper
 │   ├── data/                       # ct_rate_datamodule, ct_rate_eda, report2ct_datamodule, fvlm_report
 │   ├── models/                     # report2ct_module.py (LIVE LightningModule) + components/
 │   ├── baselines/                  # MAISI loader + 베이스라인 어댑터 (상세: §4 / baseline_reading_order.md)
@@ -66,11 +65,11 @@ radiology report (findings + impression) + voxel spacing
 ├── configs/                        # Hydra 계층
 │   ├── train.yaml, eval.yaml, inference.yaml
 │   ├── data/, trainer/, logger/, callbacks/, paths/, ...
-│   ├── model/                      # report2ct.yaml, generatect.yaml, text2ct.yaml, vlm_backbone/{ctclip,fvlm}.yaml
-│   ├── eval/                       # default.yaml + model/{report2ct,text2ct,generatect}.yaml + task/ctgen.yaml
+│   ├── model/                      # report2ct.yaml, generatect.yaml, text2ct.yaml + report2ct_{clip3d,fvlm,text2ct_mask,text2ct_mask_g4,wan,wan_mask}.yaml, vlm_backbone/{ctclip,fvlm}.yaml
+│   ├── eval/                       # default.yaml + model/{report2ct[_clip3d/fvlm/text2ct/text2ct_mask/wan/...], text2ct[_toy_v2], generatect}.yaml + task/ctgen.yaml
 │   └── experiment/report2ct_repro.yaml
 │
-├── tests/                          # pytest 53 passed / 4 skipped (가중치·데이터 게이트)
+├── tests/                          # pytest suite (일부 skip = 실가중치·데이터 게이트)
 │   ├── test_maisi_frozen_load.py   # ★ MAISI 동결 검증
 │   ├── test_{ctclip,fvlm}_adapter.py, test_fvlm_report.py   # VLM 백본 + fVLM 리포트 분해
 │   ├── test_report2ct_module.py, test_report2ct_parity.py   # UNet forward + upstream parity
@@ -92,7 +91,7 @@ radiology report (findings + impression) + voxel spacing
 ├── scripts/                        # run_eda, run_eval, precompute_report2ct_{text,image}_embeddings,
 │                                   #   build_report2ct_datalist, decompose/calibrate_*_fvlm, generate_text2ct_valid
 │
-├── notebooks/                      # eda.ipynb, 3D_viewer.ipynb, test_generateCT.ipynb
+├── notebooks/                      # 3D_viewer.ipynb, test_generateCT.ipynb  (eda.ipynb 삭제; figs/eda PNG는 유지)
 │
 ├── figs/eda/                       # EDA 산출물 (4 PNGs — §3)
 │
@@ -100,7 +99,7 @@ radiology report (findings + impression) + voxel spacing
 │
 ├── data/                           # 새 artifacts (read-write, gitignored)
 │   ├── checkpoints/                # generatect, ctclip, fvlm, text2ct, hf_cache
-│   └── report2ct_work_dir/         # Report2CT 학습 임베딩 + checkpoints (epoch_079 등)
+│   └── report2ct_work_dir/         # Report2CT datalist(v2/full_v2) + image/text embeddings (ckpt는 여기 없음 — outputs/<model>/ 로 이동)
 │
 ├── datasets/                       # ☝️ READ-ONLY collaborator 데이터 (절대 쓰지 말 것)
 │   └── datasets/CT-RATE/dataset/{train_fixed,valid_fixed,metadata,radiology_text_reports,ts_seg,...}
@@ -197,7 +196,7 @@ vae = load_frozen(device="cuda:0")  # 모든 param requires_grad=False, .eval() 
 
 **한 줄 요약**: Report2CT의 **실 학습/추론 LightningModule**. config `configs/model/report2ct.yaml`의 `_target_`가 가리키는 진짜 경로. UNet은 `DiffusionModelUNetMaisi`(233M), 스케줄러는 `src/baselines/rflow.RFlowScheduler`, 텍스트 인코딩은 `report2ct_{text,image}_encoder.py`. UNet/scheduler 정의는 코드로 새로 안 짜고 YAML `_target_`로 MONAI 클래스를 instantiate하며, `config_maisi_2560.json`과의 1:1 패리티 + bit-exact forward는 [tests/test_report2ct_parity.py](tests/test_report2ct_parity.py)가 강제한다. *(옛 `report2ct_adapter.py` skeleton은 2026-06-09 삭제 — parity 테스트와 완전 중복이었음.)*
 
-학습은 [[report2ct-training-is-user-owned]] 정책에 따라 사용자가 직접 수행(완료, `epoch_079` ckpt 존재). 절차는 [docs/report2ct_training_runbook.md](docs/report2ct_training_runbook.md).
+학습은 [[report2ct-training-is-user-owned]] 정책에 따라 사용자가 직접 수행. ⚠ 초기 `epoch_079` ckpt는 no_chest 오염으로 `outputs/report2ct/legacy_work_dir/`에 격리(`CONTAMINATED.md`)됐으니 사용 금지 — clean 재학습본을 쓸 것([[no-chest-correction-report2ct]]). 절차는 [docs/report2ct_training_runbook.md](docs/report2ct_training_runbook.md).
 
 ### 4.3 `src/baselines/generatect_adapter.py` — GenerateCT 텍스트→볼륨
 
@@ -227,17 +226,19 @@ records = load_records("valid")  # 메타데이터만 (NIfTI 안 읽음)
 
 - `_parse_spacing()`가 stringified-list spacing 셀 처리. `mode="metadata"`(현재)는 NIfTI 안 읽음; `mode="volume"`은 Phase C(`NotImplementedError`).
 
-### 4.6 `src/vlm3d_runner.py` + `src/eval/` — VLM3D 평가
+### 4.6 `src/eval/` — VLM3D 평가 (docker 없이)
 
-**한 줄 요약**: `vlm3d_runner.py`는 ctgen_evaluation docker를 subprocess로 invoke(없으면 NaN placeholder로 schema validate). `src/eval/`는 우리 측 샘플러(`samplers/{report2ct,text2ct,generatect}.py`) + 메트릭 태스크(`tasks/ctgen.py`, 2.5D-FID/CLIPScore/FVD)로 baseline 결과를 생성·평가.
+**한 줄 요약**: docker 이미지를 통째로 돌리는 대신, ctgen_evaluation **docker 내부의 파이썬 스크립트를 우리 컨테이너에서 직접 subprocess 호출**한다. 엔트리포인트는 `scripts/run_eval.py`(Hydra): 샘플러(`src/eval/samplers/{report2ct,text2ct,generatect}.py`)로 예측 `.mha` 생성 → `src/eval/tasks/ctgen.py`의 `CTGenEvaluator`가 2.5D-FID/CLIPScore/FVD 스크립트를 호출(symlink·PYTHONPATH·numpy shim·CPU FID로 docker 환경을 재현). 경로 해석은 `src/eval/_vlm3d_paths.py`.
 
 ```bash
-python -m src.vlm3d_runner --dry-run --out /tmp/smoke.json   # docker 없을 때
+CUDA_VISIBLE_DEVICES=0 python scripts/run_eval.py \
+    task=ctgen model=report2ct model.ckpt_path=<ckpt> \
+    model.spacing_mm=[0.8,0.8,1.5] model.cfg_scale=5.0 task.n_samples=1   # 1-sample smoke (spacing_mm/cfg_scale REQUIRED)
 ```
 
 ### 4.7 `tests/` — pytest 가이드
 
-전체: **53 passed / 4 skipped** (skip은 실가중치·parity-reference 데이터 게이트). 핵심:
+전체: 대부분 통과, 일부 skip(실가중치·parity-reference 데이터 게이트). 핵심:
 
 | 파일 | 검증 |
 |---|---|
@@ -302,8 +303,9 @@ python scripts/run_eda.py --split valid --hu-sample 50
 # 전체 pytest
 pytest tests/ -q
 
-# VLM3D dry-run
-python -m src.vlm3d_runner --dry-run --out /tmp/smoke.json
+# VLM3D 평가 1-sample smoke (docker 없이, scripts/run_eval.py)
+CUDA_VISIBLE_DEVICES=0 python scripts/run_eval.py task=ctgen model=report2ct model.ckpt_path=<ckpt> \
+  model.spacing_mm=[0.8,0.8,1.5] model.cfg_scale=5.0 task.n_samples=1   # spacing_mm/cfg_scale REQUIRED (no default)
 
 # MAISI VAE 로드 (reuse 패턴)
 python -c "from src.baselines.maisi import load_frozen; print(type(load_frozen(device='cpu')))"
@@ -316,8 +318,8 @@ python -c "from src.baselines.maisi import load_frozen; print(type(load_frozen(d
 | Phase | 기간 | 주요 산출물 | 상태 |
 |---|---|---|---|
 | A | 5/26 → 5/31 | repo restructure, EDA, GenerateCT inference 준비, Report2CT 1-step gate, envelope lock | ✅ 완료 |
-| B | 6/1 → 6/30 | Report2CT 학습(완료), 베이스라인 어댑터 4종(CT-CLIP/fVLM/GenerateCT/Text2CT), VLM3D eval 하네스, 우리 v1 설계 | 🔄 진행 중 |
-| C | 7/1 → 7/31 | 우리 모델 v1 학습 + ablation + 진단 | — |
+| B | 6/1 → 6/30 | Report2CT 학습, 베이스라인 어댑터 4종(CT-CLIP/fVLM/GenerateCT/Text2CT), VLM3D eval 하네스, 우리 v1 설계 | ✅ 완료 |
+| C | 7/1 → 7/31 | 우리 모델 v1 학습(clip3d/fvlm/text2ct/mask/wan 변종) + ablation + 진단 | 🔄 진행 중 |
 | D | 8/1 → 8/20 | final 학습 + submission docker + writeup + 제출 | — |
 
 상세 계획·의사결정은 `.omc/plans/vlm3d-pivot-plan.md` 참조. (Phase B 초기 6/1 작업 목록 — precompute 스크립트, report2ct_repro experiment, launcher — 은 모두 완료됨.)

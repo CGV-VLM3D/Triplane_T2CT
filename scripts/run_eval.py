@@ -56,8 +56,11 @@ Common args (quick reference)
   task.manifest=<jsonl>                NEW — mask-intervention run (docs/mask_intervention_manifest.md):
                                         cases come from the manifest ROWS, so predictions are named
                                         <sample_id>.mha and one target appears several times (one per
-                                        conditioning-mask condition). DIAGNOSTIC-ONLY — FID/FVD are
-                                        REFUSED for such a run; use task.metrics.per_sample/dice.
+                                        conditioning-mask condition). The POOLED task.metrics.{fid_2p5d,
+                                        fvd,fvd_ctclip} are REFUSED for such a run (repeated target
+                                        breaks their premise) — use task.metrics.per_sample/dice for
+                                        CLIP-T2I/Dice, and task.metrics.condition_fid=true for FID/FVD
+                                        scored PER CONDITION (valid; lands in this run's SUMMARY.md).
 
 New-flag examples
 ------------------
@@ -147,14 +150,23 @@ _SET_LEVEL_METRICS = ("fid_2p5d", "fvd", "fvd_ctclip")
 
 
 def _refuse_setlevel_metrics(cfg: DictConfig) -> None:
-    """Stop a manifest run from being scored with FID/FVD.
+    """Stop a manifest run from being scored with the POOLED FID/FVD default.
 
     Those metrics compare two *distributions* under a "1 volume = 1 independent sample" premise.
-    A mask-intervention run generates the SAME target several times (one per condition), so the
-    prediction set is neither independent nor a sample of the CT-RATE distribution, and the GT
+    A default fid_2p5d/fvd/fvd_ctclip pass scores the WHOLE predictions/ dir as one pool, and a
+    mask-intervention run generates the SAME target several times in there (once per condition),
+    so that pool is neither independent nor a sample of the CT-RATE distribution, and the GT
     reference would be counted once per repeat. The numbers would still compute — which is
-    exactly why this refuses rather than warns. A manifest run's meaningful metrics are the
-    per-sample diagnostics: CLIPScore-T2I, dice_to_input_mask, dice_to_gt_mask.
+    exactly why this refuses rather than warns.
+
+    This is NOT a blanket "FID is invalid for manifest runs" claim: a SINGLE condition's subset
+    (e.g. just the label_mismatched_swap volumes) has no repeated target and is exactly as valid
+    as any other model's plain-run FID. That per-condition scoring is
+    ``task.metrics.condition_fid=true`` (folded into this same run — see step 5b in
+    ``_run_ctgen``) or, for a run already scored without it, the post-hoc
+    ``scripts/score_condition_fid.py`` (both call ``src/eval/analysis/condition_setlevel.py``).
+    The remaining, always-valid, same-run diagnostics are CLIPScore-T2I, dice_to_input_mask,
+    dice_to_gt_mask.
     """
     if not cfg.task.get("manifest"):
         return
@@ -162,11 +174,13 @@ def _refuse_setlevel_metrics(cfg: DictConfig) -> None:
     if requested:
         raise RuntimeError(
             f"task.manifest is set, so this is a mask-intervention run — {requested} cannot be "
-            "scored on it (one target has several generated volumes, breaking the "
+            "scored POOLED on it (one target has several generated volumes, breaking the "
             "'1 volume = 1 independent sample' premise those metrics rest on). Pass "
             + " ".join(f"task.metrics.{m}=false" for m in requested)
-            + " and use the per-sample diagnostics instead (task.metrics.per_sample=true, "
-            "task.metrics.dice=true)."
+            + " and use the per-sample diagnostics (task.metrics.per_sample=true, "
+            "task.metrics.dice=true) plus, for FID/FVD compared BY CONDITION, "
+            "task.metrics.condition_fid=true (folded into this same run) or "
+            "scripts/score_condition_fid.py on an already-scored run."
         )
 
 
@@ -458,6 +472,33 @@ def _run_ctgen(cfg: DictConfig) -> dict:
         ),
         metrics_path=primary_dir / "metrics.json",
     )
+
+    # 5b. FID/FVD BY CONDITION (manifest runs only, opt-in) — the sanctioned alternative to the
+    # pooled fid_2p5d/fvd/fvd_ctclip _refuse_setlevel_metrics blocks above: each condition's
+    # OWN subset has no repeated target, so it is exactly as valid as any plain run's FID.
+    # Folded into this same invocation (rather than left to the standalone
+    # scripts/score_condition_fid.py) so `task.metrics.condition_fid=true` is the only thing
+    # needed for the numbers to show up in this run's SUMMARY.md — no separate command.
+    if manifest_path and metrics_cfg.get("condition_fid", False):
+        from src.eval.analysis import condition_setlevel
+        from src.eval.analysis.orchestrate import analysis_paths
+
+        per_sample_csv = analysis_paths(out_dir)["per_sample_csv"]
+        if not per_sample_csv.is_file():
+            raise RuntimeError(
+                "task.metrics.condition_fid=true needs analysis/per_sample.csv (for the "
+                "sample_id/condition columns) — pass task.metrics.per_sample=true too."
+            )
+        condition_setlevel.run(
+            pred_dir=pred_dir,
+            gt_view_dir=clip_gt_dir,  # this run's gt_view/ (GT-by-stem, see build_gt_view)
+            per_sample_csv=per_sample_csv,
+            out_dir=out_dir / "condition_fid",
+            fid_profile=cfg.task.get(
+                "subgroup_fid_profile", _DEFAULT_SUBGROUP_FID_PROFILE
+            ),
+            ctclip_ckpt=cfg.task.get("ctclip_ckpt"),
+        )
 
     # 6. Summaries — one per profile folder plus the combined top-level one.
     _write_summaries(out_dir, score_dirs, cfg.model.name, scored)

@@ -1,0 +1,54 @@
+# Dual-condition-CFG variant of configs/model/report2ct_wan_mask.yaml (report2ct_wan_mask_v2).
+# vs report2ct_wan_mask the ONLY changes are the mask_cfg block below — the UNet (in=32/out=16),
+# RFlow, channels, cross_attention_dim=2560, lr/warmup are IDENTICAL. The mask is still a PRECOMPUTED
+# frozen-Wan encode of the painted 4-organ GT mask, concatenated RAW at the UNet input, BUT now:
+#   * mask_cfg=true enables IP2P 5/5/5 dropout of TEXT + MASK (Report2CTModule._shared_forward), and
+#   * CFG-dropped masks are replaced by a LEARNED null embedding (no_mask_embed, SAM pattern), NOT zeros.
+# Sampling uses text-inner / mask-outer dual CFG (3 passes) via Report2CTWanMaskV2LatentSampler:
+#   pred = e(∅m,∅t) + s_t·[e(∅m,t)−e(∅m,∅t)] + s_m·[e(m,t)−e(∅m,t)]   (s_m is the mask-effect dial).
+# See docs/wan_latent_runbook.md.
+
+_target_: src.models.report2ct_module.Report2CTModule
+
+# Training hyperparameters — identical to report2ct_wan_mask
+lr: 2e-4                 # sqrt scale for batch 8 (report2ct baseline is 1e-4 @ batch 2)
+cfg_drop_prob: 0.15      # IGNORED when mask_cfg=true (the mask_cfg branch owns dropout)
+spacing_scale: 1.0       # spacing already ×100 in DataModule (upstream :88)
+modality_class_label: 1  # CT modality — upstream :270
+lr_scheduler_power: 2.0  # upstream PolynomialLR :200
+warmup_steps: 500        # linear LR warmup before PolynomialLR (report2ct baseline keeps 0)
+
+# Dual-condition CFG (NEW vs report2ct_wan_mask) — IP2P 5/5/5 dropout + learned null mask
+mask_cfg: true
+cfg_uncond_prob: 0.05    # per-bucket base p → each of {text, mask} dropped 2p=10% (single 5% + both 5%)
+mask_channels: 16        # Wan mask-latent channels for the learned null embedding
+no_mask_init_std: 0.02   # small-random init for no_mask_embed (neutral in normalized Wan latent space)
+
+# UNet — identical to report2ct_wan_mask (in_channels doubled for the mask concat)
+unet:
+  _target_: monai.apps.generation.maisi.networks.diffusion_model_unet_maisi.DiffusionModelUNetMaisi
+  spatial_dims: 3
+  in_channels: 32          # 16 Wan image latent + 16 Wan mask latent (concat)
+  out_channels: 16         # predict the 16-channel image latent only
+  num_channels: [64, 128, 256, 512]
+  num_res_blocks: 2
+  attention_levels: [false, false, true, true]
+  num_head_channels: [0, 0, 32, 32]
+  cross_attention_dim: 2560  # report2ct findings+impression context (B, 2, 2560)
+  num_class_embeds: 128
+  include_fc: true
+  include_spacing_input: true
+  include_top_region_index_input: false  # include_body_region: false (:102)
+  include_bottom_region_index_input: false
+  resblock_updown: true
+  with_conditioning: true
+  use_flash_attention: true
+
+# Noise scheduler — identical to report2ct_wan_mask
+noise_scheduler:
+  _target_: src.baselines.rflow.RFlowScheduler
+  num_train_timesteps: 1000
+  scale: 1.4
+  use_timestep_transform: true
+  use_discrete_timesteps: false
+  sample_method: uniform

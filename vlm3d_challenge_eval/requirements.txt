@@ -1,0 +1,17 @@
+# Runtime deps for the ctgen submission image, pinned to the `wan` conda env this pipeline was
+# validated in (py3.11 / torch 2.7.0+cu128). torch itself is installed separately from the cu128
+# index — see the Dockerfile.
+#
+# Direct imports only; pip resolves the rest. The set was checked by installing exactly this list
+# into a clean venv and importing process.py (vlm3d_challenge_eval/README.md).
+# monai==1.4.0 is installed by the Dockerfile with --no-deps: its metadata pins numpy<2.0, which
+# is stale — the `wan` env this pipeline was validated in runs monai 1.4.0 on numpy 2.2.5. MONAI's
+# real runtime needs are numpy + torch, both pinned here/in the Dockerfile.
+diffusers==0.39.0
+transformers==4.51.3
+SimpleITK==2.5.4
+einops==0.8.2
+numpy==2.2.5
+tqdm==4.67.1
+nibabel==5.4.2
+accelerate==1.13.0

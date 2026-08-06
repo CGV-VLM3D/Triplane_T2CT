@@ -63,7 +63,7 @@ TRAIN_META = DS / "metadata" / "train_metadata.csv"
 VALID_META = DS / "metadata" / "validation_metadata.csv"
 TRAIN_LABELS = DS / "multi_abnormality_labels" / "train_predicted_labels.csv"
 VALID_LABELS = DS / "multi_abnormality_labels" / "valid_predicted_labels.csv"
-DEFAULT_GT_DIR = Path("/workspace/data/vlm3d_eval/_valid_v2_1304")
+DEFAULT_GT_DIR = Path("/workspace/data/vlm3d_eval/_valid_full_3001")
 
 CAT_AXES = ["Manufacturer", "ConvolutionKernel", "PatientSex"]
 CONT_AXES = ["ZSpacing", "NumberofSlices", "PatientAge"]
@@ -161,18 +161,43 @@ def build_train(out: Path, latent_source: str, copy: bool) -> list[str]:
 
 
 # --------------------------------------------------------------------------- valid_v2
-def select_valid_v2_ids() -> list[str]:
-    """One scan per valid_fixed patient (prefer ``_a_1``, else first sorted), existing NIfTI."""
+def select_valid_v2_ids(seed: int = 42) -> list[str]:
+    """One scan-``a`` reconstruction per valid_fixed patient, seed-fixed uniform random.
+
+    CT-RATE reconstructs each scan into a sharp/soft kernel pair (``_a_1``/``_a_2``) that
+    *share the same report*; the legacy ``_a_1``-preferred rule always took the sharp recon and
+    skewed the reconstruction-kernel marginal (B 28%->5%, YA 26%->51%, χ² p≈0). Here we keep one
+    scan per patient (scan ``a`` — the primary acquisition; every valid patient has one) and draw
+    one of its clean recons uniformly at random with a fixed ``seed``, de-biasing the kernel
+    distribution while leaving the report/prompt unchanged (recons share the report). Longitudinal
+    extra scans (``_b``/``_c``…) are intentionally excluded (same-patient separate studies).
+    Excludes no_chest/error-quarantined scans and any volume whose NIfTI is missing.
+
+    Args:
+        seed: RNG seed for the per-patient uniform recon draw (reproducible id list).
+
+    Returns:
+        Sorted list of 1304 volume ids (one scan-``a`` recon per patient).
+    """
+    from tests.mask_vae.dataset import excluded_scan_ids  # no_chest/error quarantine
+
+    excluded = excluded_scan_ids()
     meta = pd.read_csv(VALID_META)
-    meta["vn"] = meta["VolumeName"].astype(str)
-    meta["pid"] = meta["vn"].map(_pid)
-    chosen: list[str] = []
-    for pid, grp in meta.groupby("pid"):
-        names = sorted(grp["vn"].tolist())
-        a1 = [n for n in names if n.endswith("_a_1.nii.gz")]
-        chosen.append(a1[0] if a1 else names[0])
-    chosen = [n for n in chosen if _volume_name_to_nifti(n).is_file()]
-    return sorted(_volume_name_to_id(n) for n in chosen)
+    by_patient: dict[str, list[str]] = {}
+    for vn in sorted(str(v) for v in meta["VolumeName"]):  # deterministic input order
+        vid = _volume_name_to_id(vn)  # "valid_4_a_1.nii.gz" -> "valid_4_a_1"
+        parts = vid.split("_")  # ["valid", "4", "a", "1"]
+        if parts[2] != "a":  # scan-a only (drop _b/_c longitudinal studies)
+            continue
+        if vid in excluded or not _volume_name_to_nifti(vn).is_file():
+            continue
+        pid = "_".join(parts[:2])  # "valid_4"
+        by_patient.setdefault(pid, []).append(vid)
+    rng = np.random.default_rng(seed)
+    chosen = [
+        str(rng.choice(by_patient[p])) for p in sorted(by_patient)
+    ]  # 1 recon / patient
+    return sorted(chosen)
 
 
 def build_valid_v2(out: Path, valid_v2_ids: list[str]) -> list:
@@ -184,7 +209,8 @@ def build_valid_v2(out: Path, valid_v2_ids: list[str]) -> list:
             {
                 "split": "valid_v2",
                 "source": "valid_fixed",
-                "selection": "one scan per patient (_a_1 preferred)",
+                "selection": "one scan-a recon per patient (seed=42 uniform-random over clean recons)",
+                "seed": 42,
                 "n": len(valid_v2_ids),
                 "ids": valid_v2_ids,
             },
@@ -234,16 +260,18 @@ def make_report(out: Path, train_ids: list[str], valid_v2_ids: list[str]) -> dic
 
     full_va_a1 = va[
         va["vn"].str.endswith("_a_1.nii.gz")
-    ]  # valid one-per-patient reference
+    ]  # legacy _a_1-only reference (pre-de-bias)
 
     dist: dict = {}
     lines = ["# CT-RATE toy dataset v2 — representativeness report", ""]
 
     # Only the toy-train block is GATED: it is a 5000/20000 subsample, so representativeness
-    # is a real property to enforce. valid_v2 is a CENSUS (every valid_fixed patient, one
-    # scan each) — there is no sampling to gate. The valid_v2-vs-all-scans block is reported
-    # for transparency: it quantifies what one-per-patient intentionally drops (sharp-kernel /
-    # thin-slice recon variants _a_2/_b_*), which is the _a_1 trade-off chosen for de-biasing.
+    # is a real property to enforce. valid_v2 is a full one-per-patient set (every valid_fixed
+    # patient, one scan-a recon each, kernel-de-biased by a random recon draw) — no sampling to
+    # gate. The two valid_v2 blocks are reported for transparency: block 2 shows how far the
+    # random-recon draw moved off the legacy _a_1-only selection (the kernel de-bias delta);
+    # block 3 shows kernel/geometry representativeness vs all valid scans (now close, since the
+    # recon is no longer _a_1-fixed).
     comparisons = [
         (
             "toy-train (5000) vs train_fixed one-per-patient (20000) — GATED (subsample)",
@@ -254,21 +282,22 @@ def make_report(out: Path, train_ids: list[str], valid_v2_ids: list[str]) -> dic
             "A 5000/20000 subsample; gated axes must stay within TVD<0.05 / KS<0.05.",
         ),
         (
-            "valid_v2 (1304) vs valid_fixed one-per-patient (1304) — sanity (census)",
+            "valid_v2 (1304) vs valid_fixed _a_1-only (1304) — info: kernel de-bias delta",
             full_va_a1,
             valid_v2_df,
             "valid_v2_vs_valid_fixed_a1",
             False,
-            "valid_v2 IS the full one-per-patient population, so this is ~0 by construction.",
+            "valid_v2 now draws a random scan-a recon per patient, so this quantifies the shift "
+            "away from the legacy _a_1-only selection (mainly ConvolutionKernel).",
         ),
         (
-            "valid_v2 (1304, _a_1) vs valid_fixed ALL scans (3039) — info, NOT gated",
+            "valid_v2 (1304, random scan-a recon) vs valid_fixed ALL scans (3039) — info, NOT gated",
             va,
             valid_v2_df,
             "valid_v2_vs_valid_fixed_all",
             False,
-            "Expected/intentional: one-per-patient drops sharp-kernel/thin-slice recon variants "
-            "(_a_2/_b_*). Documents the _a_1 trade-off (patient-level de-biasing).",
+            "Kernel/geometry representativeness: the random-recon selection matches the all-scans "
+            "ConvolutionKernel marginal (the _a_1-preferred bias is fixed).",
         ),
     ]
     for label, full, sub, key, gated, note in comparisons:
@@ -428,7 +457,7 @@ def main() -> None:
     log.info("building toy dataset v2 -> %s", out)
 
     train_ids = build_train(out, args.latent_source, args.copy)
-    valid_v2_ids = select_valid_v2_ids()
+    valid_v2_ids = select_valid_v2_ids(args.seed)
     cases = build_valid_v2(out, valid_v2_ids)
     dist = make_report(out, train_ids, valid_v2_ids)
     assert_invariants(train_ids, valid_v2_ids, cases, dist)

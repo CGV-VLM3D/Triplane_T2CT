@@ -90,9 +90,8 @@ baseline "결과 확인"은 여기서 돈다:
 
 - `src/eval.py` — Hydra `@main` eval 엔트리.
 - `src/eval/samplers/` — `base.py`(추상) + `report2ct.py` / `text2ct.py` / `generatect.py`.
-- `src/eval/tasks/ctgen.py` + `_fid_runner.py` — 2.5D-FID / CLIPScore / FVD.
-- `src/vlm3d_runner.py` — VLM3D-Dockers 래퍼 (docker 없으면 `--dry-run` 폴백).
-- `scripts/run_eval.py` — 실제 실행 예시.
+- `src/eval/tasks/ctgen.py` + `_fid_runner.py` — 2.5D-FID / CLIPScore / FVD (docker 스크립트 직접 호출).
+- `scripts/run_eval.py` — 실제 실행 엔트리포인트(Hydra).
 
 ## 한눈에 보기
 

@@ -1,0 +1,53 @@
+# @package _global_
+# report2ct_wan + REPA — representation alignment against a frozen SPECTRE CT ViT-L (U-REPA
+# structure: middle-stage tap, project-then-upsample, manifold loss). Everything else is identical
+# to experiment=report2ct_wan, so the comparison against outputs/report2ct_wan/2026-07-16_3
+# isolates the alignment term. Requires scripts/precompute_spectre_features.py to have run.
+#
+# Track A — from-scratch pilot (U-REPA regime: hard + soft):
+#   CUDA_VISIBLE_DEVICES=1 python src/train.py experiment=report2ct_wan_repa \
+#       trainer.max_epochs=100
+# Track B — finetune the trained baseline, relational-only (VideoREPA regime):
+#   CUDA_VISIBLE_DEVICES=3 python src/train.py experiment=report2ct_wan_repa \
+#       ckpt_path=outputs/report2ct_wan/2026-07-16_3/checkpoints/epoch_299.ckpt \
+#       model.repa.hard_weight=0 model.repa.rel_loss=videorepa_l1_st model.lr=2e-6
+# Smoke:
+#   CUDA_VISIBLE_DEVICES=3 python src/train.py experiment=report2ct_wan_repa \
+#       trainer.max_epochs=1 trainer.limit_train_batches=50
+
+defaults:
+  - override /data: report2ct_wan_repa
+  - override /model: report2ct_wan_repa   # report2ct_wan + the RepaAligner block
+  - override /trainer: report2ct
+  - override /callbacks: default
+  - override /logger: wandb
+  - _self_
+
+task_name: report2ct_wan_repa   # → outputs/report2ct_wan/<KST-date>[_N]/
+tags: ["wan_latent", "repa", "spectre", "ctgen"]
+seed: 42
+
+logger:
+  wandb:
+    group: "wan-repa"
+test: false
+
+# report2ct regime (cfg_drop_prob 0.15 from the model config); NO grad-clip (baseline-matched) — grad-norm
+# is LOGGED (Report2CTModule.on_before_optimizer_step → train/grad_norm) to decide clipping empirically.
+# max_epochs 300 (not the baseline's 100): Wan @ batch 8 is step-starved at 100 (62k vs MAISI's 250k steps),
+# and PolynomialLR must span the full horizon so LR doesn't decay to ~0 by epoch 90. Stop early on FID plateau.
+trainer:
+  max_epochs: 300
+model:
+  cfg_per_sample: true   # per-sample CFG drop (user override; drop prob stays 0.15 from model cfg)
+
+callbacks:
+  early_stopping: null
+  model_checkpoint:
+    monitor: null
+    every_n_epochs: 10
+    save_top_k: -1
+    save_last: true
+    filename: "epoch_{epoch:03d}"
+    auto_insert_metric_name: false
+  rich_progress_bar: null

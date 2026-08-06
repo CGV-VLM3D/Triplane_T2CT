@@ -1,10 +1,61 @@
 {
-  "outputStyle": "explanatory",
+  "permissions": {
+    "allow": [
+      "Bash(CUDA_VISIBLE_DEVICES=0 python -m tests.mask_vae.train --limit 8 --steps 1500 --batch-size 2 --num-workers 4 --kl-weight 1e-6 --lr 5e-5 --clip-grad 10)",
+      "Bash(nvidia-smi --query-gpu=index,memory.used,memory.total --format=csv,noheader)",
+      "Bash(CUDA_VISIBLE_DEVICES=2 python -m tests.mask_vae.train --limit 8 --steps 2000 --batch-size 8 --num-workers 4 --kl-weight 1e-6 --lr 5e-5 --clip-grad 10 --warmup-steps 150)",
+      "Bash(awk 'NR==1||NR%6==0||/2000/||/saved/')",
+      "Bash(CUDA_VISIBLE_DEVICES=2 python -m tests.mask_vae.train --input-mode raw --limit 8 --steps 2000 --batch-size 8 --num-workers 3 --kl-weight 1e-6 --lr 5e-5 --clip-grad 10 --warmup-steps 150 --out /workspace/data/checkpoints/mask_vae/raw.pt)",
+      "Bash(echo \"RAW_EXIT=$?\")",
+      "Bash(CUDA_VISIBLE_DEVICES=2 python -m tests.mask_vae.train --input-mode onehot --limit 8 --steps 2000 --batch-size 8 --num-workers 3 --kl-weight 1e-6 --lr 5e-5 --clip-grad 10 --warmup-steps 150 --out /workspace/data/checkpoints/mask_vae/onehot.pt)",
+      "Bash(echo \"ONEHOT_EXIT=$?\")",
+      "Bash(CUDA_VISIBLE_DEVICES=2 python -m tests.mask_vae.train --input-mode embed --embed-dim 16 --limit 8 --steps 2000 --batch-size 8 --num-workers 3 --kl-weight 1e-6 --lr 5e-5 --clip-grad 10 --warmup-steps 150 --out /workspace/data/checkpoints/mask_vae/embed.pt)",
+      "Bash(echo \"EMBED_EXIT=$?\")",
+      "Bash(jobs -l)",
+      "Bash(ps -o pid,ppid,pgid,cmd -p 2118726)",
+      "Bash(nvidia-smi --query-gpu=index,memory.used,memory.free,utilization.gpu --format=csv,noheader)",
+      "Bash(CUDA_VISIBLE_DEVICES=0 python -m tests.mask_vae.train --input-mode raw --limit 8 --steps 1200 --batch-size 8 --num-workers 4 --kl-weight 1e-6 --lr 5e-5 --clip-grad 10 --warmup-steps 150 --log-every 50 --out /workspace/data/checkpoints/mask_vae/raw.pt)",
+      "Bash(CUDA_VISIBLE_DEVICES=1 python -m tests.mask_vae.train --input-mode onehot --limit 8 --steps 1200 --batch-size 8 --num-workers 4 --kl-weight 1e-6 --lr 5e-5 --clip-grad 10 --warmup-steps 150 --log-every 50 --out /workspace/data/checkpoints/mask_vae/onehot.pt)",
+      "Bash(CUDA_VISIBLE_DEVICES=2 python -m tests.mask_vae.train --input-mode embed --embed-dim 16 --limit 8 --steps 1200 --batch-size 8 --num-workers 4 --kl-weight 1e-6 --lr 5e-5 --clip-grad 10 --warmup-steps 150 --log-every 50 --out /workspace/data/checkpoints/mask_vae/embed.pt)",
+      "Bash(python -c \"import tests.mask_vae.train as t; print\\('import OK'\\); import inspect; print\\('patch_size default:', inspect.signature\\(t.train\\).parameters['patch_size'].default\\)\")",
+      "Bash(python -c \"import tests.mask_vae.train, tests.mask_vae.viz; print\\('import OK'\\)\")",
+      "Bash(nvidia-smi --query-gpu=index,memory.free,utilization.gpu --format=csv,noheader)",
+      "Bash(CUDA_VISIBLE_DEVICES=1 python -m tests.mask_vae.train --exp-name _verify --input-mode embed --limit 8 --steps 60 --batch-size 8 --val-limit 8 --val-every 30 --vis-samples 3 --log-every 20 --num-workers 4)",
+      "Bash(CUDA_VISIBLE_DEVICES=1 python -m tests.mask_vae.train --exp-name embed_gen300 --input-mode embed --limit 300 --steps 2000 --batch-size 8 --cache-rate 0.0 --num-workers 8 --val-limit 16 --val-every 100 --vis-samples 6 --log-every 50)",
+      "Bash(python -c \"import tests.mask_vae.train; print\\('import OK'\\)\")",
+      "Bash(awk 'NR==1||NR==2')",
+      "Bash(nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv)",
+      "Bash(nvidia-smi --query-compute-apps=gpu_uuid,pid,used_memory --format=csv)",
+      "Bash(CUDA_VISIBLE_DEVICES=1 python -m tests.mask_vae.train --exp-name cmp_maisi_default --input-mode embed --limit 300 --steps 2000 --batch-size 8 --cache-rate 1.0 --num-workers 32 --val-limit 16 --val-every 100 --vis-samples 6 --log-every 50 --lr 1e-4 --kl-weight 1e-7 --out /workspace/data/checkpoints/mask_vae/cmp_maisi_default.pt)",
+      "Bash(echo \"A EXIT=$?\")",
+      "Bash(CUDA_VISIBLE_DEVICES=1 python -m tests.mask_vae.train --exp-name cmp_current --input-mode embed --limit 300 --steps 2000 --batch-size 8 --cache-rate 1.0 --num-workers 32 --val-limit 16 --val-every 100 --vis-samples 6 --log-every 50 --lr 5e-5 --kl-weight 1e-6 --out /workspace/data/checkpoints/mask_vae/cmp_current.pt)",
+      "Bash(echo \"B EXIT=$?\")",
+      "Bash(awk 'NR==2{print \"used\",$3,\"avail\",$7}')",
+      "Bash(nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader)",
+      "Bash(nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader)",
+      "Bash(CUDA_VISIBLE_DEVICES=2 python /tmp/claude-0/-workspace/03522550-c9cc-4fd6-a3db-32bdec48c931/scratchpad/verify_text_cond.py)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(python -c \"import pandas as pd; df=pd.read_excel\\('/workspace/outputs/report2ct/eval_report2ct_full_2026-07-12/prompts.xlsx'\\); print\\(list\\(df.columns\\)\\); print\\(len\\(df\\)\\); print\\(repr\\(df.iloc[0]['Text_prompts']\\)[:200]\\)\")",
+      "Bash(python -c \"import tests.mask_vae.model; print\\('import OK'\\)\")",
+      "Bash(CUDA_VISIBLE_DEVICES=2 python -)",
+      "Bash(python -c \"import inspect; from tests.mask_vae.train import train; p=inspect.signature\\(train\\).parameters; print\\('lr', p['lr'].default, '| kl', p['kl_weight'].default, '| input', p['input_mode'].default\\)\")",
+      "Bash(find /workspace/datasets/datasets/CT-RATE/dataset/ts_seg/ts_total/train_fixed -maxdepth 3 -name train_10000_*.nii.gz)",
+      "Bash(python -c ' *)",
+      "Bash(timeout 180 forithmus generate)",
+      "Bash(timeout 300 forithmus validate data/vlm3d_submission/gate0_nii --input .forithmus/test_data/input)",
+      "Bash(HF_HOME=/workspace/data/checkpoints/hf_cache timeout 600 python -m pytest vlm3d_challenge_eval/tests/test_report_parse.py -q --no-header -p no:cacheprovider)",
+      "Bash(python -m pytest tests/eval_analysis/test_subgroup_fid_smalln.py -q)",
+      "Bash(python -m pytest tests/eval_analysis/ -q)"
+    ]
+  },
   "hooks": {
     "SessionStart": [
       {
         "hooks": [
-          { "type": "command", "command": "/workspace/.claude/hooks/check-remote-updates.sh" }
+          {
+            "type": "command",
+            "command": "/workspace/.claude/hooks/check-remote-updates.sh"
+          }
         ]
       }
     ],
@@ -12,7 +63,10 @@
       {
         "matcher": "Edit|Write",
         "hooks": [
-          { "type": "command", "command": "/workspace/.claude/hooks/protect-files.sh" }
+          {
+            "type": "command",
+            "command": "/workspace/.claude/hooks/protect-files.sh"
+          }
         ]
       }
     ],
@@ -20,7 +74,10 @@
       {
         "matcher": "Edit|Write",
         "hooks": [
-          { "type": "command", "command": "/workspace/.claude/hooks/ruff-format.sh" }
+          {
+            "type": "command",
+            "command": "/workspace/.claude/hooks/ruff-format.sh"
+          }
         ]
       }
     ],
@@ -28,15 +85,22 @@
       {
         "matcher": "experiment-runner",
         "hooks": [
-          { "type": "command", "command": "/workspace/.claude/hooks/notify-training-done.sh" }
+          {
+            "type": "command",
+            "command": "/workspace/.claude/hooks/notify-training-done.sh"
+          }
         ]
       },
       {
         "matcher": "result-analyzer",
         "hooks": [
-          { "type": "command", "command": "/workspace/.claude/hooks/trigger-summarizer.sh" }
+          {
+            "type": "command",
+            "command": "/workspace/.claude/hooks/trigger-summarizer.sh"
+          }
         ]
       }
     ]
-  }
+  },
+  "outputStyle": "explanatory"
 }

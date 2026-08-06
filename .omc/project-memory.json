@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1781945949097,
+  "lastScanned": 1785950287634,
   "projectRoot": "/workspace",
   "techStack": {
     "languages": [
@@ -28,7 +28,7 @@
   },
   "build": {
     "buildCommand": "make build",
-    "testCommand": "cd /workspace\necho \"=== tests/ 에서 옛 이름 참조? ===\"\ngrep -rn \"prepare_proxy_gt\\|gt_mode.*proxy\\|backfill_proxy\\|no_proxy\\|proxy_ids\" tests/ 2>/dev/null || echo \"  (참조 없음 — OK)\"\necho\necho \"=== 관련 테스트 실행 ===\"\npython -m pytest tests/ -q -k \"hydra or datalist or data_module or report2ct or ct_rate or eval\" 2>&1 | tail -20",
+    "testCommand": "make test",
     "lintCommand": "ruff check",
     "devCommand": null,
     "scripts": {}
@@ -52,11 +52,20 @@
   },
   "customNotes": [],
   "directoryMap": {
+    "__pycache__": {
+      "path": "__pycache__",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1785950287627,
+      "keyFiles": [
+        "_tmp_wan_mask_psnr.cpython-311.pyc"
+      ]
+    },
     "configs": {
       "path": "configs",
       "purpose": null,
       "fileCount": 4,
-      "lastAccessed": 1781945949091,
+      "lastAccessed": 1785950287627,
       "keyFiles": [
         "__init__.py",
         "eval.yaml",
@@ -68,14 +77,14 @@
       "path": "data",
       "purpose": "Data files",
       "fileCount": 0,
-      "lastAccessed": 1781945949091,
+      "lastAccessed": 1785950287628,
       "keyFiles": []
     },
     "datasets": {
       "path": "datasets",
       "purpose": null,
       "fileCount": 6,
-      "lastAccessed": 1781945949092,
+      "lastAccessed": 1785950287628,
       "keyFiles": [
         "Dockerfile",
         "conc_info.json",
@@ -88,44 +97,49 @@
       "path": "deprecated",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1781945949092,
+      "lastAccessed": 1785950287628,
       "keyFiles": []
     },
     "docs": {
       "path": "docs",
       "purpose": "Documentation",
-      "fileCount": 11,
-      "lastAccessed": 1781945949093,
+      "fileCount": 17,
+      "lastAccessed": 1785950287628,
       "keyFiles": [
         "baseline_reading_order.md",
         "ctgen_challenge_submission.md",
         "ctgen_local_eval.md",
         "dataset_reference.md",
-        "fvlm_report2ct_guidebook.md"
+        "eda_survey_plan.md"
       ]
     },
     "figs": {
       "path": "figs",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1781945949093,
+      "lastAccessed": 1785950287628,
       "keyFiles": []
     },
     "logs": {
       "path": "logs",
       "purpose": null,
-      "fileCount": 0,
-      "lastAccessed": 1781945949094,
-      "keyFiles": []
+      "fileCount": 541,
+      "lastAccessed": 1785950287630,
+      "keyFiles": [
+        "ablation_nonorm_20260728_125730.log",
+        "ablation_resume_20260729_012824.log",
+        "add_fvd_20260729_145557.log",
+        "avg189299_20260729_145522.log",
+        "bench_wan_b16_24_32.log"
+      ]
     },
     "notebooks": {
       "path": "notebooks",
       "purpose": null,
-      "fileCount": 3,
-      "lastAccessed": 1781945949094,
+      "fileCount": 2,
+      "lastAccessed": 1785950287630,
       "keyFiles": [
         "3D_viewer.ipynb",
-        "eda.ipynb",
         "test_generateCT.ipynb"
       ]
     },
@@ -133,84 +147,99 @@
       "path": "outputs",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1781945949094,
+      "lastAccessed": 1785950287630,
       "keyFiles": []
     },
     "paper_pdf": {
       "path": "paper_pdf",
       "purpose": null,
-      "fileCount": 9,
-      "lastAccessed": 1781945949094,
+      "fileCount": 14,
+      "lastAccessed": 1785950287631,
       "keyFiles": [
         "CT-Rate.pdf",
         "GenerateCT.pdf",
+        "HASTE.pdf",
         "MedVista3D.pdf",
-        "Report2CT.pdf",
-        "TRACE (미카이 버전).pdf"
+        "REPA.pdf"
       ]
     },
     "results": {
       "path": "results",
       "purpose": null,
-      "fileCount": 2,
-      "lastAccessed": 1781945949095,
+      "fileCount": 4,
+      "lastAccessed": 1785950287631,
       "keyFiles": [
+        "cfg_sweep.csv",
         "report2ct_envelope.json",
-        "upper_bound.json"
+        "upper_bound.json",
+        "wan_epoch_sweep.csv"
       ]
     },
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
-      "fileCount": 14,
-      "lastAccessed": 1781945949095,
+      "fileCount": 45,
+      "lastAccessed": 1785950287631,
       "keyFiles": [
-        "apply_no_chest_correction.py",
-        "build_fvlm_cond_datalist.py",
-        "build_report2ct_datalist.py",
-        "calibrate_decompose_fvlm.py",
-        "decompose_reports_fvlm.py"
+        "_run_ctx_toy.sh",
+        "add_eval_metric.sh",
+        "aggregate_cfg_sweep.py",
+        "aggregate_wan_epoch_sweep.py",
+        "apply_no_chest_correction.py"
       ]
     },
     "src": {
       "path": "src",
       "purpose": "Source code",
-      "fileCount": 5,
-      "lastAccessed": 1781945949095,
+      "fileCount": 4,
+      "lastAccessed": 1785950287631,
       "keyFiles": [
         "__init__.py",
         "eval.py",
         "inference.py",
-        "train.py",
-        "vlm3d_runner.py"
+        "train.py"
       ]
     },
     "tests": {
       "path": "tests",
       "purpose": "Test files",
-      "fileCount": 15,
-      "lastAccessed": 1781945949095,
+      "fileCount": 26,
+      "lastAccessed": 1785950287631,
       "keyFiles": [
         "__init__.py",
+        "test_cfg_per_sample.py",
         "test_ctclip_adapter.py",
         "test_data_module.py",
-        "test_fvlm_adapter.py",
-        "test_fvlm_organ_report.py"
+        "test_ema_callback.py"
       ]
     },
     "third_party": {
       "path": "third_party",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1781945949095,
+      "lastAccessed": 1785950287632,
       "keyFiles": []
+    },
+    "vlm3d_challenge_eval": {
+      "path": "vlm3d_challenge_eval",
+      "purpose": null,
+      "fileCount": 8,
+      "lastAccessed": 1785950287632,
+      "keyFiles": [
+        "Dockerfile",
+        "README.md",
+        "entrypoint.sh",
+        "inspect_submission.py",
+        "process.py"
+      ]
     },
     "configs/data": {
       "path": "configs/data",
       "purpose": "Data files",
-      "fileCount": 2,
-      "lastAccessed": 1781945949095,
+      "fileCount": 10,
+      "lastAccessed": 1785950287632,
       "keyFiles": [
+        "clip3d_cond.yaml",
         "fvlm_cond.yaml",
         "report2ct.yaml"
       ]
@@ -218,8 +247,8 @@
     "src/data": {
       "path": "src/data",
       "purpose": "Data files",
-      "fileCount": 6,
-      "lastAccessed": 1781945949096,
+      "fileCount": 11,
+      "lastAccessed": 1785950287634,
       "keyFiles": [
         "__init__.py",
         "ct_rate_datamodule.py",
@@ -230,18 +259,27 @@
       "path": "src/models",
       "purpose": "Data models",
       "fileCount": 2,
-      "lastAccessed": 1781945949097,
+      "lastAccessed": 1785950287634,
       "keyFiles": [
         "__init__.py",
         "report2ct_module.py"
+      ]
+    },
+    "vlm3d_challenge_eval/tests": {
+      "path": "vlm3d_challenge_eval/tests",
+      "purpose": "Test files",
+      "fileCount": 1,
+      "lastAccessed": 1785950287634,
+      "keyFiles": [
+        "test_report_parse.py"
       ]
     }
   },
   "hotPaths": [
     {
       "path": "CLAUDE.md",
-      "accessCount": 113,
-      "lastAccessed": 1781967241958,
+      "accessCount": 169,
+      "lastAccessed": 1785597041269,
       "type": "file"
     },
     {

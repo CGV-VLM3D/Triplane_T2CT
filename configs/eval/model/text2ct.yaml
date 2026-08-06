@@ -4,6 +4,7 @@ name: text2ct
 _target_: src.eval.samplers.text2ct.Text2CTSampler
 
 ckpt_dir: /workspace/data/checkpoints/text2ct
+unet_filename: unet_rflow_200ep.pt     # released baseline; override to eval a self-trained UNet (e.g. unet_rflow_200ep_toy_v2.pt)
 n_steps: 30                       # upstream config_diff_model.json (num_inference_steps)
 guidance_scale: 5.0               # upstream environment_diff_model_eval.json
 output_spacing_mm: [0.75, 0.75, 3.0]   # Text2CT native output spacing

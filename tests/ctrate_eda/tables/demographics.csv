@@ -1,0 +1,3 @@
+split,n_scans,n_patients,age_scan_median,age_scan_q25,age_scan_q75,age_scan_min,age_scan_max,age_scan_missing,age_gt100_count,age_patient_median,age_patient_q25,age_patient_q75,scans_per_patient_mean,scans_per_patient_max,patients_multi_scan,repeat_interval_days_median,repeat_interval_days_mean,repeat_interval_n_pairs,sex_M,sex_F,sex_missing
+train,24128,20000,46.0,35.0,62.0,18,102,6,3,45.0,34.0,61.0,1.2064,17,2638,74.0,177.3389050387597,4128,14098,10027,3.0
+valid,1564,1304,46.0,35.0,61.0,18,96,1,0,45.0,34.0,60.0,1.1993865030674846,8,169,73.0,178.7576923076923,260,910,654,

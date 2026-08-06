@@ -1,0 +1,378 @@
+{
+  "n_volumes": 300,
+  "labels": [
+    "Medical material",
+    "Arterial wall calcification",
+    "Cardiomegaly",
+    "Pericardial effusion",
+    "Coronary artery wall calcification",
+    "Hiatal hernia",
+    "Lymphadenopathy",
+    "Emphysema",
+    "Atelectasis",
+    "Lung nodule",
+    "Lung opacity",
+    "Pulmonary fibrotic sequela",
+    "Pleural effusion",
+    "Mosaic attenuation pattern",
+    "Peribronchial thickening",
+    "Consolidation",
+    "Bronchiectasis",
+    "Interlobular septal thickening"
+  ],
+  "timestep_frac": 0.5,
+  "figure": "tests/repa_probe/u8_semantic/figs/U8_semantic_by_stage.png",
+  "rows": [
+    {
+      "kind": "teacher",
+      "model": "spectre_ssl",
+      "tap": "-",
+      "dim": 1080,
+      "linear_auroc": 0.7240554351365543,
+      "cknn_auroc": 0.7112840223087556,
+      "cka_spectre_ssl": 1.0
+    },
+    {
+      "kind": "teacher",
+      "model": "spectre_vla",
+      "tap": "-",
+      "dim": 1080,
+      "linear_auroc": 0.7500613822997884,
+      "cknn_auroc": 0.7253070794949826,
+      "cka_spectre_ssl": 0.8479397296905518
+    },
+    {
+      "kind": "teacher",
+      "model": "spectre_vla_scanlevel",
+      "tap": "-",
+      "dim": 1080,
+      "linear_auroc": 0.7934439282888112,
+      "cknn_auroc": 0.8177649444473706,
+      "cka_spectre_ssl": 0.28740692138671875
+    },
+    {
+      "kind": "student",
+      "model": "baseline",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.5288546145779083,
+      "cknn_auroc": 0.49581815299641835,
+      "cka_spectre_ssl": 0.18760278820991516
+    },
+    {
+      "kind": "student",
+      "model": "baseline",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.6180054083607942,
+      "cknn_auroc": 0.5243580629924204,
+      "cka_spectre_ssl": 0.16406916081905365
+    },
+    {
+      "kind": "student",
+      "model": "baseline",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6493206323076437,
+      "cknn_auroc": 0.5379822178812439,
+      "cka_spectre_ssl": 0.2930382788181305
+    },
+    {
+      "kind": "student",
+      "model": "baseline",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.6628655094774154,
+      "cknn_auroc": 0.5605404921241262,
+      "cka_spectre_ssl": 0.4085615873336792
+    },
+    {
+      "kind": "student",
+      "model": "baseline",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.6410654518510714,
+      "cknn_auroc": 0.5814699443415351,
+      "cka_spectre_ssl": 0.4479599595069885
+    },
+    {
+      "kind": "student",
+      "model": "baseline",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.6441458861905192,
+      "cknn_auroc": 0.5828565659690286,
+      "cka_spectre_ssl": 0.43705445528030396
+    },
+    {
+      "kind": "student",
+      "model": "baseline",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.6205454472337186,
+      "cknn_auroc": 0.5914481511224345,
+      "cka_spectre_ssl": 0.2698606550693512
+    },
+    {
+      "kind": "student",
+      "model": "baseline",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.6511882400863228,
+      "cknn_auroc": 0.5809469095097748,
+      "cka_spectre_ssl": 0.512033224105835
+    },
+    {
+      "kind": "student",
+      "model": "baseline",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.6493488553407584,
+      "cknn_auroc": 0.5564431702446966,
+      "cka_spectre_ssl": 0.4577334225177765
+    },
+    {
+      "kind": "student",
+      "model": "baseline+ctx",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.5288546145779083,
+      "cknn_auroc": 0.49581815299641835,
+      "cka_spectre_ssl": 0.18760278820991516
+    },
+    {
+      "kind": "student",
+      "model": "baseline+ctx",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.6180054083607942,
+      "cknn_auroc": 0.5243580629924204,
+      "cka_spectre_ssl": 0.16406916081905365
+    },
+    {
+      "kind": "student",
+      "model": "baseline+ctx",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6493206323076437,
+      "cknn_auroc": 0.5379822178812439,
+      "cka_spectre_ssl": 0.2930382788181305
+    },
+    {
+      "kind": "student",
+      "model": "baseline+ctx",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.8197980463574637,
+      "cknn_auroc": 0.6190381601637472,
+      "cka_spectre_ssl": 0.4231158494949341
+    },
+    {
+      "kind": "student",
+      "model": "baseline+ctx",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.8409143361515636,
+      "cknn_auroc": 0.7074380880554157,
+      "cka_spectre_ssl": 0.3706294894218445
+    },
+    {
+      "kind": "student",
+      "model": "baseline+ctx",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.8457389899693044,
+      "cknn_auroc": 0.7244173450935355,
+      "cka_spectre_ssl": 0.3551589250564575
+    },
+    {
+      "kind": "student",
+      "model": "baseline+ctx",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.8351765849978008,
+      "cknn_auroc": 0.7007903166335214,
+      "cka_spectre_ssl": 0.29490751028060913
+    },
+    {
+      "kind": "student",
+      "model": "baseline+ctx",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.7921975800311651,
+      "cknn_auroc": 0.6540870615570817,
+      "cka_spectre_ssl": 0.529639720916748
+    },
+    {
+      "kind": "student",
+      "model": "baseline+ctx",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.7126353812240475,
+      "cknn_auroc": 0.5767288085337623,
+      "cka_spectre_ssl": 0.4559660255908966
+    },
+    {
+      "kind": "student",
+      "model": "repa",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.5233484192728067,
+      "cknn_auroc": 0.479782969363525,
+      "cka_spectre_ssl": 0.18588602542877197
+    },
+    {
+      "kind": "student",
+      "model": "repa",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.5825078182113415,
+      "cknn_auroc": 0.5185325691172296,
+      "cka_spectre_ssl": 0.16180165112018585
+    },
+    {
+      "kind": "student",
+      "model": "repa",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6377275960419931,
+      "cknn_auroc": 0.5150300993718682,
+      "cka_spectre_ssl": 0.1976444572210312
+    },
+    {
+      "kind": "student",
+      "model": "repa",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.6378505834920365,
+      "cknn_auroc": 0.5774718515418811,
+      "cka_spectre_ssl": 0.33850806951522827
+    },
+    {
+      "kind": "student",
+      "model": "repa",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.6775270545782391,
+      "cknn_auroc": 0.6621380831422912,
+      "cka_spectre_ssl": 0.6392086744308472
+    },
+    {
+      "kind": "student",
+      "model": "repa",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.6799407498597649,
+      "cknn_auroc": 0.6881905928556719,
+      "cka_spectre_ssl": 0.8768331408500671
+    },
+    {
+      "kind": "student",
+      "model": "repa",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.6854780336494494,
+      "cknn_auroc": 0.6410629126488017,
+      "cka_spectre_ssl": 0.6397567987442017
+    },
+    {
+      "kind": "student",
+      "model": "repa",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.6589627544646645,
+      "cknn_auroc": 0.5687417566822299,
+      "cka_spectre_ssl": 0.43204519152641296
+    },
+    {
+      "kind": "student",
+      "model": "repa",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.6630874543220446,
+      "cknn_auroc": 0.5384577448522411,
+      "cka_spectre_ssl": 0.4531961679458618
+    },
+    {
+      "kind": "student",
+      "model": "repa+ctx",
+      "tap": "conv_in",
+      "dim": 64,
+      "linear_auroc": 0.5233484192728067,
+      "cknn_auroc": 0.479782969363525,
+      "cka_spectre_ssl": 0.18588602542877197
+    },
+    {
+      "kind": "student",
+      "model": "repa+ctx",
+      "tap": "down_blocks.0",
+      "dim": 64,
+      "linear_auroc": 0.5825078182113415,
+      "cknn_auroc": 0.5185325691172296,
+      "cka_spectre_ssl": 0.16180165112018585
+    },
+    {
+      "kind": "student",
+      "model": "repa+ctx",
+      "tap": "down_blocks.1",
+      "dim": 128,
+      "linear_auroc": 0.6377275960419931,
+      "cknn_auroc": 0.5150300993718682,
+      "cka_spectre_ssl": 0.1976444572210312
+    },
+    {
+      "kind": "student",
+      "model": "repa+ctx",
+      "tap": "down_blocks.2",
+      "dim": 256,
+      "linear_auroc": 0.7539090651494337,
+      "cknn_auroc": 0.5761570268368937,
+      "cka_spectre_ssl": 0.33813250064849854
+    },
+    {
+      "kind": "student",
+      "model": "repa+ctx",
+      "tap": "down_blocks.3",
+      "dim": 512,
+      "linear_auroc": 0.8078473149360504,
+      "cknn_auroc": 0.6661685552194723,
+      "cka_spectre_ssl": 0.6339166164398193
+    },
+    {
+      "kind": "student",
+      "model": "repa+ctx",
+      "tap": "middle_block",
+      "dim": 512,
+      "linear_auroc": 0.7789358990769604,
+      "cknn_auroc": 0.7196793901367146,
+      "cka_spectre_ssl": 0.8742195963859558
+    },
+    {
+      "kind": "student",
+      "model": "repa+ctx",
+      "tap": "up_blocks.0",
+      "dim": 512,
+      "linear_auroc": 0.7904274041503583,
+      "cknn_auroc": 0.671285395196183,
+      "cka_spectre_ssl": 0.6335670948028564
+    },
+    {
+      "kind": "student",
+      "model": "repa+ctx",
+      "tap": "up_blocks.1",
+      "dim": 256,
+      "linear_auroc": 0.7728026584555653,
+      "cknn_auroc": 0.6207744683851607,
+      "cka_spectre_ssl": 0.4426649510860443
+    },
+    {
+      "kind": "student",
+      "model": "repa+ctx",
+      "tap": "up_blocks.2",
+      "dim": 128,
+      "linear_auroc": 0.7047162797727611,
+      "cknn_auroc": 0.5408293795134038,
+      "cka_spectre_ssl": 0.45705175399780273
+    }
+  ]
+}

@@ -46,10 +46,60 @@ deprecated/wandb_old/
 # "data/" matches that name at any depth, which silently untracked both directories' contents.
 /data/
 
+# Medical volume formats — raw CT, generated predictions, masks. NEVER committed: a single
+# volume is 100-350 MB. (A pre-2026-06-20 history did commit .mha/.nii.gz; filter-repo stripped
+# them out, which is why this is now a global rule rather than per-directory.)
+*.mha
+*.mhd
+*.raw
+*.nrrd
+*.nii
+*.nii.gz
+*.npy
+
 # fvlm: de-vendored from submodule, kept local-only (runtime dep, not tracked)
 third_party/fvlm/
+
+# Stray local clone — NOT a submodule (absent from .gitmodules), reference-only
+third_party/nv_generate_ctmr/
+
+# forithmus challenge harness: local test volumes (272 MB)
+.forithmus/
+
+# OMC per-session state that leaked into nested dirs
+**/.omc/state/
+
+# REPA-family reference clones — read-only, never imported (SHAs in docs/submodule_pins.md)
+third_party/repa_refs/
 
 paper_pdf/
 
 # Saliency experiment outputs (Experiment 3)
 tests/saliency_map/results/
+# spacing/FOV study: bulk volumes, feature caches and eval runs (figures + results are kept)
+tests/spacing_fov/preds/
+tests/spacing_fov/dumps/
+tests/spacing_fov/_cells/
+tests/spacing_fov/_invariance/
+tests/spacing_fov/_smoke/
+tests/spacing_fov/_sweep_featcache/
+tests/spacing_fov/runs/
+tests/spacing_fov/_zcells/
+tests/spacing_fov/_gt300/
+tests/spacing_fov/preds/gen_sp0.8_300/
+tests/spacing_fov/preds/wan_lps/
+
+# Study artifacts: bulk embeddings + rendered CT montages. Code, tables, REPORT.md and the
+# small analysis plots in each study dir ARE tracked — only these heavy outputs are excluded.
+# 169 MB of .npz teacher/student features
+tests/alignment_probe/embeddings/
+# 76 MB of per-scan CT slice montages
+tests/ctrate_eda/figures/montages/
+# 44 MB of teacher feature-map renders
+tests/repa_probe/u6_teachers/
+# 65 MB recon dumps + montages
+tests/vae_recon_compare/out/
+# 31 MB of overlay renders
+tests/abnormality_fidelity/figures/
+# 6.9 MB of segmentation overlay renders
+tests/disease_seg_overlay/

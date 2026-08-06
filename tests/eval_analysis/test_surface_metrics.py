@@ -66,27 +66,33 @@ def test_hd95_both_empty_is_nan():
     assert math.isnan(hd95["lung"])
 
 
-def test_hd95_one_empty_is_nan():
+def test_hd95_one_empty_is_penalized_not_nan():
+    """One side empty (the model missed an organ the reference has, or vice versa) gets the
+    penalty sentinel, not NaN — see test_one_empty_side_is_penalized_for_every_metric for why."""
     pred = _mask()
     pred[5, 5, 5] = 1
     ref = _mask()
     hd95 = _hd95(pred, ref, (1.0, 1.0, 1.0))
-    assert math.isnan(
-        hd95["lung"]
-    )  # MONAI: Hausdorff undefined without two non-empty sets
+    expected_sentinel = math.sqrt(3 * 10**2)  # shape (10,10,10), spacing (1,1,1)
+    assert abs(hd95["lung"] - expected_sentinel) < 1e-4
 
 
-def test_one_empty_side_is_nan_for_every_metric():
+def test_one_empty_side_is_penalized_for_every_metric():
     """Our one deliberate deviation from upstream, pinned in both directions.
 
     MONAI is self-inconsistent when exactly one side of an organ is empty: HD95 returns NaN
-    (``torch.quantile`` of an all-inf tensor is NaN) while HD and ASSD return ``+inf``. An inf
-    reaching ``per_sample.csv`` would turn every downstream mean into inf, so we map non-finite
-    to NaN. The first half of this test documents upstream's actual behaviour so the deviation
-    stays visible; the second half pins ours.
+    (``torch.quantile`` of an all-inf tensor is NaN) while HD and ASSD return ``+inf``. Both are
+    "undefined," but the failure is real — a model that fails to generate an organ the reference
+    has must be PENALIZED, not have it silently dropped from the mean (that would reward the
+    model that failed hardest, exactly inverted from Dice — see
+    ``test_omitting_an_organ_must_be_penalized_not_rewarded``). So all three metrics get the
+    volume-diagonal sentinel here, and it counts toward ``_mean``/``n``. The first half of this
+    test documents upstream's raw behaviour so the deviation stays visible; the second half pins
+    ours.
     """
     empty, present = _mask(), _mask()
     present[5, 5, 5] = 1
+    expected_sentinel = math.sqrt(3 * 10**2)  # shape (10,10,10), spacing (1,1,1)
 
     # BOTH directions. The one that actually occurs in production is (pred empty, ref present):
     # the reference ts_seg always has the organ, and a weak model can fail to generate it.
@@ -108,11 +114,19 @@ def test_one_empty_side_is_nan_for_every_metric():
 
         out = _surface_metrics_per_organ(pred, ref, (1.0, 1.0, 1.0))
         for metric in ("hd95_mm", "hd_mm", "assd_mm"):
-            assert math.isnan(out[metric]["lung"]), f"{label}/{metric}"
-            assert math.isnan(out[metric]["_mean"]), (
+            assert abs(out[metric]["lung"] - expected_sentinel) < 1e-4, (
                 f"{label}/{metric}"
-            )  # no finite organ
-        assert out["_scored"]["n"] == 0, label  # nothing was scorable
+            )
+            assert abs(out[metric]["_mean"] - expected_sentinel) < 1e-4, (
+                f"{label}/{metric}"
+            )
+        # heart/aorta/esophagus are never populated in this fixture -> both-empty -> excluded;
+        # only lung (the one organ under test here) is penalized-but-counted.
+        assert out["_scored"]["n"] == 1, label
+        expected_side = "pred" if pred is empty else "ref"
+        assert out["_scored"]["missing"] == (
+            f"lung:{expected_side};heart:both;aorta:both;esophagus:both"
+        ), label
 
 
 def test_scored_record_names_the_missing_organ_and_side():
@@ -127,23 +141,28 @@ def test_scored_record_names_the_missing_organ_and_side():
     )
 
     out = _surface_metrics_per_organ(pred, ref, (1.0, 1.0, 1.0))
-    assert out["_scored"]["n"] == 3  # the mean averaged 3 organs, not 4
+    assert out["_scored"]["n"] == 4  # penalized, not dropped — still counts
     assert (
         out["_scored"]["missing"] == "esophagus:pred"
     )  # and the model's side is named
-    assert math.isnan(out["hd95_mm"]["esophagus"])
+    diag = math.sqrt(3 * 10**2)  # shape (10,10,10), spacing (1,1,1)
+    assert abs(out["hd95_mm"]["esophagus"] - diag) < 1e-4
 
     ref[4, 5, 5] = 0  # now absent on BOTH sides
     both = _surface_metrics_per_organ(pred, ref, (1.0, 1.0, 1.0))
     assert both["_scored"]["missing"] == "esophagus:both"
+    assert both["_scored"]["n"] == 3  # ONLY both-empty actually reduces n
+    assert math.isnan(both["hd95_mm"]["esophagus"])
 
 
-def test_omitting_an_organ_must_not_look_better_than_generating_it_badly():
-    """The hazard `_scored` exists to expose, pinned end to end.
+def test_omitting_an_organ_must_be_penalized_not_rewarded():
+    """The bug ``_scored``'s ``missing`` field used to only expose, now fixed end to end.
 
     A model that generates an organ badly is penalised by the surface mean; a model that omits it
-    entirely has it dropped from the denominator and can score BETTER. Dice penalises both. The
-    numbers are allowed to move, but `n` must always reveal which mean covered fewer organs.
+    entirely must be penalised at least as hard (a sentinel distance), not have it dropped from
+    the denominator and score BETTER — that would invert the surface family relative to Dice
+    (which scores 0 for the identical case). ``n`` still reveals composition, but no longer means
+    "organs excluded from the mean" — only true both-empty organs are excluded.
     """
     ref = _mask((40, 40, 40))
     ref[8:20, 8:20, 8:20] = 1
@@ -161,9 +180,9 @@ def test_omitting_an_organ_must_not_look_better_than_generating_it_badly():
     gone = _surface_metrics_per_organ(omitted, ref, (1.0, 1.0, 1.0))
 
     assert bad["_scored"]["n"] == 4 and bad["_scored"]["missing"] == ""
-    assert gone["_scored"]["n"] == 3 and gone["_scored"]["missing"] == "esophagus:pred"
-    # the omission scores better on the surface mean despite being anatomically worse
-    assert gone["hd95_mm"]["_mean"] < bad["hd95_mm"]["_mean"]
+    assert gone["_scored"]["n"] == 4 and gone["_scored"]["missing"] == "esophagus:pred"
+    # the omission must now score WORSE (higher mm) than a badly-placed-but-present organ
+    assert gone["hd95_mm"]["_mean"] > bad["hd95_mm"]["_mean"]
 
 
 def test_hd_exposes_stray_voxel_that_hd95_hides():

@@ -4,6 +4,8 @@ defaults:
   - model_summary
   - rich_progress_bar
   - discord_notifier
+  - loss_curve
+  - ema
   - _self_
 
 model_checkpoint:

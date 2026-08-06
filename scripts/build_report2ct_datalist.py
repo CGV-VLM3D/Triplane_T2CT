@@ -41,13 +41,25 @@ def build_parser() -> argparse.ArgumentParser:
         "--ids-valid", required=True, help="ids_valid.txt — one volume ID per line"
     )
     p.add_argument("--out", required=True, help="Output datalist.json path")
+    p.add_argument(
+        "--mask-dir",
+        default=None,
+        help="Optional dir of <id>_mask_emb.nii.gz Wan mask latents; when set, each entry gains a "
+        "'mask_latent' path and volumes missing the mask latent are skipped (report2ct_wan_mask).",
+    )
     return p
 
 
-def merge_sample(vol_id: str, image_dir: Path, text_dir: Path) -> dict | None:
+def merge_sample(
+    vol_id: str, image_dir: Path, text_dir: Path, mask_dir: Path | None = None
+) -> dict | None:
     """Merge image embedding header (dim, spacing) with text embeddings into one JSON.
 
-    Returns the datalist entry dict, or None if required files are missing.
+    Args:
+        mask_dir: if given, also require + attach the ``<id>_mask_emb.nii.gz`` Wan mask latent as
+            a ``"mask_latent"`` entry key (report2ct_wan_mask); a missing mask latent skips the vol.
+
+    Returns the datalist entry dict, or None if any required file is missing.
     """
     img_path = image_dir / f"{vol_id}_emb.nii.gz"
     text_path = text_dir / f"{vol_id}_emb.nii.gzmulti_2560.json"
@@ -56,6 +68,9 @@ def merge_sample(vol_id: str, image_dir: Path, text_dir: Path) -> dict | None:
     if not img_path.is_file():
         return None
     if not text_path.is_file():
+        return None
+    mask_path = mask_dir / f"{vol_id}_mask_emb.nii.gz" if mask_dir else None
+    if mask_path is not None and not mask_path.is_file():
         return None
 
     # Load spacing from image embedding NIfTI header
@@ -76,21 +91,24 @@ def merge_sample(vol_id: str, image_dir: Path, text_dir: Path) -> dict | None:
 
     abs_img = str(img_path.resolve())
     abs_json = str(merged_json_path.resolve())
-    return {
+    entry = {
         "image": abs_img,
         "spacing": abs_json,
         "context_f": abs_json,
         "context_i": abs_json,
     }
+    if mask_path is not None:
+        entry["mask_latent"] = str(mask_path.resolve())
+    return entry
 
 
 def build_split(
-    ids: list[str], image_dir: Path, text_dir: Path
+    ids: list[str], image_dir: Path, text_dir: Path, mask_dir: Path | None = None
 ) -> tuple[list[dict], int]:
     entries = []
     missing = 0
     for vol_id in tqdm(ids, leave=False):
-        entry = merge_sample(vol_id, image_dir, text_dir)
+        entry = merge_sample(vol_id, image_dir, text_dir, mask_dir)
         if entry is None:
             missing += 1
         else:
@@ -102,21 +120,31 @@ def main() -> None:
     args = build_parser().parse_args()
     image_dir = Path(args.image_dir)
     text_dir = Path(args.text_dir)
+    mask_dir = Path(args.mask_dir) if args.mask_dir else None
 
     def _read_ids(path: str) -> list[str]:
-        return [l.strip() for l in Path(path).read_text().splitlines() if l.strip()]
+        p = Path(path)
+        if p.suffix == ".json":  # toy_v2 ids are JSON ({"ids": [...]} or a bare list)
+            data = json.loads(p.read_text())
+            ids = data["ids"] if isinstance(data, dict) else data
+            return [str(i).strip() for i in ids if str(i).strip()]
+        return [l.strip() for l in p.read_text().splitlines() if l.strip()]
 
     ids_train = _read_ids(args.ids_train)
     ids_valid = _read_ids(args.ids_valid)
 
+    if mask_dir is not None:
+        print(f"Mask-latent dir set → each entry gains 'mask_latent' ({mask_dir})")
+
     print(f"Building training split ({len(ids_train)} IDs)...")
-    train_entries, train_missing = build_split(ids_train, image_dir, text_dir)
+    train_entries, train_missing = build_split(ids_train, image_dir, text_dir, mask_dir)
     print(
-        f"  → {len(train_entries)} included, {train_missing} skipped (missing image/text embedding)"
+        f"  → {len(train_entries)} included, {train_missing} skipped "
+        "(missing image/text embedding" + (" or mask latent)" if mask_dir else ")")
     )
 
     print(f"Building validation split ({len(ids_valid)} IDs)...")
-    val_entries, val_missing = build_split(ids_valid, image_dir, text_dir)
+    val_entries, val_missing = build_split(ids_valid, image_dir, text_dir, mask_dir)
     print(f"  → {len(val_entries)} included, {val_missing} skipped")
 
     if not train_entries:

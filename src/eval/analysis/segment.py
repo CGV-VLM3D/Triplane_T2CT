@@ -41,16 +41,48 @@ import SimpleITK as sitk
 def _mha_to_nib_xyz(mha_path: str | Path):
     """Read a ``.mha`` (sitk convention, array axes Z,Y,X) into a nibabel image (X,Y,Z).
 
-    The generated volumes carry a synthetic (unregistered) grid — ``SetSpacing`` only, identity
-    origin/direction (see plan §3.8) — so the affine here is a pure diagonal spacing matrix.
+    ⚠ The affine is derived from the file's own header and is **not** a plain diagonal spacing
+    matrix, even though the generated volumes carry a synthetic grid with identity
+    origin/direction (plan §3.8). SimpleITK's world is **LPS**, NIfTI/nibabel's is **RAS**, so an
+    ITK *identity* direction is ``diag(-1, -1, +1)`` in NIfTI terms — writing
+    ``np.diag([sx, sy, sz, 1])`` declares LPS content to be RAS. That matters because
+    TotalSegmentator canonicalizes its input by this affine
+    (``totalsegmentator/nnunet.py:476`` ``as_closest_canonical``, undone at ``:713``), so a
+    wrong-handed affine makes the canonicalization a no-op and feeds nnU-Net a patient rotated
+    180° about S — left/right and anterior/posterior swapped.
+
+    Measured cost of getting it wrong (2026-08-01, ``valid_1006_a_1``, one prediction segmented
+    twice with **only** the affine sign changed, scored against the same reference mask):
+
+    ===============  =============================  ==========================
+    metric           ``diag(+sx, +sy, +sz)`` (RAS)  header-faithful (LPS→RAS)
+    ===============  =============================  ==========================
+    Dice lung        0.927                          0.966
+    Dice heart       0.136                          0.893
+    Dice aorta       0.128                          0.898
+    Dice esophagus   0.000                          0.654
+    hd95_mm mean     87.4                           5.3
+    ===============  =============================  ==========================
+
+    **lung barely moves** because ``organ_groups.TS_TO_GROUP`` merges the five lobes into one
+    left-right symmetric label — which is exactly why the historical "lung Dice 0.9645"
+    validation (``seg_metrics.py`` module docstring) could not see this.
     """
     import nibabel as nib
 
     img = sitk.ReadImage(str(mha_path))
     arr_zyx = sitk.GetArrayFromImage(img).astype(np.int16)
     arr_xyz = arr_zyx.transpose(2, 1, 0)
-    sx, sy, sz = img.GetSpacing()
-    affine = np.diag([sx, sy, sz, 1.0]).astype(np.float64)
+
+    # ITK index -> LPS world:  p_lps = origin + direction @ (spacing * index)
+    # NIfTI index -> RAS world: the same map, then LPS -> RAS (negate the first two axes).
+    direction = np.array(img.GetDirection()).reshape(
+        3, 3
+    )  # column j = axis j's direction
+    lps_to_ras = np.diag([-1.0, -1.0, 1.0])
+    affine = np.eye(4, dtype=np.float64)
+    affine[:3, :3] = lps_to_ras @ (direction * np.array(img.GetSpacing()))
+    affine[:3, 3] = lps_to_ras @ np.array(img.GetOrigin())
     return nib.Nifti1Image(arr_xyz, affine)
 
 

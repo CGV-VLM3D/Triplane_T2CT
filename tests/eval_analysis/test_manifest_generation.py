@@ -361,3 +361,6 @@ def test_setlevel_metrics_are_refused_on_a_manifest_run():
     for metric in ("fid_2p5d", "fvd", "fvd_ctclip"):
         with pytest.raises(RuntimeError, match=metric):
             _refuse_setlevel_metrics(cfg("/tmp/m.jsonl", **{metric: True}))
+    # condition_fid is the sanctioned per-condition alternative — never refused, since a single
+    # condition's subset has no repeated target (src/eval/analysis/condition_setlevel.py).
+    _refuse_setlevel_metrics(cfg("/tmp/m.jsonl", condition_fid=True))

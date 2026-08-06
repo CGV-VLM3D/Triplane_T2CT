@@ -496,7 +496,7 @@ class Report2CTWanMaskV2LatentSampler(Report2CTWanMaskLatentSampler):
 class Report2CTWanSeqLatentSampler(Report2CTWanLatentSampler):
     """report2ct_wan_seq (arms B/C, docs/vlm3d_research_roadmap.md Phase 1e): per-encoder token
     SEQUENCES instead of the pooled 2-token context, with the padding-aware UNet + optional
-    pooled-text AdaLN path from Unit 3a/3b.
+    pooled-text conditioning path from Unit 3a/3b.
 
     Must reproduce ``Report2CTSeqDataModule``'s (training-side) padding *exactly* — same lengths,
     same encoder order, same mask convention — or the model sees a context distribution shifted
@@ -506,16 +506,16 @@ class Report2CTWanSeqLatentSampler(Report2CTWanLatentSampler):
     cannot drift from training by editing only one side.
 
     Args:
-        text_pooled_adaln: whether the checkpoint was trained with the pooled findings/impression
+        text_pooled_cond: whether the checkpoint was trained with the pooled findings/impression
             -> ``emb`` path active (arm C). ``False`` (default, arm B) leaves that path idle —
             the UNet is always ``DiffusionModelUNetMaisiTextPooled`` either way (its pooled path
             is a zero-init no-op when unused, verified in Unit 3a), only whether this sampler
             *feeds* it differs.
     """
 
-    def __init__(self, *args, text_pooled_adaln: bool = False, **kwargs) -> None:
+    def __init__(self, *args, text_pooled_cond: bool = False, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.text_pooled_adaln = text_pooled_adaln
+        self.text_pooled_cond = text_pooled_cond
         self._text_projector: TextSequenceProjector | None = None
         # Per-case state set by _case_to_context, read by _predict — same pattern as the mask
         # subclasses' _mask_latent (an instance-attribute side channel is required here because
@@ -546,7 +546,7 @@ class Report2CTWanSeqLatentSampler(Report2CTWanLatentSampler):
         if self._text_projector is None:
             raise RuntimeError(
                 f"{self.ckpt_path} has no text_projector.* weights — was it trained with "
-                "experiment=report2ct_wan_seq (or report2ct_wan_seq_adaln)? "
+                "experiment=report2ct_wan_seq (or report2ct_wan_seq_pooled)? "
                 "Report2CTWanSeqLatentSampler needs a checkpoint trained with text_projector set."
             )
         log.info("Loading Report2CT text encoders …")
@@ -561,7 +561,7 @@ class Report2CTWanSeqLatentSampler(Report2CTWanLatentSampler):
         Returns:
             Cross-attention context, ``(1, n_encoders*(SEQ_LEN_FINDINGS+SEQ_LEN_IMPRESSION),
             2560)`` — same return type as the base class, so ``generate()`` needs no override.
-            The mask (and, if ``text_pooled_adaln``, the pooled vectors) are stashed on
+            The mask (and, if ``text_pooled_cond``, the pooled vectors) are stashed on
             ``self`` for ``_predict`` to read.
         """
         f_seqs, i_seqs = self._text_encoder.encode_tokens_pair(
@@ -582,7 +582,7 @@ class Report2CTWanSeqLatentSampler(Report2CTWanLatentSampler):
             context, context_mask = self._text_projector(f_pad, f_mask, i_pad, i_mask)
         self._context_mask = context_mask  # (1, T)
 
-        if self.text_pooled_adaln:
+        if self.text_pooled_cond:
             # Same encoder_pair + mean-pool identity Phase 1a verified exactly
             # (encode_tokens' mean == encode()'s pooled output): reuse encode_pair directly
             # rather than re-deriving the pooled vector from the just-computed sequences.
@@ -602,7 +602,7 @@ class Report2CTWanSeqLatentSampler(Report2CTWanLatentSampler):
         class_labels: torch.Tensor,
         spacing_tensor: torch.Tensor,
     ) -> torch.Tensor:
-        """Text-only CFG, extended with the context mask and (if enabled) pooled-text AdaLN.
+        """Text-only CFG, extended with the context mask and (if enabled) pooled-text conditioning.
 
         The CFG-dropped branch mirrors ``Report2CTModule``'s training-time joint drop: the
         cross-attention context AND the pooled vectors are zeroed together, never independently
@@ -612,7 +612,7 @@ class Report2CTWanSeqLatentSampler(Report2CTWanLatentSampler):
             z if self._mask_latent is None else torch.cat([z, self._mask_latent], dim=1)
         )
         extra: dict[str, torch.Tensor] = {}
-        if self.text_pooled_adaln:
+        if self.text_pooled_cond:
             extra["text_pooled_f"] = self._text_pooled_f
             extra["text_pooled_i"] = self._text_pooled_i
 

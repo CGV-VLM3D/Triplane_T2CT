@@ -1,0 +1,47 @@
+# @package _global_
+# Wan2.1-latent ctgen experiment — REAL report2ct (2560-d findings+impression conditioning + RFlow
+# + varied per-scan spacing) with ONLY the VAE latent swapped MAISI → Wan2.1 (8×8×4, latent ch16).
+# Isolates the "latent space effect"; the head-to-head comparison is the report2ct(MAISI) baseline.
+# Trains on precomputed Wan latents; the main env never touches diffusers/Wan.
+# Launch (GPU 1):
+#   CUDA_VISIBLE_DEVICES=1 python src/train.py experiment=report2ct_wan
+# Smoke:
+#   CUDA_VISIBLE_DEVICES=1 python src/train.py experiment=report2ct_wan \
+#       trainer.max_epochs=1 trainer.limit_train_batches=50
+
+defaults:
+  - override /data: report2ct_wan
+  - override /model: report2ct_wan     # in=16, out=16, cross_attention_dim=2560, no mask_conditioner
+  - override /trainer: report2ct
+  - override /callbacks: default
+  - override /logger: wandb
+  - _self_
+
+task_name: report2ct_wan   # → outputs/report2ct_wan/<KST-date>[_N]/
+tags: ["wan_latent", "baseline", "ctgen"]
+seed: 42
+
+logger:
+  wandb:
+    group: "wan-latent"
+test: false
+
+# report2ct regime (cfg_drop_prob 0.15 from the model config); NO grad-clip (baseline-matched) — grad-norm
+# is LOGGED (Report2CTModule.on_before_optimizer_step → train/grad_norm) to decide clipping empirically.
+# max_epochs 300 (not the baseline's 100): Wan @ batch 8 is step-starved at 100 (62k vs MAISI's 250k steps),
+# and PolynomialLR must span the full horizon so LR doesn't decay to ~0 by epoch 90. Stop early on FID plateau.
+trainer:
+  max_epochs: 300
+model:
+  cfg_per_sample: true   # per-sample CFG drop (user override; drop prob stays 0.15 from model cfg)
+
+callbacks:
+  early_stopping: null
+  model_checkpoint:
+    monitor: null
+    every_n_epochs: 10
+    save_top_k: -1
+    save_last: true
+    filename: "epoch_{epoch:03d}"
+    auto_insert_metric_name: false
+  rich_progress_bar: null

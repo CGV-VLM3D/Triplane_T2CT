@@ -1,0 +1,81 @@
+split,field,rank,count,pct_of_reports,sentence
+train,Findings_EN,1,14029,58.15,When examined in the lung parenchyma window;
+train,Findings_EN,2,9201,38.14,Pericardial effusion-thickening was not observed.
+train,Findings_EN,3,8246,34.18,Bilateral adrenal glands were normal and no space-occupying lesion was detected.
+train,Findings_EN,4,7122,29.52,No space-occupying lesion was detected in the liver that entered the cross-sectional area.
+train,Findings_EN,5,7089,29.38,Vertebral corpus heights are preserved.
+train,Findings_EN,6,7068,29.29,"No enlarged lymph nodes in prevascular, pre-paratracheal, subcarinal or bilateral hilar-axillary pathological dimensions were detected."
+train,Findings_EN,7,7054,29.24,"Trachea, both main bronchi are open."
+train,Findings_EN,8,6722,27.86,Bone structures in the study area are natural.
+train,Findings_EN,9,6162,25.54,Upper abdominal organs included in the sections are normal.
+train,Findings_EN,10,5612,23.26,"Mediastinal main vascular structures, heart contour, size are normal."
+train,Findings_EN,11,5494,22.77,Thoracic esophagus calibration was normal and no significant tumoral wall thickening was detected.
+train,Findings_EN,12,4769,19.77,Thoracic aorta diameter is normal.
+train,Findings_EN,13,4722,19.57,Thoracic esophagus calibration was normal and no significant pathological wall thickening was detected.
+train,Findings_EN,14,3614,14.98,Pleural effusion-thickening was not detected.
+train,Findings_EN,15,3583,14.85,As far as can be seen;
+train,Findings_EN,16,3361,13.93,No occlusive pathology was detected in the trachea and both main bronchi.
+train,Findings_EN,17,3314,13.74,Trachea and both main bronchi are open.
+train,Findings_EN,18,3169,13.13,Mediastinal structures cannot be evaluated optimally because contrast material is not given.
+train,Findings_EN,19,3109,12.89,The widths of the mediastinal main vascular structures are normal.
+train,Findings_EN,20,2960,12.27,As far as can be observed: Heart contour and size are normal.
+train,Impressions_EN,1,763,3.27,Hiatal hernia.
+train,Impressions_EN,2,756,3.24,Hepatosteatosis.
+train,Impressions_EN,3,573,2.45,Thoracic CT examination within normal limits
+train,Impressions_EN,4,470,2.01,Emphysematous changes in both lungs.
+train,Impressions_EN,5,420,1.8,Cholelithiasis.
+train,Impressions_EN,6,382,1.64,Clinical and laboratory correlation is recommended.
+train,Impressions_EN,7,366,1.57,Millimetric nonspecific nodules in both lungs.
+train,Impressions_EN,8,329,1.41,No sign of pneumonia was detected.
+train,Impressions_EN,9,320,1.37,Hiatal hernia .
+train,Impressions_EN,10,317,1.36,Cardiomegaly.
+train,Impressions_EN,11,300,1.28,Millimetric nodules in both lungs.
+train,Impressions_EN,12,271,1.16,It is recommended to be evaluated together with clinical and laboratory.
+train,Impressions_EN,13,270,1.16,Minimal emphysematous changes in both lungs.
+train,Impressions_EN,14,257,1.1,Atelectasis in both lungs.
+train,Impressions_EN,15,252,1.08,Atherosclerotic changes in the aorta and coronary arteries.
+train,Impressions_EN,16,247,1.06,"However, it should be known that CT may be false negative in the first few days."
+train,Impressions_EN,17,233,1.0,Findings consistent with viral pneumonia in both lungs.
+train,Impressions_EN,18,232,0.99,Findings within normal limits
+train,Impressions_EN,19,229,0.98,No signs of infection were detected in the lungs.
+train,Impressions_EN,20,223,0.96,Findings within normal limits.
+valid,Findings_EN,1,939,60.04,When examined in the lung parenchyma window;
+valid,Findings_EN,2,587,37.53,Pericardial effusion-thickening was not observed.
+valid,Findings_EN,3,559,35.74,Bilateral adrenal glands were normal and no space-occupying lesion was detected.
+valid,Findings_EN,4,489,31.27,No space-occupying lesion was detected in the liver that entered the cross-sectional area.
+valid,Findings_EN,5,473,30.24,"No enlarged lymph nodes in prevascular, pre-paratracheal, subcarinal or bilateral hilar-axillary pathological dimensions were detected."
+valid,Findings_EN,6,465,29.73,"Trachea, both main bronchi are open."
+valid,Findings_EN,7,458,29.28,Vertebral corpus heights are preserved.
+valid,Findings_EN,8,443,28.32,Bone structures in the study area are natural.
+valid,Findings_EN,9,419,26.79,Upper abdominal organs included in the sections are normal.
+valid,Findings_EN,10,366,23.4,Thoracic esophagus calibration was normal and no significant tumoral wall thickening was detected.
+valid,Findings_EN,11,364,23.27,"Mediastinal main vascular structures, heart contour, size are normal."
+valid,Findings_EN,12,313,20.01,Thoracic aorta diameter is normal.
+valid,Findings_EN,13,305,19.5,Thoracic esophagus calibration was normal and no significant pathological wall thickening was detected.
+valid,Findings_EN,14,245,15.66,Pleural effusion-thickening was not detected.
+valid,Findings_EN,15,239,15.28,As far as can be seen;
+valid,Findings_EN,16,209,13.36,No occlusive pathology was detected in the trachea and both main bronchi.
+valid,Findings_EN,17,197,12.6,Trachea and both main bronchi are open.
+valid,Findings_EN,18,185,11.83,The widths of the mediastinal main vascular structures are normal.
+valid,Findings_EN,19,177,11.32,Mediastinal structures cannot be evaluated optimally because contrast material is not given.
+valid,Findings_EN,20,174,11.13,Thoracic esophageal calibration was normal and no significant tumoral wall thickening was detected.
+valid,Impressions_EN,1,52,3.42,Hepatosteatosis.
+valid,Impressions_EN,2,45,2.96,Hiatal hernia.
+valid,Impressions_EN,3,40,2.63,Thoracic CT examination within normal limits
+valid,Impressions_EN,4,35,2.3,Clinical and laboratory correlation is recommended.
+valid,Impressions_EN,5,23,1.51,Cholelithiasis.
+valid,Impressions_EN,6,22,1.45,Cardiomegaly.
+valid,Impressions_EN,7,21,1.38,Emphysematous changes in both lungs.
+valid,Impressions_EN,8,20,1.32,Millimetric nonspecific nodules in both lungs.
+valid,Impressions_EN,9,20,1.32,Findings within normal limits
+valid,Impressions_EN,10,20,1.32,Minimal emphysematous changes in both lungs.
+valid,Impressions_EN,11,19,1.25,Sequelae changes in both lungs.
+valid,Impressions_EN,12,17,1.12,Hiatal hernia .
+valid,Impressions_EN,13,17,1.12,It is recommended to be evaluated together with clinical and laboratory.
+valid,Impressions_EN,14,17,1.12,small vessel disease?).
+valid,Impressions_EN,15,17,1.12,No sign of pneumonia was detected.
+valid,Impressions_EN,16,17,1.12,Thoracic spondylosis.
+valid,Impressions_EN,17,16,1.05,No finding compatible with pneumonia was detected.
+valid,Impressions_EN,18,15,0.99,Degenerative changes in bone structure.
+valid,Impressions_EN,19,15,0.99,"However, it should be known that CT may be false negative in the first few days."
+valid,Impressions_EN,20,15,0.99,Millimetric nodules in both lungs.

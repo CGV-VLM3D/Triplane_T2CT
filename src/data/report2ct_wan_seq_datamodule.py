@@ -4,7 +4,7 @@ Thin subclass of :class:`~src.data.report2ct_datamodule.Report2CTDataModule`, fo
 same pattern as :class:`~src.data.report2ct_wan_mask_datamodule.Report2CTWanMaskDataModule`
 (base transforms + one extra conditioning signal). It emits everything the plain-wan module
 does — ``image``, ``spacing``, ``context_f``/``context_i`` (2560-d pooled findings+impression,
-unchanged, still feeds the AdaLN path) — PLUS the per-encoder token sequences that
+unchanged, still feeds the pooled-conditioning path) — PLUS the per-encoder token sequences that
 ``Report2CTTextEncoder.encode_tokens`` produces and
 ``scripts/precompute_report2ct_text_embeddings.py --save-tokens`` writes to the
 ``<id>_emb.nii.gzmulti_2560_ctx.npz`` sidecar (see docs/vlm3d_research_roadmap.md Phase 1a/1b).

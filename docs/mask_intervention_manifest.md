@@ -13,10 +13,29 @@ fixed by [tests/eval_analysis/test_manifest_builder.py](../tests/eval_analysis/t
 Generation-side *consumption* of the manifest (the sampler generating one volume per row) is the
 remaining piece.
 
-⚠ **A manifest run is for DIAGNOSTIC metrics only** — CLIPScore-T2I, `dice_to_input_mask`,
-`dice_to_gt_mask`. Do **not** score it for FID/FVD as leaderboard metrics: one target appears in
-several rows, which breaks the "1 volume = 1 independent sample" premise those set-level metrics
-rest on (and the GT reference would be counted once per repeat of the same target).
+⚠ **The run's default/pooled FID/FVD are refused** (`run_eval._refuse_setlevel_metrics`) —
+scoring the whole `predictions/` dir at once repeats each target once per condition, breaking the
+"1 volume = 1 independent sample" premise those metrics rest on, and the GT reference would be
+counted once per repeat too. `task.metrics.per_sample`/`dice`/`hd95` (CLIPScore-T2I,
+`dice_to_input_mask`, `dice_to_gt_mask`, HD95/HD/ASSD) are unaffected and are the metrics a
+manifest run is scored with directly.
+
+**FID/FVD BY CONDITION are valid and supported** — a single condition's subset (e.g. just
+`label_mismatched_swap`) has no repeated target, so it is exactly as valid as any other model's
+plain-run FID. Two ways to get them, same underlying code
+(`src/eval/analysis/condition_setlevel.py`), both writing
+`<out_dir>/condition_fid/condition_fid_fvd.csv` + a `## FID/FVD by condition` section in
+`SUMMARY.md`:
+
+1. **Folded into the scoring run** — add `task.metrics.condition_fid=true` to the `run_eval.py`
+   command in "Running one" below (needs `task.metrics.per_sample=true` too, for the
+   `sample_id`/`condition` columns). No separate command; the numbers land in the same
+   `SUMMARY.md` this run writes.
+2. **Post-hoc, on a run already scored without it** — reuses `predictions/` and `gt_view/`
+   already on disk, no regeneration:
+   ```bash
+   CUDA_VISIBLE_DEVICES=3 python scripts/score_condition_fid.py --run-dir <out_dir>
+   ```
 
 ## Format
 
@@ -107,11 +126,13 @@ CUDA_VISIBLE_DEVICES=3 python scripts/generate_wan_mask_v2_latents.py \
 CUDA_VISIBLE_DEVICES=3 /opt/conda/envs/wan/bin/python scripts/decode_wan_latents.py \
     --latent-dir <OUT>/latents --out <OUT>/predictions --spacing 0.75 0.75 1.3
 
-# 3. score the DIAGNOSTICS only (FID/FVD are refused for a manifest run)
+# 3. score the DIAGNOSTICS (POOLED fid_2p5d/fvd/fvd_ctclip are refused for a manifest run) plus
+#    FID/FVD scored PER CONDITION (condition_fid=true — valid; needs per_sample=true alongside it)
 python scripts/run_eval.py task=ctgen model=report2ct_wan_mask_v2 out_dir=<OUT> \
     task.manifest=<manifest> task.is_mask_model=true \
     task.metrics.fid_2p5d=false task.metrics.fvd=false task.metrics.fvd_ctclip=false \
-    task.metrics.per_sample=true task.metrics.dice=true task.metrics.hd95=true
+    task.metrics.per_sample=true task.metrics.dice=true task.metrics.hd95=true \
+    task.metrics.condition_fid=true
 ```
 
 - Step 1 cross-checks `--ckpt` / `--cfg-scale-text` / `--cfg-scale-mask` against the manifest's

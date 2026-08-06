@@ -37,6 +37,41 @@ git submodule status third_party/ct_clip
 # Should print one line with a SHA prefix (fVLM is a plain directory, not a submodule).
 ```
 
+### 2.5D-FID feature networks (torch.hub / torchvision cache)
+
+The ctgen FID needs one of two ImageNet-style backbones, both cached under `~/.cache/torch/hub/`
+— i.e. on the **container root filesystem, not `/workspace`**, so they are lost when the container
+is rebuilt. Verified copies live at `data/checkpoints/`:
+
+| profile | weight | backup |
+|---|---|---|
+| `research` | `RadImageNet-ResNet50_notop.pth` (94 MB) | `data/checkpoints/radimagenet/` |
+| `docker` (default) | `squeezenet1_1-b8a52dc0.pth` (5 MB) | `data/checkpoints/torchvision/` |
+
+```bash
+# restore both into the torch cache after a container rebuild
+cp data/checkpoints/radimagenet/RadImageNet-ResNet50_notop.pth ~/.cache/torch/hub/checkpoints/
+cp data/checkpoints/torchvision/squeezenet1_1-b8a52dc0.pth      ~/.cache/torch/hub/checkpoints/
+```
+
+⚠ **The RadImageNet weight is effectively not re-downloadable.** `torch.hub.load("Warvito/radimagenet-models", ...)`
+fetches it from a Google Drive direct link (`radimagenet_models/models/resnet.py`, generated with
+gdocs2direct), and that URL now returns Drive's *"Virus scan warning"* HTML instead of the file —
+`load_state_dict_from_url` would save the HTML and fail. It is still obtainable by hand with the
+confirm token, but only outside torch.hub:
+
+```bash
+curl -L -o RadImageNet-ResNet50_notop.pth \
+  "https://drive.usercontent.google.com/download?id=1VOWHgOq0rm7OkE_JxlWXhMAH4CvcXUHT&export=download&confirm=t"
+# sanity: a real checkpoint starts with the zip magic "PK\x03\x04", not "<!DOCTYPE html>"
+head -c 4 RadImageNet-ResNet50_notop.pth | xxd
+# expected sha256: 2457479b254569e5a81ba48fee6c5b2b84b7a729e507aaa2466101aedb8e5c37
+```
+
+The squeezenet weight is a plain torchvision download (`torchvision.models.squeezenet1_1(pretrained=True)`)
+and needs no special handling — but it must be present before any default-profile eval, which is
+why the backup exists.
+
 ## 1. CT-CLIP
 
 `CT-CLIP_v2.pt` is **already on disk** (used by the VLM3D-Dockers eval). We

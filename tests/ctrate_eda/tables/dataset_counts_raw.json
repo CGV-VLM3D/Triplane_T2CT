@@ -1,0 +1,126 @@
+{
+  "train": {
+    "split": "train",
+    "manifest": {
+      "volumes": 47149,
+      "scans": 24128,
+      "patients": 20000
+    },
+    "matching": {
+      "reports_rows": 47149,
+      "reports_unique": 47149,
+      "labels_rows": 47149,
+      "meta_rows": 47149,
+      "reports_not_in_labels": 0,
+      "reports_not_in_meta": 0,
+      "labels_not_in_reports": 0,
+      "meta_not_in_reports": 0
+    },
+    "recon_dist": {
+      "1": 1972,
+      "2": 21827,
+      "3": 57,
+      "4": 26,
+      "5": 235,
+      "6": 8,
+      "7": 2,
+      "11": 1
+    },
+    "pct_scan_with_2_recon": 90.46,
+    "scan_report_inconsistent": 0,
+    "scan_label_inconsistent": 0,
+    "no_chest": {
+      "listed": 752,
+      "in_manifest": 752,
+      "scans": 267,
+      "patients": 265,
+      "pct_of_volumes": 1.595
+    },
+    "on_disk": {
+      "fixed_dir_volumes": 46393,
+      "manifest_minus_disk": 756,
+      "in_no_chest_data": 752,
+      "in_error_ctrate_data": 3,
+      "moved_not_in_quarantine": [
+        "train_14384_a_2.nii.gz"
+      ]
+    }
+  },
+  "valid": {
+    "split": "valid",
+    "manifest": {
+      "volumes": 3039,
+      "scans": 1564,
+      "patients": 1304
+    },
+    "matching": {
+      "reports_rows": 3039,
+      "reports_unique": 3039,
+      "labels_rows": 3039,
+      "meta_rows": 3039,
+      "reports_not_in_labels": 0,
+      "reports_not_in_meta": 0,
+      "labels_not_in_reports": 0,
+      "meta_not_in_reports": 0
+    },
+    "recon_dist": {
+      "1": 132,
+      "2": 1415,
+      "3": 4,
+      "4": 1,
+      "5": 11,
+      "6": 1
+    },
+    "pct_scan_with_2_recon": 90.47,
+    "scan_report_inconsistent": 0,
+    "scan_label_inconsistent": 0,
+    "no_chest": {
+      "listed": 37,
+      "in_manifest": 37,
+      "scans": 13,
+      "patients": 13,
+      "pct_of_volumes": 1.218
+    },
+    "on_disk": {
+      "fixed_dir_volumes": 3001,
+      "manifest_minus_disk": 38,
+      "in_no_chest_data": 37,
+      "in_error_ctrate_data": 0,
+      "moved_not_in_quarantine": [
+        "valid_251_a_2.nii.gz"
+      ]
+    }
+  },
+  "leakage": {
+    "train_patients": 20000,
+    "valid_patients": 1304,
+    "overlap": 0
+  },
+  "ctrate_full_census": {
+    "train": {
+      "n": 46393,
+      "n_with_latent": 46393,
+      "n_missing_latent": 0,
+      "n_excluded_no_chest": 752,
+      "n_excluded_unencodable": 4
+    },
+    "valid": {
+      "n": 3001,
+      "n_with_latent": 3001,
+      "n_missing_latent": 0,
+      "n_excluded_no_chest": 37,
+      "n_excluded_unencodable": 1
+    },
+    "valid_v2": {
+      "n": 1304,
+      "n_with_latent": 1304,
+      "n_missing_latent": 0
+    }
+  },
+  "valid_v2": {
+    "n": 1304,
+    "patients": 1304,
+    "one_per_patient": true,
+    "subset_of_disk": true
+  }
+}

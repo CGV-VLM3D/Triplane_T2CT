@@ -1,0 +1,11 @@
+split,level,n
+train,manifest_volumes,47149
+train,manifest_scans,24128
+train,manifest_patients,20000
+train,on_disk_volumes,46393
+train,quarantined_no_chest,752
+valid,manifest_volumes,3039
+valid,manifest_scans,1564
+valid,manifest_patients,1304
+valid,on_disk_volumes,3001
+valid,quarantined_no_chest,37

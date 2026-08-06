@@ -187,8 +187,8 @@ CUDA_VISIBLE_DEVICES=1,2 python src/train.py \
 CUDA_VISIBLE_DEVICES=1,2 python src/train.py experiment=report2ct_repro
 ```
 
-Checkpoints are saved to `/workspace/outputs/report2ct/<timestamp>/checkpoints/` (one
-timestamped dir per run; older runs from before the reorg live under
+Checkpoints are saved to `/workspace/outputs/report2ct/<KST-date>[_N]/checkpoints/` (one
+dated dir per run, `_2`/`_3`… on same-day reruns; older runs from before the reorg live under
 `/workspace/outputs/report2ct/legacy_work_dir/checkpoints/`).
 
 ---
@@ -214,7 +214,7 @@ timestamped dir per run; older runs from before the reorg live under
 | `data/report2ct_work_dir/image_embeddings/<id>_emb.nii.gzmulti_2560.json` | Merged dim/spacing/embeddings |
 | `data/report2ct_work_dir/datalist.json` | Training datalist |
 | `data/report2ct_work_dir/parity_refs/` | Parity reference files |
-| `outputs/report2ct/<timestamp>/checkpoints/` | Saved model checkpoints (per run) |
+| `outputs/report2ct/<KST-date>[_N]/checkpoints/` | Saved model checkpoints (per run) |
 | `configs/experiment/report2ct_repro.yaml` | Main experiment config |
 | `configs/model/report2ct.yaml` | UNet + scheduler kwargs |
 | `src/models/report2ct_module.py` | Lightning training loop |

@@ -1,9 +1,14 @@
 # 연구 방향 로드맵 — 텍스트 조건화 → U-DiT / U-REPA
 
-> **상태 (2026-07-31 갱신)**: `report2ct_wan_repa`(300 epoch) 학습 **완료**
-> (`epoch_299.ckpt` 저장, 크래시 없이 정상 종료 — Phase 0 게이트 통과). Phase 1은
-> 1a(`c_ctx` 토큰 시퀀스 사이드카, toy 6,304개 전체 precompute) 완료, 1b/1c(datamodule +
-> AdaLN 서브클래스) 착수 전. Phase 2a(더미 벤치마크)도 실행 완료 — 결과는 해당 절 참조.
+> **상태 (2026-08-02 갱신)**: Phase 0(`report2ct_wan_repa` 300 epoch) **완료**
+> (`epoch_299.ckpt` 저장, 크래시 없이 정상 종료). Phase 1은 1a(`c_ctx` 토큰 시퀀스 사이드카,
+> toy 6,304개 전체 precompute)·1b(`Report2CTSeqDataModule`)·1c(pooled 조건화 UNet 서브클래스 +
+> 패딩 마스킹 cross-attn)·eval-side train/eval parity(`Report2CTWanSeqLatentSampler`)까지
+> 코드·커밋 완료. **남은 것은 1e(toy 5k A/B/C 게이트) 실행뿐** — 사용자 시간 될 때 착수.
+> Phase 2a(더미 벤치마크)도 실행 완료 — 결과는 해당 절 참조.
+> ⚠ **개명(2026-08-02)**: pooled 텍스트 조건화 경로를 "AdaLN"이라 불렀으나 실제로는
+> scale/shift/gate 없는 단순 additive 조건화라 `text_pooled_cond`로 코드 전체 개명함
+> (이전 이름 `text_pooled_adaln`). 이 문서도 전체 갱신.
 > 이 문서는 대화 중 코드·데이터로 직접 확인한 사실 위에 세운 것이며,
 > 확인되지 않은 항목은 본문에 ⚠로 표시했다.
 
@@ -48,7 +53,7 @@ upstream 노트북이 `c_ctx = torch.cat(token_list, dim=1)  # [B, num_models*51
 datamodule이 `context` 키로 `(B, N, D)`를 내보내면 그대로 cross-attention에 들어간다
 (fVLM이 `(B, 4, 256)`으로 이미 사용 중). **cross-attention 경로는 모델 수정 0.**
 
-**(4) AdaLN 주입 지점이 깨끗하다.**
+**(4) pooled 텍스트 조건화 주입 지점이 깨끗하다.**
 `DiffusionModelUNetMaisi.forward`는 `emb`를 두 헬퍼로 조립한다:
 ```python
 emb = self._get_time_and_class_embedding(x, timesteps, class_labels)
@@ -58,11 +63,12 @@ emb = self._get_input_embeddings(emb, top_region_index_tensor, bottom_region_ind
 `third_party` 무손상). 그리고 `emb`는 **모든 레벨**의 ResBlock에 들어가므로,
 `attention_levels: [false, false, true, true]` 때문에 cross-attn이 닿지 못하는
 **고해상도 레벨(64³, 32³)에 텍스트가 도달하는 유일한 통로**가 된다.
-⚠ 이 문서에서 편의상 "AdaLN"이라 부르지만 **엄밀히는 다르다** — 실제 메커니즘은
-`DiffusionUNetResnetBlock.forward`에서 `h = h + time_emb_proj(emb)[...,None,None,None]`
-(채널별 bias를 더하기만 함, scale/gate 없음). DiT의 AdaLN-Zero(`x*(1+scale)+shift`, 게이트 포함)보다
-약한 additive 조건화다. `_get_input_embeddings`가 spacing/region 벡터를 붙이는 방식은
-**진짜 concat**(`torch.cat((emb, _emb), dim=1)`)이 맞음 — 새 텍스트 pooled 벡터도 이 패턴을 따른다.
+⚠ **AdaLN이 아니다** — 실제 메커니즘은 `DiffusionUNetResnetBlock.forward`에서
+`h = h + time_emb_proj(emb)[...,None,None,None]`(채널별 bias를 더하기만 함, scale/gate 없음).
+DiT의 AdaLN-Zero(`x*(1+scale)+shift`, 게이트 포함)보다 약한 additive 조건화라서
+`text_pooled_cond`로 부른다(2026-08-02 개명, 이전 `text_pooled_adaln`). `_get_input_embeddings`가
+spacing/region 벡터를 붙이는 방식은 **진짜 concat**(`torch.cat((emb, _emb), dim=1)`)이 맞음 —
+새 텍스트 pooled 벡터도 이 패턴을 따른다.
 
 **(5) ⚠ "선행연구는 pooled를 쓴다"는 주장은 성립하지 않는다.**
 vendoring된 4개 모델을 코드로 확인한 결과 2:2로 갈린다.
@@ -101,7 +107,7 @@ vendoring된 4개 모델을 코드로 확인한 결과 2:2로 갈린다.
 
 ## Phase 1 — 텍스트 조건화 (챌린지 + 전제 작업)
 
-**목표**: pooled 2토큰 → 토큰 시퀀스(cross-attn) + pooled(AdaLN) 이중 경로.
+**목표**: pooled 2토큰 → 토큰 시퀀스(cross-attn) + pooled(전역 additive 조건화, `text_pooled_cond`) 이중 경로.
 SD3의 설계에서 joint attention만 뺀 형태.
 
 ### 1a. `c_ctx` 복구 — 사이드카 방식
@@ -135,14 +141,15 @@ SD3의 설계에서 joint attention만 뺀 형태.
   더 가깝다 — **가장 가까운 선례가 마스킹하는 쪽**이라 지금 넣는다. `CrossAttentionBlock`은 pip
   설치된 MONAI라(third_party 아님) 서브클래싱 자유로움.
 
-### 1c. AdaLN 주입 — UNet 서브클래스
+### 1c. Pooled 전역 조건화 주입 — UNet 서브클래스 ✅ 완료
 
-- 신규 파일 (예: `src/models/components/maisi_unet_adaln.py`):
-  `DiffusionModelUNetMaisi`를 상속, `_get_input_embeddings`를 오버라이드해
-  pooled 벡터의 선형 투영을 `emb`에 더한다. ~15줄.
-- `Report2CTModule`에 `context_pooled`를 UNet으로 전달하는 경로 추가.
-- ⚠ **CFG**: 두 경로를 **함께 드롭**한다 (CFG scale 하나 유지).
-  기존 `cfg_drop_prob=0.15` / `cfg_per_sample` 의미를 보존할 것.
+- `src/models/components/maisi_unet_text_pooled.py`: `DiffusionModelUNetMaisiTextPooled`
+  (`DiffusionModelUNetMaisi` 상속), pooled 벡터의 선형 투영(zero-init)을 `emb`에 더함
+  (concat 아님 — 모든 ResBlock의 `time_emb_proj` 폭이 고정이라 concat은 shape 크래시).
+  같은 클래스가 패딩 마스크 cross-attention(`masked_cross_attention.py`)도 함께 활성화.
+- `Report2CTModule`에 `text_pooled_cond` 플래그로 pooled 벡터를 UNet에 전달하는 경로 추가
+  (이전 이름 `text_pooled_adaln` — 진짜 AdaLN이 아니라서 2026-08-02 개명).
+- ⚠ **CFG**: 두 경로를 **함께 드롭** — 구현 완료, `cfg_drop_prob=0.15` / `cfg_per_sample` 의미 보존 확인.
 
 ### 1d. ⭐ 20일 안에 넣는 핵심 트릭 — `cross_attention_dim: 2560` 유지
 
@@ -150,16 +157,28 @@ SD3의 설계에서 joint attention만 뺀 형태.
 그대로 전이된다 → **from-scratch가 아니라 fine-tune**으로 갈 수 있다.
 (1a의 인코더별 투영 레이어가 이 역할을 겸해 제로 패딩 문제도 동시에 해소.)
 
-### 1e. toy 5k 통제 A/B — **게이트 G1**
+⚠ **설계는 완료, 실행 경로엔 gap 있음 (2026-08-02 확인, 미수정)**: 이 트릭을 실제로 쓰는
+`Report2CTModule.init_from_ckpt` → `_load_weights_only`(report2ct_module.py:213)가
+`strict=True`. arm B/C의 UNet(`DiffusionModelUNetMaisiTextPooled`)은 arm A 체크포인트엔 없는
+`text_pooled_proj.weight/bias`를 갖고 있어서, arm A 체크포인트를 그대로 `init_from_ckpt`로
+로드하면 지금 코드로는 missing-key `RuntimeError`. **1e 게이트 자체는 안 막힘**(arm A도
+스크래치 학습이라 B/C도 스크래치로 하면 여전히 apples-to-apples) — 다만 1f(46k 파인튜닝,
+23시간 추정)는 이 트릭이 실제로 작동해야 그 추정이 성립. 수정은 작음: `strict=False` +
+missing key가 정확히 `text_pooled_proj.*`인지 확인하는 assert(~10줄, 다른 아키텍처 drift는
+여전히 loud하게 에러나도록). **1e를 파인튜닝으로 돌리기로 하면 그 직전에 하면 됨.**
 
-기존 `report2ct_wan`이 toy 5k(625 it × batch 8)로 학습돼 있어 **동일 조건 통제 비교**가 된다.
-데이터·스케줄·latent 전부 고정, 조건화만 변경:
+### 1e. toy 5k 통제 A/B — **게이트 G1** ⬜ 다음 할 일 (미착수)
 
-| arm | 텍스트 표현 | 주입 |
-|---|---|---|
-| **A** (기존, 재학습 불필요) | pooled 2토큰 | cross-attn |
-| **B** | 시퀀스 | cross-attn |
-| **C** | 시퀀스 + pooled | cross-attn + AdaLN |
+기존 `report2ct_wan`이 toy 5k(625 it × batch 8, 체크포인트
+`outputs/report2ct_wan/2026-07-16_3/checkpoints/epoch_299.ckpt`)로 학습돼 있어
+**동일 조건 통제 비교**가 된다. 데이터·스케줄·latent 전부 고정, 조건화만 변경 —
+data/model config는 다 준비됨, experiment yaml만 아직 없음(직접 CLI override로도 실행 가능):
+
+| arm | 텍스트 표현 | 주입 | 상태 |
+|---|---|---|---|
+| **A** (기존, 재학습 불필요) | pooled 2토큰 | cross-attn | ✅ 체크포인트 존재 |
+| **B** | 시퀀스 | cross-attn | `configs/model/report2ct_wan_seq.yaml` 준비, 학습 안 함 |
+| **C** | 시퀀스 + pooled | cross-attn + `text_pooled_cond` | `configs/model/report2ct_wan_seq_pooled.yaml` 준비, 학습 안 함 |
 
 **게이트 기준**: B 또는 C가 A 대비 **CLIPScore-T2I** 개선.
 eval은 `task.n_samples=300`, step 100, `fid_profile=docker`, **신규 `out_dir`**
@@ -179,7 +198,7 @@ eval은 `task.n_samples=300`, step 100, `fid_profile=docker`, **신규 `out_dir`
 "pooling은 노이즈 대응이었다"는 가설을 직접 검증하는 실험이 된다.
 결과가 어느 쪽이든 논문에 들어간다.
 
-### 1h. 후속 ablation (1e/1f 이후, 지금 착수 안 함) — 인코더 교체 + 역할 재배치
+### 1h. 후속 ablation (1e/1f 이후, 지금 착수 안 함) — 인코더 교체 + 역할 재배치 ⬜
 
 **계기**: 현재 3개 텍스트 인코더 중 `BiomedVLP-CXR-BERT-specialized`가 실제로 CLIP류
 대조학습을 거친 VLA(vision-language-alignment) 모델임을 HF 모델카드 원문으로 확인했다
@@ -196,12 +215,14 @@ arXiv:2511.17209)에 **CT 리포트에 정렬된 동일 성격의 텍스트 타�
 **후속 ablation 2개** (같은 precompute로 라벨만 바꿔 재사용 가능, 추가 비용 거의 없음):
 1. **D**: `CXR-BERT` 시퀀스 → `SPECTRE-VLA` 시퀀스로 교체(역할은 그대로 cross-attn).
    "CXR 정렬 vs CT 정렬"만 분리 측정.
-2. **E**: 비전 정렬 인코더(D의 승자)를 cross-attn이 아니라 **AdaLN(pooled)** 으로 이동.
-   근거: SPECTRE-VLA·CXR-BERT·(HiDream-I1의 CLIP) **셋 다 대조학습의 정렬 대상이 pooled/[CLS]
-   토큰 하나**였다 — 토큰별 표현은 직접 학습 신호를 받은 적이 없다. HiDream-I1(arXiv:2505.22705)이
-   실제로 이 역할 분리(pooled CLIP → AdaLN 전역 조건 / T5+Llama 시퀀스 → cross-attn)를 쓴다.
-   **다만 이건 문헌이 아니라 추론이다** — HiDream이 "왜" 그렇게 했는지 논문이 직접 설명하진 않고,
-   이 프로젝트 세팅에서 검증된 적도 없다. E는 그 추론을 직접 테스트하는 실험으로 취급한다.
+2. **E**: 비전 정렬 인코더(D의 승자)를 cross-attn이 아니라 **pooled 전역 조건화
+   (`text_pooled_cond`)** 로 이동. 근거: SPECTRE-VLA·CXR-BERT·(HiDream-I1의 CLIP) **셋 다
+   대조학습의 정렬 대상이 pooled/[CLS] 토큰 하나**였다 — 토큰별 표현은 직접 학습 신호를 받은
+   적이 없다. HiDream-I1(arXiv:2505.22705)이 실제로 이 역할 분리(pooled CLIP → AdaLN 전역 조건 /
+   T5+Llama 시퀀스 → cross-attn)를 쓴다(HiDream 자체는 진짜 AdaLN-Zero, 우리는 additive라는
+   차이는 있음). **다만 이건 문헌이 아니라 추론이다** — HiDream이 "왜" 그렇게 했는지 논문이
+   직접 설명하진 않고, 이 프로젝트 세팅에서 검증된 적도 없다. E는 그 추론을 직접 테스트하는
+   실험으로 취급한다.
 
 **기각한 대안**: RadFM(arXiv:2308.02463/Nat.Commun. 2025, MedMD, 3D ViT+Perceiver+MedLLaMA-13B) —
 텍스트 임베딩 API 없이 VQA/리포트생성 전용 생성모델이라 통합 비용 대비 가치가 낮음, 기각.
@@ -360,10 +381,11 @@ Wan의 patch (1,2,2), spatial↔temporal 분리 attention을 낳았다.
 ## 실행 순서 요약
 
 ```
-Phase 0  REPA ep300 완료 → eval
-Phase 1  1a c_ctx 사이드카 ─┐
-         1b datamodule      ├→ 1e toy 5k A/B [G1] → 1f full 46k [G2] → 챌린지 제출
-         1c AdaLN 서브클래스 ┘                      └→ 1g 노이즈 ablation (여유 시)
+Phase 0  REPA ep300 완료 → eval                                    ✅완료
+Phase 1  1a c_ctx 사이드카 ✅─┐
+         1b datamodule       ✅├→ 1e toy 5k A/B [G1] ⬜다음 할 일 → 1f full 46k [G2] → 챌린지 제출
+         1c pooled-cond 서브클래스✅┘                              └→ 1g 노이즈 ablation (여유 시)
+                                        1e/1f 이후 별도로 → 1h 인코더 교체 ablation
 ──────────────────────────── 08-20 마감 ────────────────────────────
 Phase 2  2a 더미 벤치마크 ✅완료 → 2b U-REPA-3D vs 3레벨 [G3] → 2c MM-DiT
 ```

@@ -1,0 +1,12 @@
+# Mask-conditioned variant, ts_seg labels MERGED to 4 흉부 organ groups.
+# Identical to configs/model/report2ct_text2ct_mask.yaml EXCEPT mask_conditioner.num_classes 118 -> 5.
+#   * 4 organ groups (lung/heart/aorta/esophagus) + background(0) = 5 classes.
+#   * Grouping map + evidence: src/data/organ_groups.py + plan radiant-popping-fox.md.
+#   * embed_dim(4) / unet.in_channels(8) UNCHANGED — num_classes only sizes the nn.Embedding table.
+# Consumes masks precomputed with `precompute_mask_latentgrid.py --group-organs` (K=4 lossless).
+defaults:
+  - report2ct_text2ct_mask
+  - _self_
+
+mask_conditioner:
+  num_classes: 5   # NUM_GROUPS(4) + background; was 118 (full TotalSegmentator v2)

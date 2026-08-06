@@ -1,0 +1,121 @@
+{
+  "wan": {
+    "n": 100,
+    "is_mask_model": false,
+    "grid": [
+      253,
+      512,
+      512
+    ],
+    "frame": "flipYX",
+    "frame_margin_vs_identity": 0.22687191546853624,
+    "dice": {
+      "lung": 0.621257017234926,
+      "heart": 0.4504013607141274,
+      "aorta": 0.22530550492489318,
+      "esophagus": 0.08729788257910619
+    }
+  },
+  "wan_mask": {
+    "n": 100,
+    "is_mask_model": true,
+    "grid": [
+      253,
+      512,
+      512
+    ],
+    "frame": "flipYX",
+    "frame_margin_vs_identity": 0.6269807529431697,
+    "dice": {
+      "lung": 0.9686034797867848,
+      "heart": 0.9230451796794575,
+      "aorta": 0.8812864672248317,
+      "esophagus": 0.747699326859543
+    }
+  },
+  "report2ct_toy_v2": {
+    "n": 100,
+    "is_mask_model": false,
+    "grid": [
+      256,
+      480,
+      480
+    ],
+    "frame": "flipYX",
+    "frame_margin_vs_identity": 0.1936183713734163,
+    "dice": {
+      "lung": 0.608859452488949,
+      "heart": 0.3931688299649852,
+      "aorta": 0.20342163293842472,
+      "esophagus": 0.06012641310306648
+    }
+  },
+  "report2ct_text2ct": {
+    "n": 100,
+    "is_mask_model": false,
+    "grid": [
+      128,
+      512,
+      512
+    ],
+    "frame": "flipYX",
+    "frame_margin_vs_identity": 0.2135738164230066,
+    "dice": {
+      "lung": 0.6039814753631148,
+      "heart": 0.4245918231615036,
+      "aorta": 0.22440599751096374,
+      "esophagus": 0.06977877974708267
+    }
+  },
+  "report2ct_text2ct_mask": {
+    "n": 100,
+    "is_mask_model": true,
+    "grid": [
+      128,
+      512,
+      512
+    ],
+    "frame": "flipYX",
+    "frame_margin_vs_identity": 0.6219224459755592,
+    "dice": {
+      "lung": 0.9666967020679302,
+      "heart": 0.9180067017493795,
+      "aorta": 0.876183232787998,
+      "esophagus": 0.7723845422084779
+    }
+  },
+  "text2ct": {
+    "n": 100,
+    "is_mask_model": false,
+    "grid": [
+      128,
+      512,
+      512
+    ],
+    "frame": "flipYX",
+    "frame_margin_vs_identity": 0.21843049827784267,
+    "dice": {
+      "lung": 0.6115252686022908,
+      "heart": 0.4322011336624434,
+      "aorta": 0.22966639910321995,
+      "esophagus": 0.08641664109201329
+    }
+  },
+  "report2ct_full": {
+    "n": 100,
+    "is_mask_model": false,
+    "grid": [
+      256,
+      480,
+      480
+    ],
+    "frame": "flipYX",
+    "frame_margin_vs_identity": 0.20735670702069986,
+    "dice": {
+      "lung": 0.6121103640806618,
+      "heart": 0.42059989967548417,
+      "aorta": 0.24492920310662644,
+      "esophagus": 0.09306616801764939
+    }
+  }
+}

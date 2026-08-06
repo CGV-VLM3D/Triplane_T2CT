@@ -1,0 +1,47 @@
+{
+  "run_dir": "outputs/report2ct_wan_repa/2026-07-28_2/wandb/run-20260728_123532-ebxvrgnj",
+  "last_step": 31,
+  "metrics": {
+    "train/loss_step": {
+      "n": 30,
+      "first": 1.7114250659942627,
+      "last": 0.043010562658309937
+    },
+    "train/loss_diff_step": {
+      "n": 30,
+      "first": 1.5266165733337402,
+      "last": 0.3264278173446655
+    },
+    "train/loss_repa_step": {
+      "n": 30,
+      "first": 0.3696170747280121,
+      "last": -0.5668345093727112
+    },
+    "train/repa_cos_step": {
+      "n": 30,
+      "first": 0.09576809406280518,
+      "last": 0.6036709547042847
+    },
+    "train/repa_cos_shuffled_step": {
+      "n": 30,
+      "first": 0.09390011429786682,
+      "last": 0.4292304515838623
+    },
+    "train/repa_cos_gap_step": {
+      "n": 30,
+      "first": 0.0018679797649383545,
+      "last": 0.17444050312042236
+    },
+    "train/repa_rel_step": {
+      "n": 30,
+      "first": 0.1551283895969391,
+      "last": 0.012278817594051361
+    },
+    "train/grad_norm": {
+      "n": 30,
+      "first": 4.9619317054748535,
+      "last": 1.6473572254180908
+    }
+  },
+  "figure": "tests/repa_probe/u7_monitor/figs/U7_training_monitor.png"
+}

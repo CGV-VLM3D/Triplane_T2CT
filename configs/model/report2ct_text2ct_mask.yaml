@@ -1,0 +1,49 @@
+# Mask-conditioned variant on the text2ct-latent substrate.
+# vs configs/model/report2ct_clip3d.yaml, the ONLY changes are:
+#   * unet.in_channels 4 -> 12  (4 latent + 8 mask-embedding channels)
+#   * a MaskConditioner node whose top-K organ-mask embedding is concatenated onto the noisy
+#     latent at the UNet input (LDM concat conditioning). out_channels stays 4 (predict latent only).
+# Everything else (RFlow, channels, attention, class embeds, spacing, cross_attention_dim=768
+# FrozenCLIP3D) is identical to the clip3d baseline — a pure "add the mask" A/B.
+
+_target_: src.models.report2ct_module.Report2CTModule
+
+lr: 1e-4
+cfg_drop_prob: 0.1       # TEXT CFG dropout = text2ct conditional_free_guidance (config_diff_model.json); MASK dropout lives in MaskConditioner
+cfg_per_sample: true     # per-sample CFG drop (text2ct diff_model_train.py:335), not report2ct's per-batch
+spacing_scale: 1.0
+modality_class_label: 1  # CT
+lr_scheduler_power: 2.0
+
+unet:
+  _target_: monai.apps.generation.maisi.networks.diffusion_model_unet_maisi.DiffusionModelUNetMaisi
+  spatial_dims: 3
+  in_channels: 8           # 4 latent + 4 mask embedding  ← only line coupled to embed_dim
+  out_channels: 4          # predict the 4-channel latent only
+  num_channels: [64, 128, 256, 512]
+  num_res_blocks: 2
+  attention_levels: [false, false, true, true]
+  num_head_channels: [0, 0, 32, 32]
+  cross_attention_dim: 768   # FrozenCLIP3D condition dim
+  num_class_embeds: 128
+  include_fc: true
+  include_spacing_input: true
+  include_top_region_index_input: false
+  include_bottom_region_index_input: false
+  resblock_updown: true
+  with_conditioning: true
+  use_flash_attention: true
+
+mask_conditioner:
+  _target_: src.models.components.mask_conditioner.MaskConditioner
+  num_classes: 118       # TotalSegmentator v2 (0=background .. 117)
+  embed_dim: 4           # tighter bottleneck (LDM used 3 for 182 classes); over-reliance controlled by gamma
+  class_dropout: 0.1     # per-organ partial-mask augmentation (no whole-mask/CFG dropout — CFG is text-only)
+
+noise_scheduler:
+  _target_: src.baselines.rflow.RFlowScheduler
+  num_train_timesteps: 1000
+  scale: 1.4
+  use_timestep_transform: true
+  use_discrete_timesteps: false
+  sample_method: uniform

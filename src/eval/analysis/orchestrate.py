@@ -20,6 +20,7 @@ from src.eval.analysis import (
 )
 from src.eval.analysis import subgroup_config as subgroup_config_mod
 from src.eval.analysis.labels import load_label_csv
+from src.eval.tasks.ctgen import _DEFAULT_SUBGROUP_FID_PROFILE
 
 log = logging.getLogger(__name__)
 
@@ -75,7 +76,7 @@ def run_metrics_analysis(
     clip_scores: dict[str, tuple[float, float]] | None = None,
     subgroup_setlevel_compute_fvd: bool = False,
     label_split: str = "valid",
-    subgroup_fid_profile: str = "research",
+    subgroup_fid_profile: str = _DEFAULT_SUBGROUP_FID_PROFILE,
     metrics_path: str | Path | None = None,
 ) -> None:
     """Dispatch the metric-analysis flags: build per_sample.csv (if any flag needs it), then

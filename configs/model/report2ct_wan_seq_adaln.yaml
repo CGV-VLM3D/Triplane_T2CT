@@ -1,9 +1,0 @@
-# Arm C of the text-conditioning A/B (docs/vlm3d_research_roadmap.md Phase 1e): arm B plus the
-# pooled findings/impression vectors routed into the UNet's `emb` — the vector every ResBlock
-# reads, and the only path that reaches the high-resolution levels where attention_levels is
-# false. Dual-path conditioning in the spirit of SD3/HiDream-I1 (pooled -> global, sequence ->
-# cross-attention), with the two paths CFG-dropped together.
-defaults:
-  - report2ct_wan_seq
-
-text_pooled_adaln: true

@@ -159,6 +159,34 @@ def test_setlevel_appendix_lists_every_axis(tmp_path: Path):
     assert text.rstrip().endswith("|")  # appendix is last
 
 
+def test_condition_fid_section_renders_when_scored(tmp_path: Path):
+    """FID/FVD by condition only appears after scripts/score_condition_fid.py has run (writes
+    condition_fid/condition_fid_fvd.csv); a run without it gets no such section."""
+    analysis_dir = tmp_path / "analysis"
+    analysis_dir.mkdir(parents=True)
+    (tmp_path / "condition_fid").mkdir()
+    pd.DataFrame(
+        [
+            {"condition": "gt", "n": 300, "FID_2p5D_Avg": 12.3, "FVD_CTCLIP": 0.2},
+            {
+                "condition": "label_mismatched_swap",
+                "n": 300,
+                "FID_2p5D_Avg": 18.7,
+                "FVD_CTCLIP": 0.4,
+            },
+        ]
+    ).to_csv(tmp_path / "condition_fid" / "condition_fid_fvd.csv", index=False)
+
+    text = write_summary(tmp_path).read_text()
+    assert "FID/FVD by condition" in text
+    assert "| gt | 300 | 12.3000 | 0.2000 |" in text
+    assert "| label_mismatched_swap | 300 | 18.7000 | 0.4000 |" in text
+
+    plain = tmp_path / "plain"
+    (plain / "analysis").mkdir(parents=True)
+    assert "FID/FVD by condition" not in write_summary(plain).read_text()
+
+
 def test_organ_generation_section_absent_without_the_column(tmp_path: Path):
     df = pd.DataFrame([{"clip_t2i": 55.0}])
     analysis_dir = tmp_path / "analysis"

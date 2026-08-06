@@ -18,4 +18,4 @@ text_projector:
   encoder_dims: [1024, 768, 768]
   out_dim: 2560            # == unet.cross_attention_dim, so a wan checkpoint's K/V weights transfer
 
-text_pooled_adaln: false   # arm B: cross-attention only
+text_pooled_cond: false   # arm B: cross-attention only

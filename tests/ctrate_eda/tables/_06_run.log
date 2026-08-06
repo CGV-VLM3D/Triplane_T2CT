@@ -1,0 +1,5 @@
+bundle volumes: 30 | no_chest sampled: 20
+nifti_voxel.csv rows: 50
+coverage categories: {'partial-chest': 20}
+HU-validity demo [all-zero/valid_1000_a_1.nii.gz]: fixed_median=-875 -> corrupt_median=-1899, corrupt_max=-24, frac<-1000=0.835
+montages written: 50

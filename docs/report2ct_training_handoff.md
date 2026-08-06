@@ -17,10 +17,10 @@ python scripts/precompute_report2ct_image_embeddings.py  # Phase B Day 1 deliver
 # 2. Train (multi-day; user runs)
 bash scripts/run_report2ct_training.sh
 
-# 3. After training, fill sanity metrics
-python -m src.eval.vlm3d_runner \
-    --predictions /workspace/data/report2ct_repro/predictions/ \
-    --out /workspace/results/vlm3d/report2ct_our_repro/metrics.json
+# 3. After training, fill sanity metrics (run_eval.py generates + evaluates in one pass)
+CUDA_VISIBLE_DEVICES=0 python scripts/run_eval.py \
+    task=ctgen model=report2ct model.ckpt_path=<best.ckpt> \
+    model.spacing_mm=[0.8,0.8,1.5] model.cfg_scale=5.0   # spacing_mm/cfg_scale REQUIRED (no default)
 python scripts/fill_report2ct_sanity.py \
     --metrics /workspace/results/vlm3d/report2ct_our_repro/metrics.json \
     --out /workspace/results/report2ct_sanity.json
